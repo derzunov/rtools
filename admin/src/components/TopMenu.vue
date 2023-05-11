@@ -14,8 +14,7 @@ navbar-dark bg-dark
 <!--             style="margin: 0 5px 0 0;"-->
 <!--        >-->
 
-        ₽
-        Tools
+        ₽Tools
       </router-link>
 
       <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
@@ -35,6 +34,10 @@ navbar-dark bg-dark
               </li>
               <li>
                 <router-link class="dropdown-item" to="/prices">Список прайсов</router-link>
+              </li>
+              <li><hr class="dropdown-divider"></li>
+              <li>
+                <a class="dropdown-item" target="_blank" data-bs-toggle="modal" data-bs-target="#exampleModal" href="#">Загрузить 1С номенклатуру</a>
               </li>
             </ul>
           </li>
@@ -59,7 +62,7 @@ navbar-dark bg-dark
               </li>
 
               <li>
-                <router-link class="dropdown-item" to="/variants/edit">Очистить кэш кампаний</router-link>
+                <a @click.prevent="reset" class="dropdown-item" href="#">Очистить кэш кампаний</a>
               </li>
             </ul>
           </li>
@@ -76,6 +79,10 @@ navbar-dark bg-dark
             <a class="nav-link py-2 px-0 px-lg-2" aria-current="page" href="/tools/admin/">Настройки</a>
           </li>
 
+          <li class="nav-item">
+            <router-link class="nav-link py-2 px-0 px-lg-2" aria-current="page" to="/about">Документация</router-link>
+          </li>
+
         </ul>
       </div>
     </div>
@@ -84,7 +91,18 @@ navbar-dark bg-dark
 
 <script>
 export default {
-  name: "TopMenu"
+  name: "TopMenu",
+  setup() {
+    const reset = () => {
+      window.location.reload()
+      window.localStorage.clear()
+      window.sessionStorage.clear()
+      window.location.reload()
+    }
+    return {
+      reset,
+    }
+  },
 }
 </script>
 

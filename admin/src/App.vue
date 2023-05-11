@@ -7,24 +7,55 @@
 <!--  </nav>-->
   <div class="container">
     <TopMenu/>
-    <router-view/>
+    <router-view v-if="isLoggedIn" ></router-view>
+    <div v-if="!isLoggedIn">
+
+      <h4 class="mt-5 center">Пожалуйста,
+        <ModalUniversal :modalId="`authorize-modal`"
+          title="Авторизация"
+          actionButtonText="Авторизоваться"
+          :action="() => { authorize() }"
+        >
+          <template #trigger>
+            <a href="#"
+               title="авторизоваться"
+               @click.prevent="() => { return }">
+              авторизуйтесь
+            </a>
+          </template>
+
+          <div class="form-outline mb-4">
+            <input type="text" id="login"
+                   required
+                   v-model="login"
+                   class="form-control"
+                   placeholder="Введите логин"
+            />
+          </div>
+
+          <!-- Password input -->
+          <div class="form-outline mb-3">
+            <input type="password" id="password"
+                   required
+                   v-model="password"
+                   class="form-control"
+                   placeholder="Введите пароль"
+            />
+          </div>
+        </ModalUniversal>
+      </h4>
+      <ToastUniversal toastId="login-error"
+                      toastClassNames="top-50 start-50 translate-middle"
+                      ref="toastErrorRef">
+        Неверный логин или пароль
+      </ToastUniversal>
+<!--      toastClassNames="top-50 start-50 translate-middle" -->
+    </div>
     <div class="row">
-      <div class="col-md-8">
-        <nav>
-          <a class="_gray" target="_blank" href="https://r-color.ru/tools/ipm/db/index.json">Все новости JSON</a> |
-          <router-link class="_gray" to="/about">Документация</router-link> |
-          <router-link class="_gray" to="/variants/edit">Варианты отображения</router-link> |
-          <router-link class="_gray" to="/prices">Прайс-листы</router-link>
-        </nav>
-      </div>
       <div class="col-md-4">
-<!--    <-- TODO: Переместить в настройки -->
-        <nav class="right">
-          <a class="_gray" target="_blank" data-bs-toggle="modal" data-bs-target="#exampleModal" href="#">Загрузить 1С номенклатуру</a> |
-          <a @click.prevent="reset" class="_gray" href="#">Reset</a>
-        </nav>
 
         <!-- Modal -->
+        <!-- TODO: Make it universal and move to component -->
         <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
           <div class="modal-dialog">
             <div class="modal-content">
@@ -46,29 +77,55 @@
         </div>
 
       </div>
-
     </div>
-
   </div>
 </template>
 
 <script>
-import TopMenu from "@/components/TopMenu"
-
+import TopMenu from '@/components/TopMenu'
+import { ref } from 'vue'
+import ModalUniversal from '@/components/ModalUniversal'
+import ToastUniversal from '@/components/ToastUniversal'
+import md5 from 'blueimp-md5'
 export default {
   components: {
     TopMenu,
+    ModalUniversal,
+    ToastUniversal,
   },
-
   setup() {
-    const reset = () => {
-      window.location.reload()
-      window.localStorage.clear()
-      window.sessionStorage.clear()
-      window.location.reload()
+    const SALTED_PASSWORD = 'de3ff570485f8bdabdd41d3c95b47313' // md5 of '555-900+salt'
+    const HARDCODED_LOGIN = 'rcolor'
+    const isLoggedIn = ref( localStorage.getItem( 'isLoggedIn' ) === 'true' )
+    const isError = ref( false )
+    const toastErrorRef = ref( null )
+    const login = ref( '' )
+    const password = ref( '' )
+
+    const authorize = () => {
+      // TODO: Сделать нормальную авторизацию
+      if ( ( md5( `${ password.value }+salt` ) === SALTED_PASSWORD ) &&
+         ( login.value === HARDCODED_LOGIN ) ) {
+        isLoggedIn.value = true
+        isError.value = false
+        toastErrorRef.value.hide()
+        localStorage.setItem( 'isLoggedIn', 'true' )
+      } else {
+        localStorage.setItem( 'isLoggedIn', 'false' )
+        isError.value = true
+        toastErrorRef.value.show()
+      }
     }
+
     return {
-      reset,
+      isLoggedIn,
+      isError,
+      toastErrorRef,
+      login,
+      password,
+
+      authorize,
+      md5,
     }
   }
 }
@@ -171,18 +228,19 @@ button {
 }
 
 .b-col-control.b-col-control_add {
-  margin-left: 10px;
+  margin: 9px 0 0px 10px;
 }
 
 .b-col-control.b-col-control_close {
   transform: rotate(45deg);
   margin-left: 10px;
+  margin: 9px 0 0px 10px;
 }
 
 .b-col-control.b-col-control_colspan {
   height: 24px;
   width: 60px;
-  margin: 4px 0 15px 0;
+  margin: 4px 0 2px 0;
 
   font-size: 16px;
 }

@@ -107,7 +107,7 @@
               <a href="#"
                  class="_gray b-prices-table__edit-control"
                  style="vertical-allign: baseline; margin-left: 7px;"
-                 title="Редактировать структуру прайс-листа"
+                 title="Удалить прайс-лист"
                  @click.prevent="() => { return }">
                 <font-awesome-icon
                     style="width: 22px; height: 22px;"

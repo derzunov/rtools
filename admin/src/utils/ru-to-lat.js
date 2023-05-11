@@ -13,12 +13,12 @@ export default ( str ) => {
     return [ ...str ].map( letter => {
         let latLetter = ru[ letter.toLowerCase() ]
 
-        if ( letter !== letter.toLocaleLowerCase() ) {
+        if ( letter !== letter.toLowerCase() ) {
             latLetter = latLetter.charAt(0).toUpperCase() + latLetter.slice( 1 )
         } else if ( latLetter === undefined ) {
             latLetter = letter
         }
 
         return latLetter
-    } ).join( '' ).replaceAll(/(_+)/g, '_').replaceAll(/\W+/g, '')
+    } ).join( '' ).replaceAll(/(_+)/g, '_').replaceAll(/\W+/g, '').toLowerCase()
 }

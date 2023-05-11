@@ -320,6 +320,7 @@
     </table>
 
     <ToastUniversal toastId="price-list_saved"
+                    toastClassNames=""
                     ref="toastSavedRef">
       Новый прайс-лист "{{ header }}" сохранен
     </ToastUniversal>
@@ -532,11 +533,7 @@ export default {
       const reqStr = `${ BASE_URL }/tools/price/?action=file&name=${ name }`
       const response = await axios.get( reqStr )
 
-      console.log( response.data )
-      console.log( !!response.data )
-
       return !!response.data
-
     }
 
     onMounted(async () => {
