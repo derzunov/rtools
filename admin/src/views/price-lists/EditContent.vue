@@ -26,16 +26,25 @@
                 <h5>Редактирование <span class="_gray">{{ file_name + '.html' }}</span></h5>
               </div>
               <div>
-                <div>
-                  <select class="form-select" name="group" id="group" v-model="group">
-                    <option v-for="( groupItem, groupIndex ) in groups"
-                            :value="groupIndex"
-                            :key="groupIndex"
-                    >
-                      {{ groupItem }}
-                    </option>
-                  </select>
-                </div>
+                <select class="form-select" name="group" id="group" v-model="group">
+                  <option v-for="( groupItem, groupIndex ) in groups"
+                          :value="groupIndex"
+                          :key="groupIndex"
+                  >
+                    {{ groupItem }}
+                  </option>
+                </select>
+              </div>
+
+              <div>
+                <select class="form-select" name="subgroup" id="subgroup" v-model="subgroup">
+                  <option v-for="( subgroupItem, subgroupIndex ) in subgroups"
+                          :value="subgroupIndex"
+                          :key="subgroupIndex"
+                  >
+                    {{ subgroupItem }}
+                  </option>
+                </select>
               </div>
             </div>
             <div class="mb-3">
@@ -239,7 +248,9 @@
     </table>
 
     <ToastUniversal toastId="price-list_saved"
-                    ref="toastSavedRef">
+                    ref="toastSavedRef"
+                    toastClassNames=""
+    >
       Изменения прайс-листа сохранены
     </ToastUniversal>
   </div>
@@ -296,6 +307,9 @@ export default {
     const group = ref(0) // Enum
     const groups = ref( [ 'Загружается' ] )
 
+    const subgroup = ref(0) // Enum
+    const subgroups = ref( [ 'Загружается' ] )
+
 
     // Table object
     const table = ref({
@@ -335,6 +349,8 @@ export default {
       one_s_codes.value = response.data.one_s_codes
       group.value = response.data.group
 
+      subgroup.value = response.data.subgroup
+
       // Table object
       table.value = response.data.table
 
@@ -369,6 +385,7 @@ export default {
         change_threshold: change_threshold.value,
         one_s_codes: one_s_codes.value,
         group: group.value, // Enum - индекс группы в массиве групп для фильтрации и сортировки
+        subgroup: subgroup.value,
         updateDate: Date.now(),
       }
     }
@@ -412,12 +429,19 @@ export default {
       groups.value = response.data
     }
 
+    const fetchSubgroups = async () => {
+      const reqStr = `${ BASE_URL }/tools/price/?action=subgroups`
+      const response = await axios.get( reqStr )
+      subgroups.value = response.data
+    }
+
     const log = async ( message ) => {
       console.log( message )
     }
 
     onMounted( async () => {
       await fetchGroups()
+      await fetchSubgroups()
       await fetchPriceList()
       const priceObject = makePriceObject()
       htmlResultString.value = await parsePriceToHtml( priceObject )
@@ -438,6 +462,8 @@ export default {
       one_s_codes,
       groups,
       group,
+      subgroups,
+      subgroup,
       toastSavedRef,
 
       // Functions

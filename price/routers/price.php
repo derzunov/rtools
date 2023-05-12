@@ -71,6 +71,9 @@
                 case 'groups':
                     sendJsonResponse( $db->getGroupsDb() );
                     break;
+                case 'subgroups':
+                    sendJsonResponse( $db->getSubgroupsDb() );
+                    break;
                 case 'all':
                     sendJsonResponse( $db->getAllPriceLists() );
                     break;

@@ -18,6 +18,8 @@
 
 <script>
 
+import { onMounted } from 'vue'
+
 export default {
   name: "ToastUniversal",
   props: {
@@ -50,6 +52,10 @@ export default {
       const toast = new window.bootstrap.Toast( toastUniversal )
       toast.hide()
     }
+
+    onMounted( () => {
+      // TODO: Навести порядок с инстанирванием window.bootstrap.Toast
+    } )
 
     return {
       show,

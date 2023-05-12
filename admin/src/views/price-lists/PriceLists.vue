@@ -19,7 +19,6 @@
 
     <div class="mb-3" style="display: flex; justify-content: space-between;">
       <div>
-        <div>
           <select class="form-select" name="group" id="group" v-model="group">
             <option selected="selected" value="all">Все</option>
             <option v-for="( groupItem, groupIndex ) in groups"
@@ -29,7 +28,18 @@
               {{ groupItem }}
             </option>
           </select>
-        </div>
+      </div>
+
+      <div>
+          <select class="form-select" name="subgroup" id="subgroup" v-model="subgroup">
+            <option selected="selected" value="all">Все</option>
+            <option v-for="( subgroupItem, subgroupIndex ) in subgroups"
+                    :value="subgroupIndex"
+                    :key="subgroupIndex"
+            >
+              {{ subgroupItem }}
+            </option>
+          </select>
       </div>
     </div>
     <!--  -->
@@ -49,6 +59,7 @@
               :icon="['fas', 'sort-desc']" />
           Группа
         </th>
+        <th scope="col" class="col-md-3">Подгруппа</th>
         <th scope="col" class="col-md-3">Продукт</th>
         <th scope="col" class="col-md-2">Имя файла</th>
         <th scope="col" class="col-md-2 right"></th>
@@ -63,6 +74,9 @@
 
         <td>
           {{ groups[ priceList[ 'group' ] ] }}
+        </td>
+        <td>
+          {{ subgroups[ priceList[ 'subgroup' ] ] || 'Подгруппа не выбрана' }}
         </td>
         <td>
           <router-link :to="`/prices/show/${ priceList[ 'file_name' ] }`" title="Открыть прайс">
@@ -86,16 +100,16 @@
             />
           </a>
 
-          <a href="#"
-             class="_gray b-prices-table__edit-control"
-             style="vertical-allign: baseline; margin-left: 10px;"
-             title="Редактировать структуру прайс-листа"
-             @click.prevent="() => { goToEditStruct( priceList[ 'file_name' ] ) }">
-            <font-awesome-icon
-                style="width: 22px; height: 22px;"
-                :icon="['fas', 'align-right']"
-            />
-          </a>
+<!--          <a href="#"-->
+<!--             class="_gray b-prices-table__edit-control"-->
+<!--             style="vertical-allign: baseline; margin-left: 10px;"-->
+<!--             title="Редактировать структуру прайс-листа"-->
+<!--             @click.prevent="() => { goToEditStruct( priceList[ 'file_name' ] ) }">-->
+<!--            <font-awesome-icon-->
+<!--                style="width: 22px; height: 22px;"-->
+<!--                :icon="['fas', 'align-right']"-->
+<!--            />-->
+<!--          </a>-->
 
           <!-- Удаление прайса -->
           <ModalUniversal :modalId="`delete_price_${ priceList[ 'file_name' ] }`"
@@ -175,6 +189,10 @@ export default {
 
     const group = ref( 'all' ) // all или Enum
     const groups = ref( [ 'Загружается' ] )
+
+    const subgroup = ref( 'all' ) // all или Enum
+    const subgroups = ref( [ 'Загружается' ] )
+
     const allPriceLists = ref( [] )
 
     // Functions: -------------------------------------------------------
@@ -183,6 +201,12 @@ export default {
       const reqStr = `${ BASE_URL }/tools/price/?action=groups`
       const response = await axios.get( reqStr )
       groups.value = response.data
+    }
+
+    const fetchSubgroups = async () => {
+      const reqStr = `${ BASE_URL }/tools/price/?action=subgroups`
+      const response = await axios.get( reqStr )
+      subgroups.value = response.data
     }
 
     const fetchAllPriceLists = async () => {
@@ -210,6 +234,13 @@ export default {
       allPriceLists.value = allPriceListsCached.filter( ( priceList ) => {
         return ( priceList[ 'group' ] === group.value ) ||
             ( group.value === 'all' )
+      } )
+    }
+
+    const filterPriceListsBySubgroup = () => {
+      allPriceLists.value = allPriceListsCached.filter( ( priceList ) => {
+        return ( priceList[ 'subgroup' ] === subgroup.value ) ||
+            ( subgroup.value === 'all' )
       } )
     }
 
@@ -248,6 +279,7 @@ export default {
 
     onMounted( async () => {
       await fetchGroups()
+      await fetchSubgroups()
       await fetchAllPriceLists()
       allPriceListsCached = JSON.parse( JSON.stringify( allPriceLists.value ) )
       sortByGroup()
@@ -255,6 +287,10 @@ export default {
 
     watch( [ group ], () => {
       filterPriceListsByGroup()
+    } )
+
+    watch( [ subgroup ], () => {
+      filterPriceListsBySubgroup()
     } )
 
     watch( [ isSortAsc ], () => {
@@ -275,6 +311,8 @@ export default {
       one_s_codes,
       groups,
       group,
+      subgroups,
+      subgroup,
       allPriceLists,
 
       pluralize,

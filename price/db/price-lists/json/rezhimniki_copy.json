@@ -1,1 +1,130 @@
-{"file_name":"rezhimniki_copy","header":"Стоимость изготовления режимника без основы (копия)","toptext":"Лазерная печать","table":{"thead":{"rows":[{"id":1683019390620,"cols":[{"value":"Наименование","colspan":1,"rowspan":1},{"value":"Описание","colspan":1,"rowspan":1},{"value":"Размер / Цена, руб/шт","colspan":3,"rowspan":1}]},{"id":1683019390560,"cols":[{"value":"+","colspan":1,"rowspan":1},{"value":"+","colspan":1,"rowspan":1},{"value":"30х40см","colspan":1,"rowspan":1},{"value":"40х60мм","colspan":1,"rowspan":1},{"value":"50х70мм","colspan":1,"rowspan":1}]}]},"rows":[{"id":1683019390577,"cols":[{"value":"Режимник 2 из ПВХ с ламинацией","colspan":1,"rowspan":1},{"value":"ПВХ 3мм Ламинированный винил (самоклейка + матовый или глянцевый ламинат)","colspan":1,"rowspan":1},{"value":"600","colspan":1,"rowspan":1},{"value":"700","colspan":1,"rowspan":1},{"value":"800","colspan":1,"rowspan":1}]},{"id":1683019436454,"cols":[{"value":"Что-то ","colspan":1,"rowspan":1},{"value":"Какое-то","colspan":1,"rowspan":1},{"value":"700","colspan":1,"rowspan":1},{"value":"{{ 00-00000215 }}","colspan":1,"rowspan":1},{"value":"900","colspan":1,"rowspan":1}]}]},"bottomtext":"* Цены уточняйте у менеджеров","markup_factor":"1.7","change_threshold":"10","one_s_codes":"00-00002340;00-00000252;00-00000215","group":1,"updatedate":1683019656199}
+{
+  "file_name": "rezhimniki_copy",
+  "header": "Стоимость изготовления режимника без основы (копия)",
+  "toptext": "Лазерная печать",
+  "table": {
+    "thead": {
+      "rows": [
+        {
+          "id": 1683019390620,
+          "cols": [
+            {
+              "value": "Наименование",
+              "colspan": 1,
+              "rowspan": 1
+            },
+            {
+              "value": "Описание",
+              "colspan": 1,
+              "rowspan": 1
+            },
+            {
+              "value": "Размер / Цена, руб/шт",
+              "colspan": 3,
+              "rowspan": 1
+            }
+          ]
+        },
+        {
+          "id": 1683019390560,
+          "cols": [
+            {
+              "value": "+",
+              "colspan": 1,
+              "rowspan": 1
+            },
+            {
+              "value": "+",
+              "colspan": 1,
+              "rowspan": 1
+            },
+            {
+              "value": "30х40см",
+              "colspan": 1,
+              "rowspan": 1
+            },
+            {
+              "value": "40х60мм",
+              "colspan": 1,
+              "rowspan": 1
+            },
+            {
+              "value": "50х70мм",
+              "colspan": 1,
+              "rowspan": 1
+            }
+          ]
+        }
+      ]
+    },
+    "rows": [
+      {
+        "id": 1683019390577,
+        "cols": [
+          {
+            "value": "Режимник 2 из ПВХ с ламинацией",
+            "colspan": 1,
+            "rowspan": 1
+          },
+          {
+            "value": "ПВХ 3мм Ламинированный винил (самоклейка + матовый или глянцевый ламинат)",
+            "colspan": 1,
+            "rowspan": 1
+          },
+          {
+            "value": "600",
+            "colspan": 1,
+            "rowspan": 1
+          },
+          {
+            "value": "700",
+            "colspan": 1,
+            "rowspan": 1
+          },
+          {
+            "value": "800",
+            "colspan": 1,
+            "rowspan": 1
+          }
+        ]
+      },
+      {
+        "id": 1683019436454,
+        "cols": [
+          {
+            "value": "Что-то ",
+            "colspan": 1,
+            "rowspan": 1
+          },
+          {
+            "value": "Какое-то",
+            "colspan": 1,
+            "rowspan": 1
+          },
+          {
+            "value": "700",
+            "colspan": 1,
+            "rowspan": 1
+          },
+          {
+            "value": "{{ 00-00000215 }}",
+            "colspan": 1,
+            "rowspan": 1
+          },
+          {
+            "value": "900",
+            "colspan": 1,
+            "rowspan": 1
+          }
+        ]
+      }
+    ]
+  },
+  "bottomtext": "* Цены уточняйте у менеджеров",
+  "markup_factor": "1.7",
+  "change_threshold": "10",
+  "one_s_codes": "00-00002340;00-00000252;00-00000215",
+  "group": 1,
+  "subgroup": 0,
+  "updatedate": 1683019656199
+}

@@ -31,6 +31,7 @@
               <div>
                 <div>
                   <h5><span class="_gray">{{ groups[ group ] }}</span></h5>
+                  <p><span class="_gray">{{ subgroups[ subgroup ] }}</span></p>
                 </div>
               </div>
             </div>
@@ -272,6 +273,9 @@ export default {
     const group = ref(0) // Enum
     const groups = ref( [ 'Загружается' ] )
 
+    const subgroup = ref(0) // Enum
+    const subgroups = ref( [ 'Загружается' ] )
+
 
     // Table object
     const table = ref({
@@ -310,6 +314,7 @@ export default {
       change_threshold.value = response.data.change_threshold
       one_s_codes.value = response.data.one_s_codes
       group.value = response.data.group
+      subgroup.value = response.data.subgroup
 
       // Table object
       table.value = response.data.table
@@ -345,6 +350,7 @@ export default {
         change_threshold: change_threshold.value,
         one_s_codes: one_s_codes.value,
         group: group.value, // Enum - индекс группы в массиве групп для фильтрации и сортировки
+        subgroup: subgroup.value,
         updateDate: Date.now(),
       }
     }
@@ -390,12 +396,19 @@ export default {
       groups.value = response.data
     }
 
+    const fetchSubgroups = async () => {
+      const reqStr = `${ BASE_URL }/tools/price/?action=subgroups`
+      const response = await axios.get( reqStr )
+      subgroups.value = response.data
+    }
+
     const log = async ( message ) => {
       console.log( message )
     }
 
     onMounted( async () => {
       await fetchGroups()
+      await fetchSubgroups()
       await fetchPriceList()
       const priceObject = makePriceObject()
       htmlResultString.value = await parsePriceToHtml( priceObject )
@@ -416,6 +429,8 @@ export default {
       one_s_codes,
       groups,
       group,
+      subgroups,
+      subgroup,
       toastSavedRef,
 
       // Functions

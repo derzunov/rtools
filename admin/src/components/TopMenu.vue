@@ -51,11 +51,11 @@ navbar-dark bg-dark
             <ul class="dropdown-menu">
 
               <li>
-                <router-link class="dropdown-item" to="/ipm/add">Добавить кампанию</router-link>
+                <router-link class="dropdown-item" to="/ipm/add">Добавить</router-link>
               </li>
               <li><hr class="dropdown-divider"></li>
               <li>
-                <router-link class="dropdown-item" to="/ipm">Список кампаний</router-link>
+                <router-link class="dropdown-item" to="/ipm">Список</router-link>
               </li>
               <li>
                 <router-link class="dropdown-item" to="/variants/edit">Варианты отображения</router-link>

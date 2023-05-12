@@ -1,1 +1,100 @@
-{"file_name":"rezhimniki_copy_copy","header":"rezhimniki_copy rezhimniki_copy","toptext":"rezhimniki_copy rezhimniki_copy rezhimniki_copy","table":{"thead":{"rows":[{"id":1683106560086,"cols":[{"value":"Наименвание","colspan":1,"rowspan":1},{"value":"Описание","colspan":1,"rowspan":1},{"value":"Тираж (Размер) / Цена, руб/единицы изм.","colspan":3,"rowspan":1}]},{"id":1683106560054,"cols":[{"value":"+","colspan":1,"rowspan":1},{"value":"+","colspan":1,"rowspan":1},{"value":"Вариант 1","colspan":1,"rowspan":1},{"value":"Вариант 2","colspan":1,"rowspan":1},{"value":"Вариант 3","colspan":1,"rowspan":1}]}]},"rows":[{"id":1683106560076,"cols":[{"value":"rezhimniki_copy","colspan":1,"rowspan":1},{"value":"rezhimniki_copy","colspan":1,"rowspan":1},{"value":"rezhimniki_copy","colspan":1,"rowspan":1},{"value":"rezhimniki_copy","colspan":1,"rowspan":1},{"value":"rezhimniki_copy","colspan":1,"rowspan":1}]}]},"bottomtext":"rezhimniki_copy rezhimniki_copy rezhimniki_copy","markup_factor":1.5,"change_threshold":5,"one_s_codes":"00-00002340;00-00000252;00-00000215","group":4,"updatedate":1683113547719}
+{
+  "file_name": "rezhimniki_copy_copy",
+  "header": "rezhimniki_copy rezhimniki_copy",
+  "toptext": "rezhimniki_copy rezhimniki_copy rezhimniki_copy",
+  "table": {
+    "thead": {
+      "rows": [
+        {
+          "id": 1683106560086,
+          "cols": [
+            {
+              "value": "Наименвание",
+              "colspan": 1,
+              "rowspan": 1
+            },
+            {
+              "value": "Описание",
+              "colspan": 1,
+              "rowspan": 1
+            },
+            {
+              "value": "Тираж (Размер) / Цена, руб/единицы изм.",
+              "colspan": 3,
+              "rowspan": 1
+            }
+          ]
+        },
+        {
+          "id": 1683106560054,
+          "cols": [
+            {
+              "value": "+",
+              "colspan": 1,
+              "rowspan": 1
+            },
+            {
+              "value": "+",
+              "colspan": 1,
+              "rowspan": 1
+            },
+            {
+              "value": "Вариант 1",
+              "colspan": 1,
+              "rowspan": 1
+            },
+            {
+              "value": "Вариант 2",
+              "colspan": 1,
+              "rowspan": 1
+            },
+            {
+              "value": "Вариант 3",
+              "colspan": 1,
+              "rowspan": 1
+            }
+          ]
+        }
+      ]
+    },
+    "rows": [
+      {
+        "id": 1683106560076,
+        "cols": [
+          {
+            "value": "rezhimniki_copy",
+            "colspan": 1,
+            "rowspan": 1
+          },
+          {
+            "value": "rezhimniki_copy",
+            "colspan": 1,
+            "rowspan": 1
+          },
+          {
+            "value": "rezhimniki_copy",
+            "colspan": 1,
+            "rowspan": 1
+          },
+          {
+            "value": "rezhimniki_copy",
+            "colspan": 1,
+            "rowspan": 1
+          },
+          {
+            "value": "rezhimniki_copy",
+            "colspan": 1,
+            "rowspan": 1
+          }
+        ]
+      }
+    ]
+  },
+  "bottomtext": "rezhimniki_copy rezhimniki_copy rezhimniki_copy",
+  "markup_factor": 1.5,
+  "change_threshold": 5,
+  "one_s_codes": "00-00002340;00-00000252;00-00000215",
+  "group": 4,
+  "subgroup": 0,
+  "updatedate": 1683113547719
+}

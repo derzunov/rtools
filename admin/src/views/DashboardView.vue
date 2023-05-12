@@ -1,8 +1,8 @@
 <template>
   <div class="home center" style="padding: 20px 0 0 0">
     <!--    <img alt="Vue logo" src="../assets/logo.png">-->
-    <img alt="Vue logo" src="../assets/logo-2.jpg">
-    <BlankComponent msg="Welcome to Admin panel"/>
+    <img class="mb-5" width="320" alt="Vue logo" src="../assets/logo-3.jpg">
+    <BlankComponent msg="₽Tools Admin panel"/>
   </div>
 </template>
 

@@ -3,12 +3,16 @@
     private static $instance = null;
     private $allDb = [];
     public $groupsDb = [];
+    public $subgroupsDb = [];
 
     private $dbUrl = __DIR__ .'/index.json';
     private $dbTestUrl = __DIR__ .'/index_test.json';
 
     private $groupsUrl = __DIR__ .'/groups.json';
     private $groupsTestUrl = __DIR__ .'/groups_test.json';
+
+    private $subgroupsUrl = __DIR__ .'/subgroups.json';
+    private $subgroupsTestUrl = __DIR__ .'/subgroups_test.json';
 
     private $jsonPricelistsDir = __DIR__ . "/price-lists/json/";
     private $htmlPricelistsDir = __DIR__ . "/price-lists/html/";
@@ -20,6 +24,7 @@
       {
         $this->dbUrl = $this->dbTestUrl;
         $this->groupsUrl = $this->groupsTestUrl;
+        $this->subgroupsUrl = $this->subgroupsTestUrl;
       }
 
       $json = file_get_contents( $this->dbUrl );
@@ -31,7 +36,9 @@
       );
       $this->allDb = $jsonParsed;
 
+      // Группы
       $groupsJson = file_get_contents( $this->groupsUrl );
+
 
       $groupsJsonParsed = json_decode(
                   $groupsJson,
@@ -41,6 +48,19 @@
       );
 
       $this->groupsDb = $groupsJsonParsed;
+
+      // Подгруппы
+      $subgroupsJson = file_get_contents( $this->subgroupsUrl );
+
+
+      $subgroupsJsonParsed = json_decode(
+                  $subgroupsJson,
+                  true,
+                  16,
+                  0
+      );
+
+      $this->subgroupsDb = $subgroupsJsonParsed;
     }
 
     public static function getInstance() {
@@ -58,6 +78,10 @@
 
     public function getGroupsDb() {
       return $this->groupsDb;
+    }
+
+    public function getSubgroupsDb() {
+      return $this->subgroupsDb;
     }
 
     public function getLastUpdateTimestamp() {
@@ -155,6 +179,7 @@
         $FinalPriceListsItem[ 'file_name' ] = $priceListObject[ 'file_name' ];
         $FinalPriceListsItem[ 'header' ] = $priceListObject[ 'header' ];
         $FinalPriceListsItem[ 'group' ] = $priceListObject[ 'group' ];
+        $FinalPriceListsItem[ 'subgroup' ] = $priceListObject[ 'subgroup' ];
 
         array_push( $allPriceLists, $FinalPriceListsItem );
       }

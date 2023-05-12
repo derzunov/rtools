@@ -88,7 +88,17 @@
                     {{ groupItem }}
                   </option>
                 </select>
+              </td>
 
+              <td>
+                <select class="form-select" name="subgroup" id="subgroup" v-model="subgroup">
+                  <option v-for="( subgroupItem, subgroupIndex ) in subgroups"
+                          :value="subgroupIndex"
+                          :key="subgroupIndex"
+                  >
+                    {{ subgroupItem }}
+                  </option>
+                </select>
               </td>
               <td style="width: 100px;"></td>
             </tr>
@@ -384,8 +394,10 @@ export default {
     // каждый связанный прайс будет помечен, как подлежащий пересчёту ( при превышении порога (см. выше) )
 
     const group = ref( 0 ) // Enum
-
     const groups = ref( [ "Загружается" ] )
+
+    const subgroup = ref( 0 ) // Enum
+    const subgroups = ref( [ "Загружается" ] )
 
 
     // Table object
@@ -477,6 +489,7 @@ export default {
         change_threshold: change_threshold.value,
         one_s_codes: one_s_codes.value,
         group: group.value, // Enum - индекс группы в массиве групп для фильтрации и сортировки
+        subgroup: subgroup.value, // Enum - индекс группы в массиве групп для фильтрации и сортировки
         updateDate: Date.now(),
       }
     }
@@ -529,6 +542,12 @@ export default {
       groups.value = response.data
     }
 
+    const fetchSubgroups = async () => {
+      const reqStr = `${ BASE_URL }/tools/price/?action=subgroups`
+      const response = await axios.get( reqStr )
+      subgroups.value = response.data
+    }
+
     const checkIsPriceExist = async ( name ) => {
       const reqStr = `${ BASE_URL }/tools/price/?action=file&name=${ name }`
       const response = await axios.get( reqStr )
@@ -538,6 +557,7 @@ export default {
 
     onMounted(async () => {
       await fetchGroups()
+      await fetchSubgroups()
       const priceObject = makePriceObject()
       htmlResultString.value = await parsePriceToHtml( priceObject )
     })
@@ -577,6 +597,10 @@ export default {
       one_s_codes,
       groups,
       group,
+
+      subgroups,
+      subgroup,
+
       toastSavedRef,
 
       savePrice,
