@@ -6,14 +6,7 @@ navbar-dark bg-dark
   ">
     <div class="container-fluid">
 
-      <router-link class="navbar-brand mb-0 h2" to="/">
-<!--        <img src="https://r-color.ru/logo.png"-->
-<!--             alt="Logo"-->
-<!--             width="50" height="27"-->
-<!--             class="d-inline-block align-text-top"-->
-<!--             style="margin: 0 5px 0 0;"-->
-<!--        >-->
-
+      <router-link class="navbar-brand mb-0 h2" to="/" style="color: #fff !important;">
         ₽Tools
       </router-link>
 
@@ -33,7 +26,10 @@ navbar-dark bg-dark
                 <router-link class="dropdown-item" to="/prices/add">Добавить</router-link>
               </li>
               <li>
-                <router-link class="dropdown-item" to="/prices">Список</router-link>
+                <router-link class="dropdown-item" to="/prices">Список прайсов</router-link>
+              </li>
+              <li>
+                <router-link class="dropdown-item" to="/prices/subgroups/edit">Редактировать подгруппы</router-link>
               </li>
               <li><hr class="dropdown-divider"></li>
               <li>
@@ -74,14 +70,14 @@ navbar-dark bg-dark
             <a class="nav-link py-2 px-0 px-lg-2" aria-current="page" href="/tools/admin/">Оплата</a>
           </li>
 
-          <!-- Prices -->
+          <!-- Настройки и разное -->
           <li class="nav-item dropdown">
             <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
               Настройки
             </a>
             <ul class="dropdown-menu">
               <li>
-                <router-link class="dropdown-item" to="/prices/subgroups">Скрытая угроза #1</router-link>
+                <router-link class="dropdown-item" to="/prices/groups/edit">Скрытая угроза #1</router-link>
               </li>
               <li><hr class="dropdown-divider"></li>
             </ul>

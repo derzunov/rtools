@@ -27,8 +27,8 @@ const routes = [
   },
   {
     path: '/variants/edit/',
-    name: 'variants edit',
-    component: () => import( /* webpackChunkName: "variants-edit" */ '../views/EditVariantsView.vue' )
+    name: 'Variants edit',
+    component: () => import( /* webpackChunkName: "variants.edit" */ '../views/EditVariantsView.vue' )
   },
   {
     path: '/home',
@@ -74,14 +74,24 @@ const routes = [
     component: () => import( /* webpackChunkName: "prices" */ '../views/price-lists/ShowContent.vue' )
   },
   {
-    path: '/prices/subgroups',
-    name: 'Edit subgroups',
-    component: () => import( /* webpackChunkName: "prices" */ '../views/price-lists/EditSubgroups.vue' )
+    path: '/prices/groups/show',
+    name: 'Show groups with populated subgroups',
+    component: () => import( /* webpackChunkName: "groups" */ '../views/price-lists/ShowGroups.vue' )
+  },
+  {
+    path: '/prices/groups/edit',
+    name: 'Edit groups',
+    component: () => import( /* webpackChunkName: "groups.edit" */ '../views/price-lists/EditGroups.vue' )
+  },
+  {
+    path: '/prices/subgroups/edit',
+    name: 'Show subgroups',
+    component: () => import( /* webpackChunkName: "subgroups.edit" */ '../views/price-lists/EditSubgroups.vue' )
   },
 ]
 
 const router = createRouter( {
-  history: createWebHashHistory( '/tools/admin/' ), // TODO: Move to configs
+  history: createWebHashHistory( '/tools/admin/' ), // TODO: Move url to configs
   routes
 } )
 

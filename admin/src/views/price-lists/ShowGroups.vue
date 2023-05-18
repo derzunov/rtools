@@ -11,7 +11,7 @@
       <div class="col-md-7"></div>
       <div class="col-md-2 center"></div>
     </div>
-    <h5>Группы</h5>
+    <h5>Подгрурппы</h5>
     <form method="post"
           id="ipm-edit-groups"
           class="mb-5 col-md-8"
@@ -26,14 +26,14 @@
                name="groups[]"
                class="form-control"
                type="text"
-               v-model="groupItem.name"
+               v-model = "groupItem.name"
         >
 
         <!-- Список подгрупп для группы -->
         <input required
                id="subgroup"
                name="group.subgroups[]"
-               class="form-control _gray mb-1"
+               class="form-control _gray ms-5 mb-1"
                type="text"
                v-for="subgroupItem in groupItem.subgroups"
                :key="subgroupItem.id"

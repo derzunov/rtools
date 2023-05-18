@@ -17,28 +17,35 @@
           class="mb-5 col-md-8"
           :action="`${ BASE_URL }/`"
           @submit.prevent="saveGroups">
+
+      <!-- Группа -->
       <div class="mb-3"
            v-for="( groupItem, groupIndex ) in groups"
-           :key="groupIndex"
+           :key="groupItem.id"
       >
-        <input required
-               id="group"
+        <h5 required
+               :id="`group_${ groupItem.id }`"
                name="groups[]"
-               class="form-control"
+               class=""
                type="text"
-               v-model = "groupItem.name"
+
         >
+          {{ groupItem.name }}
+        </h5>
 
         <!-- Список подгрупп для группы -->
-        <input required
-               id="subgroup"
-               name="group.subgroups[]"
-               class="form-control _gray ms-5 mb-1"
-               type="text"
-               v-for="subgroupItem in groupItem.subgroups"
-               :key="subgroupItem.id"
-               v-model="subgroupItem.name"
-        >
+        <ul>
+          <li v-for="subgroupItem in groupItem.subgroups"
+              :key="subgroupItem.id">
+            <input required
+                   id="subgroup"
+                   name="group.subgroups[]"
+                   class="form-control _gray mb-1"
+                   type="text"
+                   v-model="subgroupItem.name"
+            >
+          </li>
+        </ul>
 
       </div>
 
