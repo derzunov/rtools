@@ -30,8 +30,8 @@
               </div>
               <div>
                 <div>
-                  <h5><span class="_gray">{{ groups[ group ] }}</span></h5>
-                  <p><span class="_gray">{{ subgroups[ subgroup ] }}</span></p>
+                  <h5><span class="_gray">{{ groups[ group ].name }}</span></h5>
+                  <p><span class="_gray">{{ groups[ group ].subgroups ? groups[ group ].subgroups[ subgroup ]?.name : 'Не найдено' }}</span></p>
                 </div>
               </div>
             </div>
@@ -391,15 +391,9 @@ export default {
     }
 
     const fetchGroups = async () => {
-      const reqStr = `${ BASE_URL }/tools/price/?action=groups`
+      const reqStr = `${ BASE_URL }/tools/price/?action=groups&populate=subgoups`
       const response = await axios.get( reqStr )
       groups.value = response.data
-    }
-
-    const fetchSubgroups = async () => {
-      const reqStr = `${ BASE_URL }/tools/price/?action=subgroups`
-      const response = await axios.get( reqStr )
-      subgroups.value = response.data
     }
 
     const log = async ( message ) => {
@@ -408,7 +402,6 @@ export default {
 
     onMounted( async () => {
       await fetchGroups()
-      await fetchSubgroups()
       await fetchPriceList()
       const priceObject = makePriceObject()
       htmlResultString.value = await parsePriceToHtml( priceObject )

@@ -30,10 +30,10 @@ navbar-dark bg-dark
             </a>
             <ul class="dropdown-menu">
               <li>
-                <router-link class="dropdown-item" to="/prices/add">Добавить прайс</router-link>
+                <router-link class="dropdown-item" to="/prices/add">Добавить</router-link>
               </li>
               <li>
-                <router-link class="dropdown-item" to="/prices">Список прайсов</router-link>
+                <router-link class="dropdown-item" to="/prices">Список</router-link>
               </li>
               <li><hr class="dropdown-divider"></li>
               <li>
@@ -42,11 +42,10 @@ navbar-dark bg-dark
             </ul>
           </li>
 
-
           <!-- IPM -->
           <li class="nav-item dropdown">
             <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-              Кампании
+              IPM
             </a>
             <ul class="dropdown-menu">
 
@@ -62,21 +61,30 @@ navbar-dark bg-dark
               </li>
 
               <li>
-                <a @click.prevent="reset" class="dropdown-item" href="#">Очистить кэш кампаний</a>
+                <a @click.prevent="reset" class="dropdown-item" href="#">Очистить кэш IPM</a>
               </li>
             </ul>
           </li>
 
-          <li class="nav-item">
-            <a class="nav-link py-2 px-0 px-lg-2" aria-current="page" href="/tools/admin/">Заказы</a>
-          </li>
+<!--          <li class="nav-item">-->
+<!--            <a class="nav-link py-2 px-0 px-lg-2" aria-current="page" href="/tools/admin/">Заказы</a>-->
+<!--          </li>-->
 
           <li class="nav-item">
             <a class="nav-link py-2 px-0 px-lg-2" aria-current="page" href="/tools/admin/">Оплата</a>
           </li>
 
-          <li class="nav-item">
-            <a class="nav-link py-2 px-0 px-lg-2" aria-current="page" href="/tools/admin/">Настройки</a>
+          <!-- Prices -->
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+              Настройки
+            </a>
+            <ul class="dropdown-menu">
+              <li>
+                <router-link class="dropdown-item" to="/prices/subgroups">Скрытая угроза #1</router-link>
+              </li>
+              <li><hr class="dropdown-divider"></li>
+            </ul>
           </li>
 
           <li class="nav-item">

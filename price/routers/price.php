@@ -69,6 +69,7 @@
         if ( isset( $data[ 'action' ] ) ) {
             switch ( $data[ 'action' ] ) {
                 case 'groups':
+                    // TODO: populate=subgroups condition
                     sendJsonResponse( $db->getGroupsDb() );
                     break;
                 case 'subgroups':
@@ -104,18 +105,35 @@
                 // Работаем с прайс-листами, создаваемыми из админки и встраиваемыми в страницы
                 $db->savePriceList( $data[ 'file_name' ], $data[ 'pricelist_json' ], $data[ 'pricelist_html' ] );
                 echo 'Price list saved';
-        } else {
+        } else if ( !isset( $data[ 'action' ] ) ) {
             // Работаем с выгрузкой из 1с
             $uploadDir = './';
             $uploadFileDist = $uploadDir . basename( 'current-price.txt' );
 
             if ( move_uploaded_file( $_FILES[ 'one_s_price' ][ 'tmp_name' ], $uploadFileDist ) ) {
-                header( 'Location: /tools/ipm/admin/dist/' );
+                header( 'Location: /tools/admin/' );
                 die();
             } else {
                 echo 'Ошибка перемещения загруженного файла';
             }
         }
+
+        // В остальных случаях обрабатываем тут экшны ----------------------------------
+        // TODO: Навести порядок с роутингом отдельно групп/отдельно 1с/отдельно самих прайсов
+        if ( isset( $data[ 'action' ] ) ) {
+
+            switch ( $data[ 'action' ] ) {
+                case 'groups' && isset( $data[ 'groups_populated' ] ):
+                    $db->saveGroupsDbFromJson( $data[ 'groups_populated' ] );
+                    echo 'The groups db sucessfuly updated';
+                    break;
+                default:
+                    sendError( 'the action is not recognized' );
+                }
+                die();
+            }
+
+
         return 0;
     }
 

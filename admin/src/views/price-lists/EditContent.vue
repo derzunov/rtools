@@ -26,25 +26,32 @@
                 <h5>Редактирование <span class="_gray">{{ file_name + '.html' }}</span></h5>
               </div>
               <div>
-                <select class="form-select" name="group" id="group" v-model="group">
-                  <option v-for="( groupItem, groupIndex ) in groups"
-                          :value="groupIndex"
-                          :key="groupIndex"
-                  >
-                    {{ groupItem }}
-                  </option>
-                </select>
-              </div>
 
-              <div>
-                <select class="form-select" name="subgroup" id="subgroup" v-model="subgroup">
-                  <option v-for="( subgroupItem, subgroupIndex ) in subgroups"
-                          :value="subgroupIndex"
-                          :key="subgroupIndex"
-                  >
-                    {{ subgroupItem }}
-                  </option>
-                </select>
+                <table>
+                  <tr>
+                    <td>
+                      <select class="form-select" name="group" id="group" v-model="group">
+                        <option v-for="( groupItem, groupIndex ) in groups"
+                                :value="groupIndex"
+                                :key="groupItem.id"
+                        >
+                          {{ groupItem.name }}
+                        </option>
+                      </select>
+                    </td>
+                    <td>
+                      <select class="form-select" name="subgroup" id="subgroup" v-model="subgroup">
+                        <option v-for="( subgroupItem, subgroupIndex ) in subgroups"
+                                :value="subgroupIndex"
+                                :key="subgroupIndex"
+                        >
+                          {{ subgroupItem }}
+                        </option>
+                      </select>
+                    </td>
+                  </tr>
+                </table>
+
               </div>
             </div>
             <div class="mb-3">
@@ -424,7 +431,7 @@ export default {
     }
 
     const fetchGroups = async () => {
-      const reqStr = `${ BASE_URL }/tools/price/?action=groups`
+      const reqStr = `${ BASE_URL }/tools/price/?action=groups&populate=subgoups`
       const response = await axios.get( reqStr )
       groups.value = response.data
     }

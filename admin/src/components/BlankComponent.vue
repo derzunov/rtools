@@ -2,14 +2,9 @@
   <div class="hello">
     <h1>{{ msg }}</h1>
     <p>
-      На этой странице будем отображажать дашборд всех подсистем
+      На этой странице будет отображажаться дашборд всех подсистем
     </p>
-    <h3>IPM</h3>
-    <ul>
-      <li><router-link class="" to="/ipm/add">Добавить</router-link></li>
-      <li><router-link class="" to="/ipm">Список</router-link></li>
-      <li><router-link class="" to="/variants/edit">Варианты отображения</router-link></li>
-    </ul>
+
     <h3>Prices</h3>
     <ul>
       <li>
@@ -18,6 +13,13 @@
       <li>
         <router-link class="" to="/prices">Список прайсов</router-link>
       </li>
+    </ul>
+
+    <h3>IPM</h3>
+    <ul>
+      <li><router-link class="" to="/ipm/add">Добавить</router-link></li>
+      <li><router-link class="" to="/ipm">Список</router-link></li>
+      <li><router-link class="" to="/variants/edit">Варианты отображения</router-link></li>
     </ul>
   </div>
 </template>

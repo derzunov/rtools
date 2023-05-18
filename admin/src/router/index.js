@@ -73,6 +73,11 @@ const routes = [
     name: 'show price-list content',
     component: () => import( /* webpackChunkName: "prices" */ '../views/price-lists/ShowContent.vue' )
   },
+  {
+    path: '/prices/subgroups',
+    name: 'Edit subgroups',
+    component: () => import( /* webpackChunkName: "prices" */ '../views/price-lists/EditSubgroups.vue' )
+  },
 ]
 
 const router = createRouter( {

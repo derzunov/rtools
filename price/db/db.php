@@ -11,6 +11,8 @@
     private $groupsUrl = __DIR__ .'/groups.json';
     private $groupsTestUrl = __DIR__ .'/groups_test.json';
 
+    // Using subgropes direcly depricated now.
+    // It's populated part of groups
     private $subgroupsUrl = __DIR__ .'/subgroups.json';
     private $subgroupsTestUrl = __DIR__ .'/subgroups_test.json';
 
@@ -24,6 +26,9 @@
       {
         $this->dbUrl = $this->dbTestUrl;
         $this->groupsUrl = $this->groupsTestUrl;
+
+        // Using subgropes direcly depricated now.
+        // It's populated part of groups
         $this->subgroupsUrl = $this->subgroupsTestUrl;
       }
 
@@ -131,12 +136,6 @@
     public function savePriceList( $fileName, $priceListJson, $priceListHtml ) {
 
       $fd = fopen( $this->jsonPricelistsDir . "$fileName.json", 'w' ) or die( "Can\'t create/update $fileName db json" );
-      echo '$fileName: \n';
-      echo $fileName;
-      echo '$priceListJson: \n';
-      echo $priceListJson;
-      echo 'getCorrectRu( $priceListJson ):';
-      echo getCorrectRu( $priceListJson );
       fwrite( $fd, getCorrectRu( $priceListJson ) );
       fclose( $fd );
 
@@ -230,6 +229,18 @@
       // Обновляем индекс
       $this->updateAllPricelistsIndex();
       return ( $isJsonDeleted && $isHtmlDeleted );
+    }
+
+    // Groups api
+
+    // Saving changes
+    public function saveGroupsDbFromJson( $json ) {
+      // Unicode Ru fix & convert to json
+      $groupsJson = getCorrectRu( ( $json ) );
+
+      $fd = fopen( $this->groupsUrl, 'w' ) or die( 'Can\'t update db json by groupsUrl' );
+      fwrite( $fd, $groupsJson );
+      fclose( $fd );
     }
   }
 ?>

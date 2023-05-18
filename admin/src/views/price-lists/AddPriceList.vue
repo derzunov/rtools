@@ -83,20 +83,22 @@
                 <select class="form-select" name="group" id="group" v-model="group">
                   <option v-for="( groupItem, groupIndex ) in groups"
                           :value="groupIndex"
-                          :key="groupIndex"
+                          :key="groupItem.id"
                   >
-                    {{ groupItem }}
+                    {{ groupItem.name }}
                   </option>
                 </select>
               </td>
 
               <td>
                 <select class="form-select" name="subgroup" id="subgroup" v-model="subgroup">
-                  <option v-for="( subgroupItem, subgroupIndex ) in subgroups"
+                  <!-- Подгруппа не выбрана -->
+                  <option checked value="Not selected">Подгруппа не выбрана</option>
+                  <option v-for="( subgroupItem, subgroupIndex ) in groups[ group ].subgroups"
                           :value="subgroupIndex"
-                          :key="subgroupIndex"
+                          :key="subgroupItem.id"
                   >
-                    {{ subgroupItem }}
+                    {{ subgroupItem.name }}
                   </option>
                 </select>
               </td>
@@ -394,10 +396,10 @@ export default {
     // каждый связанный прайс будет помечен, как подлежащий пересчёту ( при превышении порога (см. выше) )
 
     const group = ref( 0 ) // Enum
-    const groups = ref( [ "Загружается" ] )
+    const groups = ref( [ 'Загружается' ] )
 
-    const subgroup = ref( 0 ) // Enum
-    const subgroups = ref( [ "Загружается" ] )
+    const subgroup = ref( 'Not selected' ) // 'Not selected' или Enum
+    const subgroups = ref( [ 'Загружается' ] )
 
 
     // Table object
@@ -537,7 +539,7 @@ export default {
     }
 
     const fetchGroups = async () => {
-      const reqStr = `${ BASE_URL }/tools/price/?action=groups`
+      const reqStr = `${ BASE_URL }/tools/price/?action=groups&populate=subgoups`
       const response = await axios.get( reqStr )
       groups.value = response.data
     }

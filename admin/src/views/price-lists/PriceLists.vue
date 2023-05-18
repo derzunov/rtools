@@ -17,15 +17,15 @@
     </div>
     <h5>Прайс листы</h5>
 
-    <div class="mb-3" style="display: flex; justify-content: space-between;">
+    <div class="mb-3" style="display: flex; justify-content: flex-start;">
       <div>
           <select class="form-select" name="group" id="group" v-model="group">
             <option selected="selected" value="all">Все</option>
             <option v-for="( groupItem, groupIndex ) in groups"
                     :value="groupIndex"
-                    :key="groupIndex"
+                    :key="groupItem.id"
             >
-              {{ groupItem }}
+              {{ groupItem.name }}
             </option>
           </select>
       </div>
@@ -33,12 +33,14 @@
       <div>
           <select class="form-select" name="subgroup" id="subgroup" v-model="subgroup">
             <option selected="selected" value="all">Все</option>
-            <option v-for="( subgroupItem, subgroupIndex ) in subgroups"
-                    :value="subgroupIndex"
-                    :key="subgroupIndex"
-            >
-              {{ subgroupItem }}
-            </option>
+            <template v-if="group !== 'all'">
+              <option v-for="( subgroupItem, subgroupIndex ) in groups[ group ].subgroups"
+                      :value="subgroupIndex"
+                      :key="subgroupItem.id"
+              >
+                {{ subgroupItem.name }}
+              </option>
+            </template>
           </select>
       </div>
     </div>
@@ -73,10 +75,10 @@
       >
 
         <td>
-          {{ groups[ priceList[ 'group' ] ] }}
+          {{ groups[ priceList[ 'group' ] ].name  }}
         </td>
         <td>
-          {{ subgroups[ priceList[ 'subgroup' ] ] || 'Подгруппа не выбрана' }}
+          {{ groups[ priceList.group ].subgroups[ priceList.subgroup ]?.name || 'Подгруппа не выбрана' }}
         </td>
         <td>
           <router-link :to="`/prices/show/${ priceList[ 'file_name' ] }`" title="Открыть прайс">
@@ -198,7 +200,7 @@ export default {
     // Functions: -------------------------------------------------------
 
     const fetchGroups = async () => {
-      const reqStr = `${ BASE_URL }/tools/price/?action=groups`
+      const reqStr = `${ BASE_URL }/tools/price/?action=groups&populate=subgoups`
       const response = await axios.get( reqStr )
       groups.value = response.data
     }
@@ -238,7 +240,9 @@ export default {
     }
 
     const filterPriceListsBySubgroup = () => {
-      allPriceLists.value = allPriceListsCached.filter( ( priceList ) => {
+      // Забираем только те подгруппы, которые внутри группы
+      filterPriceListsByGroup()
+      allPriceLists.value = allPriceLists.value.filter( ( priceList ) => {
         return ( priceList[ 'subgroup' ] === subgroup.value ) ||
             ( subgroup.value === 'all' )
       } )
