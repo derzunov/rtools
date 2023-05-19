@@ -11,7 +11,7 @@
       <div class="col-md-7"></div>
       <div class="col-md-2 center"></div>
     </div>
-    <h5>Подгрурппы</h5>
+    <h5>Подгруппы</h5>
     <form method="post"
           id="ipm-edit-groups"
           class="mb-5 col-md-8"
@@ -20,7 +20,7 @@
 
       <!-- Группа -->
       <div class="mb-3"
-           v-for="( groupItem, groupIndex ) in groups"
+           v-for="( groupItem ) in groups"
            :key="groupItem.id"
       >
         <h5 required
@@ -28,7 +28,6 @@
                name="groups[]"
                class=""
                type="text"
-
         >
           {{ groupItem.name }}
         </h5>

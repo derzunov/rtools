@@ -1,1 +1,20 @@
-[{"file_name":"blank","header":"Пример прайса","group":5,"subgroup":0},{"file_name":"rezhimniki","header":"Стоимость изготовления режимника без основы","group":0,"subgroup":0},{"file_name":"vizitki_lait","header":"Визитки \"Лайт\"","group":3,"subgroup":0}]
+[
+  {
+    "file_name": "blank",
+    "header": "Пример прайса",
+    "group": 1684392575000,
+    "subgroup": 1684392590001
+  },
+  {
+    "file_name": "rezhimniki",
+    "header": "Стоимость изготовления режимника без основы",
+    "group": 1684392575000,
+    "subgroup": 1684392590001
+  },
+  {
+    "file_name": "vizitki_lait",
+    "header": "Визитки \"Лайт\"",
+    "group": 1684392578000,
+    "subgroup": 1684392580001
+  }
+]

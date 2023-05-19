@@ -19,23 +19,25 @@
 
     <div class="mb-3" style="display: flex; justify-content: flex-start;">
       <div>
-          <select class="form-select" name="group" id="group" v-model="group">
+          <select class="form-select" name="group" id="group" v-model="groupId">
             <option selected="selected" value="all">Все</option>
-            <option v-for="( groupItem, groupIndex ) in groups"
-                    :value="groupIndex"
+            <option v-for="groupItem in groups"
+                    :value="groupItem.id"
                     :key="groupItem.id"
             >
               {{ groupItem.name }}
             </option>
           </select>
       </div>
-
+<!--      <h1> {{ currentGroup }} </h1>-->
+<!--      <h1> {{ subgroupId }} </h1>-->
       <div>
-          <select class="form-select" name="subgroup" id="subgroup" v-model="subgroup">
-            <option selected="selected" value="all">Все</option>
-            <template v-if="group !== 'all'">
-              <option v-for="( subgroupItem, subgroupIndex ) in groups[ group ].subgroups"
-                      :value="subgroupIndex"
+          <select v-if="currentGroup.subgroups?.length" class="form-select" name="subgroup" id="subgroup" v-model="subgroupId">
+<!--            <option selected="selected" value="all">Подгруппа не выбрана</option>-->
+            <template v-if="groupId !== 'all'">
+
+              <option v-for="subgroupItem in currentGroup.subgroups"
+                      :value="subgroupItem.id"
                       :key="subgroupItem.id"
               >
                 {{ subgroupItem.name }}
@@ -75,10 +77,17 @@
       >
 
         <td>
-          {{ groups[ priceList[ 'group' ] ].name  }}
+<!--          {{ R. groups[ priceList[ 'group' ] ].name  }}-->
+          {{ R.find( R.propEq( 'id', priceList[ 'group' ] ) )( groups ).name  }}
         </td>
         <td>
-          {{ groups[ priceList.group ].subgroups[ priceList.subgroup ]?.name || 'Подгруппа не выбрана' }}
+
+<!--          {{ groups[ priceList.group ].subgroups[ priceList.subgroup ]?.name || 'Подгруппа не выбрана' }}-->
+          {{
+            R.find( R.propEq( 'id', priceList[ 'subgroup' ] ) )(
+                R.find( R.propEq( 'id', priceList[ 'group' ] ) )( groups ).subgroups
+            ).name
+          }}
         </td>
         <td>
           <router-link :to="`/prices/show/${ priceList[ 'file_name' ] }`" title="Открыть прайс">
@@ -101,17 +110,6 @@
                 :icon="['fas', 'pencil-square']"
             />
           </a>
-
-<!--          <a href="#"-->
-<!--             class="_gray b-prices-table__edit-control"-->
-<!--             style="vertical-allign: baseline; margin-left: 10px;"-->
-<!--             title="Редактировать структуру прайс-листа"-->
-<!--             @click.prevent="() => { goToEditStruct( priceList[ 'file_name' ] ) }">-->
-<!--            <font-awesome-icon-->
-<!--                style="width: 22px; height: 22px;"-->
-<!--                :icon="['fas', 'align-right']"-->
-<!--            />-->
-<!--          </a>-->
 
           <!-- Удаление прайса -->
           <ModalUniversal :modalId="`delete_price_${ priceList[ 'file_name' ] }`"
@@ -147,12 +145,12 @@
 
 <script>
 import axios from "axios"
+import * as R from "ramda"
 import { onMounted, ref, watch } from 'vue'
 import {
   useRouter,
   // useRoute
 } from 'vue-router'
-
 import pluralize from 'pluralizr'
 
 import ModalUniversal from '@/components/ModalUniversal'
@@ -189,10 +187,13 @@ export default {
     const markupFactor = ref( 1.5 ) // Коэфициент наценки, на  него будет умножаться цена из файла-выгрузки из 1C
     const one_s_codes = ref( '00-00002340;00-00000252;00-00000215' ) // Строка связанных кодов 1с. Если какой-то из них элемент прайса выгрузки 1с изменится, по каждому прайсу будет оповещён владелец
 
-    const group = ref( 'all' ) // all или Enum
-    const groups = ref( [ 'Загружается' ] )
+    //const group = ref( 'all' ) // all или Enum
+    const groupId = ref( 'all' ) // Real Id in db or `all`
+    const groups = ref( [ 'Загружается' ] ) // Real groups array with populated subgroups (will be fetched)
+    const currentGroup = ref( {} ) // Chosen group object with subroups
 
-    const subgroup = ref( 'all' ) // all или Enum
+    //const subgroup = ref( 'all' ) // all или Enum
+    const subgroupId = ref( 'all' ) // Real Id in db or `all`
     const subgroups = ref( [ 'Загружается' ] )
 
     const allPriceLists = ref( [] )
@@ -205,10 +206,26 @@ export default {
       groups.value = response.data
     }
 
-    const fetchSubgroups = async () => {
-      const reqStr = `${ BASE_URL }/tools/price/?action=subgroups`
-      const response = await axios.get( reqStr )
-      subgroups.value = response.data
+    const setCurrentGroupById = ( groupId ) => {
+
+      // Группа "Все"
+      if ( groupId === 'all' ) {
+        return currentGroup.value = {
+          name: 'Все',
+          id: groupId,
+          subroups: [ { name: 'Сначала выберите группу', id: 'all' } ]
+        }
+      }
+      const foundedGroup = R.find( R.propEq( 'id', groupId ) )( groups.value )
+      if ( foundedGroup ) {
+        // если у группы есть подгуппы, устанавливаем id первой из имеющихся, если нет - `all`
+        foundedGroup.subgroups?.length ? subgroupId.value = foundedGroup.subgroups[ 0 ].id : subgroupId.value = 'all'
+        return currentGroup.value = foundedGroup
+      } else {
+        console.error( `DE: setCurrentGroupById: Group with passed id (${ groupId }) not found in:` )
+        console.table( groups.value )
+        return currentGroup.value
+      }
     }
 
     const fetchAllPriceLists = async () => {
@@ -234,17 +251,18 @@ export default {
 
     const filterPriceListsByGroup = () => {
       allPriceLists.value = allPriceListsCached.filter( ( priceList ) => {
-        return ( priceList[ 'group' ] === group.value ) ||
-            ( group.value === 'all' )
+        return ( priceList[ 'group' ] === groupId.value ) ||
+            ( groupId.value === 'all' )
       } )
     }
 
     const filterPriceListsBySubgroup = () => {
       // Забираем только те подгруппы, которые внутри группы
       filterPriceListsByGroup()
+
       allPriceLists.value = allPriceLists.value.filter( ( priceList ) => {
-        return ( priceList[ 'subgroup' ] === subgroup.value ) ||
-            ( subgroup.value === 'all' )
+        return ( priceList[ 'subgroup' ] === subgroupId.value ) ||
+            ( subgroupId.value === 'all' )
       } )
     }
 
@@ -268,7 +286,7 @@ export default {
 
       // Мы же отобразим весь список в новом порядке,
       // поэтому и группа должна смениться на "все"
-      group.value = 'all'
+      groupId.value = 'all'
 
       if ( isSortAsc.value ) {
         allPriceLists.value = allPriceListsCached.sort( ( a, b ) => {
@@ -283,17 +301,18 @@ export default {
 
     onMounted( async () => {
       await fetchGroups()
-      await fetchSubgroups()
+      // await fetchSubgroups()
+      setCurrentGroupById( groupId.value )
       await fetchAllPriceLists()
       allPriceListsCached = JSON.parse( JSON.stringify( allPriceLists.value ) )
-      sortByGroup()
     } )
 
-    watch( [ group ], () => {
+    watch( [ groupId ], () => {
+      setCurrentGroupById( groupId.value )
       filterPriceListsByGroup()
     } )
 
-    watch( [ subgroup ], () => {
+    watch( [ subgroupId ], () => {
       filterPriceListsBySubgroup()
     } )
 
@@ -314,9 +333,12 @@ export default {
       markupFactor,
       one_s_codes,
       groups,
-      group,
+      // group,
+      groupId,
+      currentGroup,
       subgroups,
-      subgroup,
+      // subgroup,
+      subgroupId,
       allPriceLists,
 
       pluralize,
@@ -325,6 +347,9 @@ export default {
       goToEditStruct,
       toggleAlphaSort,
       deletePrice,
+
+      // Tools
+      R,
     }
   }
 }
