@@ -390,7 +390,7 @@ export default {
     }
 
     const fetchGroups = async () => {
-      const reqStr = `${ BASE_URL }/tools/price/?action=groups&populate=subgoups`
+      const reqStr = `${ BASE_URL }/tools/price/?action=groups&populate=subgroups`
       const response = await axios.get( reqStr )
       groups.value = response.data
     }

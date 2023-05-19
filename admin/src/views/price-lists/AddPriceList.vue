@@ -20,6 +20,7 @@
       </div>
     </div>
     <h5>Новый прайс</h5>
+
     <form @submit.prevent="savePrice" id="add-price" class="mb-5 col-md-12" action="#">
       <div class="mb-3" style="display: flex; justify-content: space-between;">
         <div>
@@ -72,8 +73,6 @@
               </p>
             </div>
           </ModalUniversal>
-
-
         </div>
 
         <div>
@@ -93,7 +92,7 @@
               <td>
                 <select class="form-select" name="subgroup" id="subgroup" v-model="subgroup">
                   <!-- Подгруппа не выбрана -->
-                  <option checked value="Not selected">Подгруппа не выбрана</option>
+<!--              <option checked value="Not selected">Подгруппа не выбрана</option>  -->
                   <option v-for="( subgroupItem, subgroupIndex ) in groups[ group ].subgroups"
                           :value="subgroupIndex"
                           :key="subgroupItem.id"
@@ -342,7 +341,7 @@
 
 <script>
 import axios from "axios"
-import { onMounted, ref, watch } from 'vue'
+import { onBeforeMount, ref, watch } from 'vue'
 import {
   useRouter,
   // useRoute
@@ -396,10 +395,10 @@ export default {
     // каждый связанный прайс будет помечен, как подлежащий пересчёту ( при превышении порога (см. выше) )
 
     const group = ref( 0 ) // Enum
-    const groups = ref( [ 'Загружается' ] )
+    const groups = ref( [ { id: 'default value', name: 'empty' } ] )
 
-    const subgroup = ref( 'Not selected' ) // 'Not selected' или Enum
-    const subgroups = ref( [ 'Загружается' ] )
+    const subgroup = ref( 0 ) // или Enum
+    const subgroups = ref( [ { id: 'default value', name: 'empty' } ] )
 
 
     // Table object
@@ -490,8 +489,8 @@ export default {
         markup_factor: markup_factor.value,
         change_threshold: change_threshold.value,
         one_s_codes: one_s_codes.value,
-        group: group.value, // Enum - индекс группы в массиве групп для фильтрации и сортировки
-        subgroup: subgroup.value, // Enum - индекс группы в массиве групп для фильтрации и сортировки
+        group: groups.value[ group.value ].id, // group.value - индекс группы в массиве групп для фильтрации и сортировки по нему просто заберём наш id
+        subgroup: groups.value[ group.value ].subgroups[ subgroup.value ].id, // subgroup.value - индекс подгруппы в массиве подгрупп
         updateDate: Date.now(),
       }
     }
@@ -539,7 +538,7 @@ export default {
     }
 
     const fetchGroups = async () => {
-      const reqStr = `${ BASE_URL }/tools/price/?action=groups&populate=subgoups`
+      const reqStr = `${ BASE_URL }/tools/price/?action=groups&populate=subgroups`
       const response = await axios.get( reqStr )
       groups.value = response.data
     }
@@ -557,12 +556,12 @@ export default {
       return !!response.data
     }
 
-    onMounted(async () => {
+    onBeforeMount( async () => {
       await fetchGroups()
       await fetchSubgroups()
       const priceObject = makePriceObject()
       htmlResultString.value = await parsePriceToHtml( priceObject )
-    })
+    } )
 
     watch(
         [

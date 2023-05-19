@@ -77,12 +77,9 @@
       >
 
         <td>
-<!--          {{ R. groups[ priceList[ 'group' ] ].name  }}-->
           {{ R.find( R.propEq( 'id', priceList[ 'group' ] ) )( groups ).name  }}
         </td>
         <td>
-
-<!--          {{ groups[ priceList.group ].subgroups[ priceList.subgroup ]?.name || 'Подгруппа не выбрана' }}-->
           {{
             R.find( R.propEq( 'id', priceList[ 'subgroup' ] ) )(
                 R.find( R.propEq( 'id', priceList[ 'group' ] ) )( groups ).subgroups
@@ -201,7 +198,7 @@ export default {
     // Functions: -------------------------------------------------------
 
     const fetchGroups = async () => {
-      const reqStr = `${ BASE_URL }/tools/price/?action=groups&populate=subgoups`
+      const reqStr = `${ BASE_URL }/tools/price/?action=groups&populate=subgroups`
       const response = await axios.get( reqStr )
       groups.value = response.data
     }
