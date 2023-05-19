@@ -5,6 +5,7 @@ import { default as sleep } from './sleep'
 import { default as parsePriceToHtml } from './parse-price-to-html'
 import { calculateCampaignPeriodInDays } from './calculate-campaign-period'
 import { filterActiveItems, filterItemsByType, isItemActive } from './filters'
+import { default as tracer } from './tracer'
 import {
     addRow,
     deleteRow,
@@ -26,4 +27,5 @@ export {
     addCol,
     deleteCol,
     ruToLat,
+    tracer,
 }
