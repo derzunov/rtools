@@ -399,8 +399,6 @@ export default {
     const groups = ref( [ { id: 'default value', name: 'empty' } ] )
 
     const subgroup = ref( 0 ) // или Enum
-    const subgroups = ref( [ { id: 'default value', name: 'empty' } ] )
-
 
     // Table object
     const table = ref( {
@@ -522,7 +520,7 @@ export default {
       // Отладочная информация до того как будет готов backend api
       console.log( `POST ${ BASE_URL }/tools/price/` )
       console.log( 'JSON:' )
-      console.log ( '%c%s', 'color: green;', JSON.stringify( priceObject, null, 2 ) );
+      console.log( '%c%s', 'color: green;', JSON.stringify( priceObject, null, 2 ) )
 
       console.log( 'HTML:' )
       console.log( '%c%s', 'color: lightblue;', await parsePriceToHtml( priceObject ) )
@@ -544,12 +542,6 @@ export default {
       groups.value = response.data
     }
 
-    const fetchSubgroups = async () => {
-      const reqStr = `${ BASE_URL }/tools/price/?action=subgroups`
-      const response = await axios.get( reqStr )
-      subgroups.value = response.data
-    }
-
     const checkIsPriceExist = async ( name ) => {
       const reqStr = `${ BASE_URL }/tools/price/?action=file&name=${ name }`
       const response = await axios.get( reqStr )
@@ -559,7 +551,6 @@ export default {
 
     onBeforeMount( async () => {
       await fetchGroups()
-      await fetchSubgroups()
       const priceObject = makePriceObject()
       htmlResultString.value = await parsePriceToHtml( priceObject )
     } )
@@ -583,6 +574,10 @@ export default {
       file_name.value = ruToLat( file_name_ru.value )
     } )
 
+    watch( [ group ], () => {
+      subgroup.value = 0
+    } )
+
     return {
       isDev,
       isSaving,
@@ -600,7 +595,6 @@ export default {
       groups,
       group,
 
-      subgroups,
       subgroup,
 
       toastSavedRef,

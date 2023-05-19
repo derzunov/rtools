@@ -18,7 +18,7 @@ SYSTEM_PRIORITY_VALUES[ ERROR ] =  [ ERROR ]
 SYSTEM_PRIORITY_VALUES[ OFF ] = []
 
 const SYSTEM_PRIORITY_LEVEL = DEBUG // For Example...
-// TODO: config from process.env or smth. like that for SYSTEM_PRIORITY
+// TODO: config from process.env or smth. like that for SYSTEM_PRIORITY_LEVEL
 
 
 // Private methods:
