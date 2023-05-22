@@ -30,7 +30,7 @@
                 <table>
                   <tr>
                     <td>
-                      <select class="form-select" name="group" id="group" v-model="group">
+                      <select class="form-select" name="group" id="js_group" v-model="group">
                         <option v-for="( groupItem, groupIndex ) in groups"
                                 :value="groupIndex"
                                 :key="groupItem.id"
@@ -40,12 +40,12 @@
                       </select>
                     </td>
                     <td>
-                      <select class="form-select" name="subgroup" id="subgroup" v-model="subgroup">
-                        <option v-for="( subgroupItem, subgroupIndex ) in subgroups"
+                      <select v-if="groups[ group ]" class="form-select" name="subgroup" id="subgroup" v-model="subgroup">
+                        <option v-for="( subgroupItem, subgroupIndex ) in groups[ group ].subgroups"
                                 :value="subgroupIndex"
-                                :key="subgroupIndex"
+                                :key="subgroupItem.id"
                         >
-                          {{ subgroupItem }}
+                          {{ subgroupItem.name }}
                         </option>
                       </select>
                     </td>
@@ -265,6 +265,7 @@
 
 <script>
 import axios from "axios"
+import * as R from "ramda"
 import { onMounted, ref, watch } from 'vue'
 import {
   useRouter,
@@ -276,6 +277,7 @@ import {
   parsePriceToHtml,
   addRow,
   deleteRow,
+  tracer,
 } from '@/utils'
 import pluralize from 'pluralizr'
 
@@ -311,11 +313,10 @@ export default {
     const change_threshold = ref( 5 ) // Порог изменения цены из 1с в %, при превышении которого будем помечать прайс подлежащиим пересчёту
     const one_s_codes = ref( 'Загружается' ) // Строка связанных кодов 1с. Если какой-то из них элемент прайса выгрузки 1с изменится, по каждому прайсу будет оповещён владелец
 
-    const group = ref(0) // Enum
-    const groups = ref( [ 'Загружается' ] )
+    const group = ref( 0 ) // Enum
+    const groups = ref( [ { id: 1, subgroups: [] } ] )
 
-    const subgroup = ref(0) // Enum
-    const subgroups = ref( [ 'Загружается' ] )
+    const subgroup = ref( 0 ) // Enum
 
 
     // Table object
@@ -324,11 +325,19 @@ export default {
         rows: [
           {
             id: Date.now() + random( 100 ),
-            cols: [ 'Загружается', 'Загружается', 'Загружается' ],
+            cols: [ {
+              value: 'Загружается...',
+              colspan: 1,
+              rowspan: 1,
+            } ],
           },
           {
             id: Date.now() + random( 100 ),
-            cols: [ 'Загружается', 'Загружается', 'Загружается' ],
+            cols: [ {
+              value: 'Загружается...',
+              colspan: 1,
+              rowspan: 1,
+            } ],
           },
         ]
       },
@@ -354,9 +363,11 @@ export default {
       markup_factor.value = response.data.markup_factor
       change_threshold.value = response.data.change_threshold
       one_s_codes.value = response.data.one_s_codes
-      group.value = response.data.group
+      group.value = R.findIndex( R.propEq( 'id', response.data.group  ) )( groups.value )
 
-      subgroup.value = response.data.subgroup
+      subgroup.value = R.findIndex( R.propEq( 'id', response.data.subgroup  ) )(
+          ( R.find( R.propEq( 'id', response.data.group  ) )( groups.value ) ).subgroups
+      )
 
       // Table object
       table.value = response.data.table
@@ -391,8 +402,8 @@ export default {
         markup_factor: markup_factor.value,
         change_threshold: change_threshold.value,
         one_s_codes: one_s_codes.value,
-        group: group.value, // Enum - индекс группы в массиве групп для фильтрации и сортировки
-        subgroup: subgroup.value,
+        group: groups.value[ group.value ]?.id, // group.value - индекс группы в массиве групп для фильтрации и сортировки по нему просто заберём наш id
+        subgroup: groups.value[ group.value ]?.subgroups[ subgroup.value ]?.id, // subgroup.value - индекс подгруппы в массиве подгрупп
         updateDate: Date.now(),
       }
     }
@@ -426,7 +437,7 @@ export default {
       isSaving.value = false
       window.scrollBy( 0, 500 )
       toastSavedRef.value.show()
-      await sleep( 2500 )
+      await sleep( 1000 )
       await router.push( `/prices/show/${ route.params.passedFileName }` )
     }
 
@@ -436,22 +447,27 @@ export default {
       groups.value = response.data
     }
 
-    const fetchSubgroups = async () => {
-      const reqStr = `${ BASE_URL }/tools/price/?action=subgroups`
-      const response = await axios.get( reqStr )
-      subgroups.value = response.data
+    const prepareData = async () => {
+      try {
+        await fetchGroups()
+        await fetchPriceList()
+        const priceObject = makePriceObject()
+        htmlResultString.value = await parsePriceToHtml( priceObject )
+
+      } catch( err ) {
+        tracer.error( 'ERROR CAUGHT' )
+        tracer.error( err )
+      }
     }
 
-    const log = async ( message ) => {
-      console.log( message )
-    }
+    prepareData()
+
+    watch( [ group ], () => {
+      subgroup.value = 0
+    } )
 
     onMounted( async () => {
-      await fetchGroups()
-      await fetchSubgroups()
-      await fetchPriceList()
-      const priceObject = makePriceObject()
-      htmlResultString.value = await parsePriceToHtml( priceObject )
+      await prepareData()
     })
 
     return {
@@ -469,7 +485,7 @@ export default {
       one_s_codes,
       groups,
       group,
-      subgroups,
+      // subgroups,
       subgroup,
       toastSavedRef,
 
@@ -480,7 +496,8 @@ export default {
       deleteRow,
       route,
 
-      log,
+      // Utils
+      R,
     }
   }
 }

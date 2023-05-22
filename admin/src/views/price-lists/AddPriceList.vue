@@ -30,7 +30,6 @@
                  class="form-control"
                  type="text"
                  placeholder="Имя файла (без расширения)"
-                 pattern="[A-Za-z]"
                  v-model="file_name"
                  style="width: 300px; display: inline; vertical-align: middle;"
           >

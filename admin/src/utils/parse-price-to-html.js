@@ -63,6 +63,10 @@ const createTable = async ( priceObject ) => {
             td.classList.add( `js_thead_col_${ j }` )
 
             if ( cols[ j ].value === '+' && i === 1 ) {
+                // TODO: Считать colSpan-ы у верхней строки и вычитать каждый,
+                // который больше единицы из величины ${ j } в имени класса,
+                // так как получается расхождение между j у нижней строки и верхней строки
+                // Ну или найти другой способ
                 thead.querySelector( `.js_thead_row_0 .js_thead_col_${ j }` ).rowSpan = 2
                 continue
             }
