@@ -6,51 +6,61 @@
           <router-link style="color: black" to="/" title="На главную">
             <font-awesome-icon :icon="['fas', 'house']" />
           </router-link>
+          <span>/</span>
+          <span>
+            Группы
+            <router-link to="/prices/subgroups/edit/" title="Редактировать">
+              <font-awesome-icon
+                  style="width: 22px; height: 22px;"
+                  :icon="['fas', 'pencil-square']"
+              />
+            </router-link>
+          </span>
         </h5>
       </div>
       <div class="col-md-7"></div>
       <div class="col-md-2 center"></div>
     </div>
-    <h5>Подгрурппы</h5>
+
+
     <form method="post"
           id="ipm-edit-groups"
           class="mb-5 col-md-8"
           :action="`${ BASE_URL }/`"
           @submit.prevent="saveGroups">
+
+      <!-- Группа -->
       <div class="mb-3"
-           v-for="( groupItem, groupIndex ) in groups"
-           :key="groupIndex"
+           v-for="( groupItem ) in groups"
+           :key="groupItem.id"
       >
-        <input required
-               id="group"
-               name="groups[]"
-               class="form-control"
-               type="text"
-               v-model = "groupItem.name"
+        <h5 required
+            :id="`group_${ groupItem.id }`"
+            name="groups[]"
+            class=""
+            type="text"
         >
+          {{ groupItem.name }}
+        </h5>
+
+
 
         <!-- Список подгрупп для группы -->
-        <input required
-               id="subgroup"
-               name="group.subgroups[]"
-               class="form-control _gray ms-5 mb-1"
-               type="text"
-               v-for="subgroupItem in groupItem.subgroups"
-               :key="subgroupItem.id"
-               v-model="subgroupItem.name"
-        >
+        <ul>
+          <li v-for="subgroupItem in groupItem.subgroups"
+              :key="subgroupItem.id">
+            <span required
+                  :id="`subgroup_${ subgroupItem.id }`"
+                  name="group.subgroups[]"
+                  class="mb-1"
+                  type="text"
+            >
+              {{ subgroupItem.name }}
+            </span>
+          </li>
+        </ul>
 
       </div>
-
-      <input hidden required
-             id="type"
-             name="type"
-             class="form-control"
-             type="text"
-             value="groups"
-      >
-
-      <button type="submit" class="btn btn-primary">Сохранить</button>
     </form>
   </div>
 </template>

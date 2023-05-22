@@ -1,17 +1,22 @@
 <template>
   <div class="edit">
     <div class="row ipm-top-menu">
-      <div class="col-md-3">
+      <div class="col-md-4">
         <h5>
           <router-link style="color: black" to="/" title="На главную">
             <font-awesome-icon :icon="['fas', 'house']" />
           </router-link>
+          <span>/</span>
+          <router-link style="color: black" to="/prices/groups/show" title="Группы">
+            Группы
+          </router-link>
+          <span>/</span>
+          <span>Редактирование</span>
         </h5>
       </div>
-      <div class="col-md-7"></div>
+      <div class="col-md-6"></div>
       <div class="col-md-2 center"></div>
     </div>
-    <h5>Подгруппы</h5>
     <form method="post"
           id="ipm-edit-groups"
           class="mb-5 col-md-8"
@@ -34,16 +39,35 @@
 
         <!-- Список подгрупп для группы -->
         <ul>
-          <li v-for="subgroupItem in groupItem.subgroups"
+          <li v-for="( subgroupItem, subgroupIndex ) in groupItem.subgroups"
               :key="subgroupItem.id">
             <input required
-                   id="subgroup"
+                   :id="`subgroup_${ subgroupItem.id }`"
                    name="group.subgroups[]"
-                   class="form-control _gray mb-1"
+                   class="form-control mb-1"
                    type="text"
                    v-model="subgroupItem.name"
+                   style="display: inline-block; width: 80%;"
             >
+            <button @click.prevent="() => { deleteSubgroup( groupItem, subgroupItem ) }"
+                    class="btn btn-light"
+                    title="Удалить подгруппу"
+                    style="display: inline-block; margin-left: 10px; vertical-align: baseline;"
+            >
+              <font-awesome-icon
+                  style=""
+                  :icon="['fas', 'times']"
+              />
+            </button>
           </li>
+          <button @click.prevent="() => { groupItem.subgroups.push( { id: Date.now(), name: '' } ) }"
+                  class="btn btn-light"
+                  title="Добавить подгруппу">
+            <font-awesome-icon
+                style=""
+                :icon="['fas', 'plus']"
+            />
+          </button>
         </ul>
 
       </div>
@@ -65,6 +89,11 @@
 import axios from 'axios'
 import { onMounted, ref } from 'vue'
 
+import {
+  useRouter
+} from 'vue-router'
+import * as R from "ramda";
+
 // TODO: Расчет этой константы и будущих других вынести в отдельный сервис
 const IS_DEV = window.location.host.includes( 'localhost' )
 const BASE_URL = IS_DEV ?
@@ -74,6 +103,8 @@ const BASE_URL = IS_DEV ?
 export default {
 
   setup() {
+    const router = useRouter()
+
     const groups = ref( [ 'Группы загружаются' ] )
 
     const fetchGroups = async () => {
@@ -92,6 +123,31 @@ export default {
       formData.append( 'groups_populated', JSON.stringify( groups.value ) )
 
       await axios.post( reqStr, formData )
+      await router.push( '/prices/groups/show/' )
+    }
+
+    const getRelatedPrices = async ( subgroupId ) => {
+      const reqStr = `${ BASE_URL }/tools/price/?action=all`
+      const { data: prices } = await axios.get( reqStr )
+      const relatedPrices = prices.filter( price => price.subgroup === subgroupId )
+
+      return relatedPrices
+    }
+
+    const deleteSubgroup = async ( groupItem, subgroupItem ) => {
+      const relatedPrices = await getRelatedPrices( subgroupItem.id )
+      if ( !relatedPrices.length ) {
+        const subgroupIndex = R.findIndex( R.propEq( 'id', subgroupItem.id ) )( groupItem.subgroups )
+        groupItem.subgroups.splice( subgroupIndex, 1 )
+      } else {
+        let relatedPricesString = ''
+
+        relatedPrices.forEach( ( price ) => {
+          relatedPricesString += `${ price.header }; \n`
+        } )
+
+        alert( `Подгруппа содержит связанные прайсы: \n\n${ relatedPricesString }` )
+      }
     }
 
     onMounted( async () => {
@@ -103,6 +159,7 @@ export default {
       groups,
 
       saveGroups,
+      deleteSubgroup,
     }
   }
 }

@@ -7,7 +7,8 @@ navbar-dark bg-dark
     <div class="container-fluid">
 
       <router-link class="navbar-brand mb-0 h2" to="/" style="color: #fff !important;">
-        ₽Tools
+        <!--₽Tools-->
+        Price₽
       </router-link>
 
       <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
@@ -29,7 +30,7 @@ navbar-dark bg-dark
                 <router-link class="dropdown-item" to="/prices">Список прайсов</router-link>
               </li>
               <li>
-                <router-link class="dropdown-item" to="/prices/subgroups/edit">Редактировать подгруппы</router-link>
+                <router-link class="dropdown-item" to="/prices/groups/show">Группы</router-link>
               </li>
               <li><hr class="dropdown-divider"></li>
               <li>
