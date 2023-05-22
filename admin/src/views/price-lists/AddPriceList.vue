@@ -548,6 +548,15 @@ export default {
       return !!response.data
     }
 
+    const checkPriceFileName = () => {
+      if ( file_name.value &&
+          !( /[a-z]+/i.test( file_name.value ) && file_name.value.toLowerCase() === file_name.value )
+      ) {
+        file_name.value = ''
+        alert( 'Используйте только латиницу в нижнем регистре в имени файла' )
+      }
+    }
+
     onBeforeMount( async () => {
       await fetchGroups()
       const priceObject = makePriceObject()
@@ -571,6 +580,10 @@ export default {
 
     watch( [ file_name_ru ], () => {
       file_name.value = ruToLat( file_name_ru.value )
+    } )
+
+    watch( [ file_name ], () => {
+      checkPriceFileName( file_name.value )
     } )
 
     watch( [ group ], () => {
@@ -606,6 +619,7 @@ export default {
       deleteCol,
       ruToLat,
       checkIsPriceExist,
+      checkPriceFileName,
     }
   }
 }
