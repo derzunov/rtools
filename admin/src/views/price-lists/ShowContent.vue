@@ -1,7 +1,7 @@
 <template>
   <div class="main">
     <div class="row ipm-top-menu">
-      <div class="col-md-3">
+      <div class="col-md-12">
         <h5>
           <router-link style="color: black" to="/" title="На главную">
             <font-awesome-icon :icon="['fas', 'house']" />
@@ -11,8 +11,8 @@
               color: black; text-decoration: none;"
               to="/prices"
               title="К списку прайс-листов">
-            /prices
-          </router-link>
+            /прайсы</router-link>
+          <span>/{{ header }} </span>
         </h5>
       </div>
     </div>
@@ -23,10 +23,16 @@
           <td>
             <div class="mb-3" style="display: flex; justify-content: space-between;">
               <div>
-                <h5><span class="_gray">{{ file_name + '.html' }}</span></h5>
-                <router-link :to="`/prices/content/${ file_name }`" title="Редактировать">
-                  Редактировать
-                </router-link>
+                <h5>
+                  <span class="_gray">{{ file_name + '.html' }}</span>
+
+                  <router-link :to="`/prices/content/${ file_name }`" title="Редактировать">
+                    <font-awesome-icon
+                        style="width: 22px; height: 22px;"
+                        :icon="['fas', 'pencil-square']"
+                    />
+                  </router-link>
+                </h5>
               </div>
               <div>
                 <div>
@@ -116,6 +122,8 @@ export default {
 
     const subgroup = ref( 0 ) // Index in array
 
+    const updatedate = ref( 0 )
+
 
     // Table object
     const table = ref({
@@ -155,6 +163,7 @@ export default {
       one_s_codes.value = response.data.one_s_codes
       group.value = response.data.group
       subgroup.value = response.data.subgroup
+      updatedate.value = response.data.updatedate
 
       // Table object
       table.value = response.data.table
@@ -172,7 +181,7 @@ export default {
         one_s_codes: one_s_codes.value,
         group: group.value, // Enum - индекс группы в массиве групп для фильтрации и сортировки
         subgroup: subgroup.value,
-        updateDate: Date.now(),
+        updateDate: updatedate.value,
       }
     }
 

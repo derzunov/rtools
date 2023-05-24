@@ -1,7 +1,7 @@
 <template>
   <div class="main">
     <div class="row ipm-top-menu">
-      <div class="col-md-3">
+      <div class="col-md-12">
         <h5>
           <router-link style="color: black" to="/" title="На главную">
             <font-awesome-icon :icon="['fas', 'house']" />
@@ -11,8 +11,13 @@
               color: black; text-decoration: none;"
               to="/prices"
               title="К списку прайс-листов">
-            /prices
-          </router-link>
+            /прайсы</router-link>
+          <router-link
+              style="color: black; text-decoration: none;"
+              :to="`/prices/show/${ file_name }`"
+              :title="`К просмотру ${ header }`">
+            /{{ header }}</router-link>
+          <span> /Редактирование </span>
         </h5>
       </div>
     </div>
