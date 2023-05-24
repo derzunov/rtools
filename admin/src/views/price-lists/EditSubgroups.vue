@@ -87,6 +87,7 @@
     <ModalUniversal modalId="delete_subgroup"
                     title="Подтверждение удаления прайс-листа"
                     actionButtonText=""
+                    cancelButtonText="Ясно"
                     :action="() => { return }"
                     ref="relatedPricesModalRef"
     >
@@ -94,7 +95,9 @@
         Подгруппа содержит связанные прайсы.
         <br>
         <br>
-        {{ relatedPricesString }}
+        <ul v-html="relatedPricesHtml"></ul>
+        <br>
+        Сначала удалите связи с прайсами
       </div>
     </ModalUniversal>
 
@@ -127,7 +130,7 @@ export default {
     const router = useRouter()
 
     const groups = ref( [ 'Группы загружаются' ] )
-    const relatedPricesString = ref( '' )
+    const relatedPricesHtml = ref( '' )
     const relatedPricesModalRef = ref( null )
 
     const fetchGroups = async () => {
@@ -163,10 +166,10 @@ export default {
         const subgroupIndex = R.findIndex( R.propEq( 'id', subgroupItem.id ) )( groupItem.subgroups )
         groupItem.subgroups.splice( subgroupIndex, 1 )
       } else {
-        relatedPricesString.value = ''
+        relatedPricesHtml.value = ''
 
         relatedPrices.forEach( ( price ) => {
-          relatedPricesString.value += `${ price.header }; `
+          relatedPricesHtml.value += `<li>${ price.header };</li> `
         } )
 
         relatedPricesModalRef.value.show()
@@ -180,7 +183,7 @@ export default {
     return {
       BASE_URL,
       groups,
-      relatedPricesString,
+      relatedPricesHtml,
       relatedPricesModalRef,
 
       saveGroups,

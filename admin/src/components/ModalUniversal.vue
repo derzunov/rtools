@@ -19,8 +19,9 @@
         </div>
 
         <div class="modal-footer">
-          <button v-if="actionButtonText.length" @click.prevent="action" type="button" class="btn btn-primary" data-bs-dismiss="modal">{{ actionButtonText }}</button>
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Отмена</button>
+          <button v-if="actionButtonText" @click.prevent="action" type="button" class="btn btn-primary" data-bs-dismiss="modal">{{ actionButtonText }}</button>
+          <button v-if="!cancelButtonText" type="button" class="btn btn-secondary" data-bs-dismiss="modal">Отмена</button>
+          <button v-if="cancelButtonText" type="button" class="btn btn-secondary" data-bs-dismiss="modal">{{ cancelButtonText }}</button>
         </div>
       </div>
     </div>
@@ -37,9 +38,10 @@ export default {
     modalId: String,
     title: String,
     actionButtonText: String,
+    cancelButtonText: String,
     action: Function,
   },
-  setup( props ) {
+  setup() {
 
     const modalRef = ref( null )
 
@@ -53,9 +55,9 @@ export default {
       modal.hide()
     }
 
-    // onMounted( () => {
-    //   show()
-    // } )
+    onMounted( () => {
+      // show()
+    } )
 
     return {
       modalRef,
