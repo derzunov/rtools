@@ -75,8 +75,19 @@
                 case 'subgroups':
                     sendJsonResponse( $db->getSubgroupsDb() );
                     break;
+                case 'changed':
+                    sendJsonResponse( $db->getСhangedPricesDb() );
+                    break;
                 case 'all':
                     sendJsonResponse( $db->getAllPriceLists() );
+                    break;
+                case 'position':
+                    if ( isset( $data[ 'id' ] ) ) {
+                        $oneSPriceItem = $db->getPriсeByCode( $data[ 'id' ] );
+                        sendResponse( $oneSPriceItem );
+                    } else {
+                        sendError( 'position id is not passed' );
+                    }
                     break;
                 case 'file':
                     if ( isset( $data[ 'name' ] ) ) {

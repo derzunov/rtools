@@ -52,8 +52,9 @@
           <td style="width: 100px;"></td>
         </tr>
       </table>
-
     </form>
+
+    <h5 v-if="need_update" >Прайс нуждается в перерассчёте, тк изменились цены по следующим позициям</h5>
 
     <table style="width: 100%;">
       <tr>
@@ -116,6 +117,7 @@ export default {
     const markup_factor = ref( 1.5 ) // Коэфициент наценки, на  него будет умножаться цена из файла-выгрузки из 1C
     const change_threshold = ref( 5 ) // Порог изменения цены из 1с в %, при превышении которого будем помечать прайс подлежащиим пересчёту
     const one_s_codes = ref( 'Загружается' ) // Строка связанных кодов 1с. Если какой-то из них элемент прайса выгрузки 1с изменится, по каждому прайсу будет оповещён владелец
+    const need_update = ref( '' ) // Изменившиеся коды
 
     const group = ref( 2 ) // index in array
     const groups = ref( [ { id: 'default value', name: 'empty' } ] )
@@ -123,6 +125,8 @@ export default {
     const subgroup = ref( 0 ) // Index in array
 
     const updatedate = ref( 0 )
+
+    const changedPrices = ref( '' )
 
 
     // Table object
@@ -161,6 +165,7 @@ export default {
       markup_factor.value = response.data.markup_factor
       change_threshold.value = response.data.change_threshold
       one_s_codes.value = response.data.one_s_codes
+      need_update.value = response.data?.need_update
       group.value = response.data.group
       subgroup.value = response.data.subgroup
       updatedate.value = response.data.updatedate
@@ -179,6 +184,7 @@ export default {
         markup_factor: markup_factor.value,
         change_threshold: change_threshold.value,
         one_s_codes: one_s_codes.value,
+        need_update: need_update.value,
         group: group.value, // Enum - индекс группы в массиве групп для фильтрации и сортировки
         subgroup: subgroup.value,
         updateDate: updatedate.value,
@@ -214,6 +220,7 @@ export default {
       markup_factor,
       change_threshold,
       one_s_codes,
+      need_update,
       groups,
       group,
       subgroup,

@@ -3,18 +3,16 @@
     private static $instance = null;
     private $allDb = [];
     public $groupsDb = [];
-    public $subgroupsDb = [];
+    public $changedPricesDb = [];
 
     private $dbUrl = __DIR__ .'/index.json';
     private $dbTestUrl = __DIR__ .'/index_test.json';
 
+    private $changedPricesUrl = __DIR__ .'/changed.json';
+    private $changedPricesTestUrl = __DIR__ .'/changed_test.json';
+
     private $groupsUrl = __DIR__ .'/groups.json';
     private $groupsTestUrl = __DIR__ .'/groups_test.json';
-
-    // Using subgropes direcly depricated now.
-    // It's populated part of groups
-    private $subgroupsUrl = __DIR__ .'/subgroups.json';
-    private $subgroupsTestUrl = __DIR__ .'/subgroups_test.json';
 
     private $jsonPricelistsDir = __DIR__ . "/price-lists/json/";
     private $htmlPricelistsDir = __DIR__ . "/price-lists/html/";
@@ -26,10 +24,7 @@
       {
         $this->dbUrl = $this->dbTestUrl;
         $this->groupsUrl = $this->groupsTestUrl;
-
-        // Using subgropes direcly depricated now.
-        // It's populated part of groups
-        $this->subgroupsUrl = $this->subgroupsTestUrl;
+        $this->changedPricesUrl = $this->changedPricesTestUrl;
       }
 
       $json = file_get_contents( $this->dbUrl );
@@ -44,28 +39,22 @@
       // Группы
       $groupsJson = file_get_contents( $this->groupsUrl );
 
-
-      $groupsJsonParsed = json_decode(
-                  $groupsJson,
-                  true,
-                  16,
-                  0
+      $this->groupsDb = json_decode(
+          $groupsJson,
+          true,
+          16,
+          0
       );
 
-      $this->groupsDb = $groupsJsonParsed;
 
-      // Подгруппы
-      $subgroupsJson = file_get_contents( $this->subgroupsUrl );
-
-
-      $subgroupsJsonParsed = json_decode(
-                  $subgroupsJson,
-                  true,
-                  16,
-                  0
+      // Позиции с изменившейся ценой из 1с
+      $changedPricesJson = file_get_contents( $this->changedPricesUrl );
+      $this->changedPricesDb = json_decode(
+            $changedPricesJson,
+            true,
+            16,
+            0
       );
-
-      $this->subgroupsDb = $subgroupsJsonParsed;
     }
 
     public static function getInstance() {
@@ -85,8 +74,8 @@
       return $this->groupsDb;
     }
 
-    public function getSubgroupsDb() {
-      return $this->subgroupsDb;
+    public function getСhangedPricesDb() {
+      return $this->changedPricesDb;
     }
 
     public function getLastUpdateTimestamp() {
@@ -162,8 +151,6 @@
       $allPriceListsFiles = array_values( array_filter( $allPriceListsFiles, function( $fileName ) {
         return $fileName != '.' && $fileName != '..';
       } ) );
-
-      var_dump( $allPriceListsFiles );
 
       foreach ( $allPriceListsFiles as $file ) {
         $priceListJson = file_get_contents( $this->jsonPricelistsDir . $file );

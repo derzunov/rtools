@@ -285,13 +285,13 @@
                     <label for="one_s_codes" class="form-label _gray">
                       Связанные с прайсом коды 1с
                     </label>
-                    <input class="form-control mb-3"
-                           type="text"
+                    <textarea class="form-control mb-3"
+                           rows="3"
                            id="one_s_codes"
                            v-model="one_s_codes"
                            title="Связанные с прайсом коды 1с через точку с запятой.
       Пример: 00-00000001;00-00000002"
-                    >
+                    ></textarea>
                   </td>
                 </tr>
               </table>
