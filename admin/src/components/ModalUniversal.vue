@@ -4,7 +4,7 @@
     <slot name="trigger" ></slot>
   </span>
   <!-- Modal -->
-  <div class="modal fade" :id="`js_modal_universal_${ modalId }`" tabindex="-1" :aria-labelledby="`js_modal_universal_label_${ modalId }`" aria-hidden="true">
+  <div class="modal fade" ref="modalRef" :id="`js_modal_universal_${ modalId }`" tabindex="-1" :aria-labelledby="`js_modal_universal_label_${ modalId }`" aria-hidden="true">
     <div class="modal-dialog">
       <div class="modal-content">
 <!--      <div class="modal-content" @keyup.enter="action">-->
@@ -19,7 +19,7 @@
         </div>
 
         <div class="modal-footer">
-          <button @click.prevent="action" type="button" class="btn btn-primary" data-bs-dismiss="modal">{{ actionButtonText }}</button>
+          <button v-if="actionButtonText.length" @click.prevent="action" type="button" class="btn btn-primary" data-bs-dismiss="modal">{{ actionButtonText }}</button>
           <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Отмена</button>
         </div>
       </div>
@@ -28,6 +28,9 @@
 </template>
 
 <script>
+
+import { ref, onMounted } from 'vue'
+
 export default {
   name: "ModalUniversal",
   props: {
@@ -35,6 +38,31 @@ export default {
     title: String,
     actionButtonText: String,
     action: Function,
+  },
+  setup( props ) {
+
+    const modalRef = ref( null )
+
+    const show = function () {
+      const modal = new window.bootstrap.Modal( modalRef.value )
+      modal.show()
+    }
+
+    const hide = function () {
+      const modal = new window.bootstrap.Modal( modalRef.value )
+      modal.hide()
+    }
+
+    // onMounted( () => {
+    //   show()
+    // } )
+
+    return {
+      modalRef,
+
+      show,
+      hide,
+    }
   },
 }
 </script>

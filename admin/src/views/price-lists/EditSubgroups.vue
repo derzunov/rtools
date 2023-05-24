@@ -39,7 +39,7 @@
 
         <!-- Список подгрупп для группы -->
         <ul>
-          <li v-for="( subgroupItem, subgroupIndex ) in groupItem.subgroups"
+          <li v-for="( subgroupItem ) in groupItem.subgroups"
               :key="subgroupItem.id">
             <input required
                    :id="`subgroup_${ subgroupItem.id }`"
@@ -82,6 +82,22 @@
 
       <button type="submit" class="btn btn-primary">Сохранить</button>
     </form>
+
+    <!-- Удаление подгруппы -->
+    <ModalUniversal modalId="delete_subgroup"
+                    title="Подтверждение удаления прайс-листа"
+                    actionButtonText=""
+                    :action="() => { return }"
+                    ref="relatedPricesModalRef"
+    >
+      <div style="text-align: left;">
+        Подгруппа содержит связанные прайсы.
+        <br>
+        <br>
+        {{ relatedPricesString }}
+      </div>
+    </ModalUniversal>
+
   </div>
 </template>
 
@@ -92,7 +108,8 @@ import { onMounted, ref } from 'vue'
 import {
   useRouter
 } from 'vue-router'
-import * as R from "ramda";
+import * as R from 'ramda'
+import ModalUniversal from '@/components/ModalUniversal'
 
 // TODO: Расчет этой константы и будущих других вынести в отдельный сервис
 const IS_DEV = window.location.host.includes( 'localhost' )
@@ -102,10 +119,16 @@ const BASE_URL = IS_DEV ?
 
 export default {
 
+  components: {
+    ModalUniversal,
+  },
+
   setup() {
     const router = useRouter()
 
     const groups = ref( [ 'Группы загружаются' ] )
+    const relatedPricesString = ref( '' )
+    const relatedPricesModalRef = ref( null )
 
     const fetchGroups = async () => {
       const reqStr = `${ BASE_URL }/tools/price/?action=groups&populate=groups`
@@ -140,13 +163,13 @@ export default {
         const subgroupIndex = R.findIndex( R.propEq( 'id', subgroupItem.id ) )( groupItem.subgroups )
         groupItem.subgroups.splice( subgroupIndex, 1 )
       } else {
-        let relatedPricesString = ''
+        relatedPricesString.value = ''
 
         relatedPrices.forEach( ( price ) => {
-          relatedPricesString += `${ price.header }; \n`
+          relatedPricesString.value += `${ price.header }; `
         } )
 
-        alert( `Подгруппа содержит связанные прайсы: \n\n${ relatedPricesString }` )
+        relatedPricesModalRef.value.show()
       }
     }
 
@@ -157,6 +180,8 @@ export default {
     return {
       BASE_URL,
       groups,
+      relatedPricesString,
+      relatedPricesModalRef,
 
       saveGroups,
       deleteSubgroup,
