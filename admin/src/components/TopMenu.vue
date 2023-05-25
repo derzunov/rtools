@@ -35,6 +35,9 @@ navbar-dark bg-dark
               <li>
                 <a class="dropdown-item" target="_blank" data-bs-toggle="modal" data-bs-target="#exampleModal" href="#">Загрузить 1С номенклатуру</a>
               </li>
+              <li>
+                <router-link class="dropdown-item" to="/prices/changed">Изменения 1С</router-link>
+              </li>
             </ul>
           </li>
 

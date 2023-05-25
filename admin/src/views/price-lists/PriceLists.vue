@@ -72,11 +72,13 @@
       <tbody>
       <tr v-for="( priceList, index ) in allPriceLists"
           :data-index="index"
-          :key="index"
+          :key="priceList.id"
           class="b-prices-table__row"
+          :class="{ 'b-prices-table__row_need-update': priceList.needRecalculate }"
       >
 
         <td>
+          <span v-if="priceList.needRecalculate">!!!</span>
           {{ R.find( R.propEq( 'id', priceList[ 'group' ] ) )( groups ).name  }}
         </td>
         <td>
@@ -194,6 +196,7 @@ export default {
     const subgroups = ref( [ 'Загружается' ] )
 
     const allPriceLists = ref( [] )
+    const changedPriceCodes = ref( {} ) // Object
 
     // Functions: -------------------------------------------------------
 
@@ -225,10 +228,35 @@ export default {
       }
     }
 
+    const setNeedUpdate = ( priceList ) => {
+      priceList.one_s_codes.split( ';' ).every( ( code ) => {
+        if ( changedPriceCodes.value[ code.trim() ] ) {
+          priceList.needRecalculate = true
+          // Stop the loop
+          return false
+        }
+        return true
+      } )
+    }
+    const fetchOneSChangedCodes = async () => {
+      const reqStr = `${ BASE_URL }/tools/price/?action=changed`
+      const response = await axios.get( reqStr )
+      if ( response.data ) {
+          changedPriceCodes.value = response.data
+      }
+      return changedPriceCodes
+    }
+
     const fetchAllPriceLists = async () => {
       const reqStr = `${ BASE_URL }/tools/price/?action=all`
       const response = await axios.get( reqStr )
       allPriceLists.value = response.data
+
+      await fetchOneSChangedCodes()
+      allPriceLists.value.forEach( ( priceList ) => {
+        setNeedUpdate( priceList )
+      } )
+
     }
 
     const deletePrice = async ( file_name ) => {
@@ -302,6 +330,7 @@ export default {
       setCurrentGroupById( groupId.value )
       await fetchAllPriceLists()
       allPriceListsCached = JSON.parse( JSON.stringify( allPriceLists.value ) )
+
     } )
 
     watch( [ groupId ], () => {
@@ -363,6 +392,9 @@ export default {
 .b-prices-table {}
 
 .b-prices-table__row {}
+.b-prices-table__row_need-update {
+  background: pink;
+}
 
 .b-prices-table__edit-control {
   visibility: hidden;

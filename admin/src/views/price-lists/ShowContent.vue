@@ -126,7 +126,7 @@ export default {
 
     const updatedate = ref( 0 )
 
-    const changedPrices = ref( '' )
+    //const changedPrices = ref( '' )
 
 
     // Table object
