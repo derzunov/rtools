@@ -6,6 +6,7 @@
     "dev": "npm run serve",
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
+    "localbuild": "NODE_ENV=localbuild npm run build",
     "lint": "vue-cli-service lint"
   },
   "dependencies": {
