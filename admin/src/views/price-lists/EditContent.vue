@@ -409,7 +409,7 @@ export default {
         one_s_codes: one_s_codes.value,
         group: groups.value[ group.value ]?.id, // group.value - индекс группы в массиве групп для фильтрации и сортировки по нему просто заберём наш id
         subgroup: groups.value[ group.value ]?.subgroups[ subgroup.value ]?.id, // subgroup.value - индекс подгруппы в массиве подгрупп
-        updateDate: Date.now(),
+        update_date: Date.now(),
       }
     }
 

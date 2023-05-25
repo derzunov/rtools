@@ -25,34 +25,8 @@
 
     function get( $data ) {
 
-        $_ONE_S_PRICE_FILE_NAME = 'current-price.txt';
-
         $db = Db::getInstance();
 
-        $dbLastUpdateTimestamp = $db->getLastUpdateTimestamp();
-        $oneSFileLastUpdateTimestamp = filectime( $_ONE_S_PRICE_FILE_NAME );
-
-
-        // Если файл из 1с был обновлен позднее нашей БД, значит нужно обновить базу
-        if ( $oneSFileLastUpdateTimestamp > $dbLastUpdateTimestamp ) {
-            $oneSPriceContent = file_get_contents( $_ONE_S_PRICE_FILE_NAME );
-
-            // Собираем массив из каждой строки файла из 1с
-            $oneSPiceArray = explode( PHP_EOL, $oneSPriceContent );
-            $oneSPriceObject = [];
-
-
-            // Собираем объект, где ключом будет Id 1c (третий кусок строки через ';'), а значением сама строка
-            foreach ( $oneSPiceArray as $oneSPriceItem ) {
-
-                if ( isset( explode( ';', $oneSPriceItem )[ 2 ] ) ) {
-                    $oneSId = explode( ';', $oneSPriceItem )[ 2 ];
-                    $oneSPriceObject[ $oneSId ] = $oneSPriceItem;
-                }
-            }
-
-            $db->updateDb( $oneSPriceObject );
-        }
 
         if ( isset( $data[ 'code' ] ) ) {
             $oneSPriceItem = $db->getPriсeByCode( $data[ 'code' ] );
@@ -102,7 +76,7 @@
             die();
         }
 
-        // Отправляем текстовый ответ из базы
+        // Отправляем текстовый ответ из базы (коды 1с)
         sendTextResponse( $db->getWholeDb() );
     }
 
@@ -118,10 +92,40 @@
                 echo 'Price list saved';
         } else if ( !isset( $data[ 'action' ] ) ) {
             // Работаем с выгрузкой из 1с
-            $uploadDir = './';
+            $uploadDir = './db/ones-txt/';
             $uploadFileDist = $uploadDir . basename( 'current-price.txt' );
 
             if ( move_uploaded_file( $_FILES[ 'one_s_price' ][ 'tmp_name' ], $uploadFileDist ) ) {
+
+                // ------------------------------------------
+
+
+                $_ONE_S_PRICE_FILE_NAME = './db/ones-txt/current-price.txt';
+
+                $dbLastUpdateTimestamp = $db->getLastUpdateTimestamp();
+                $oneSFileLastUpdateTimestamp = filectime( $_ONE_S_PRICE_FILE_NAME );
+
+                // Если файл из 1с был обновлен позднее нашей БД, значит нужно обновить базу
+                if ( $oneSFileLastUpdateTimestamp > $dbLastUpdateTimestamp ) {
+                    $oneSPriceContent = file_get_contents( $_ONE_S_PRICE_FILE_NAME );
+
+                    // Собираем массив из каждой строки файла из 1с
+                    $oneSPiceArray = explode( PHP_EOL, $oneSPriceContent );
+                    $oneSPriceObject = [];
+
+                    // Собираем объект, где ключом будет Id 1c (третий кусок строки через ';'), а значением сама строка
+                    foreach ( $oneSPiceArray as $oneSPriceItem ) {
+
+                        if ( isset( explode( ';', $oneSPriceItem )[ 2 ] ) ) {
+                            $oneSId = explode( ';', $oneSPriceItem )[ 2 ];
+                            $oneSPriceObject[ $oneSId ] = $oneSPriceItem;
+                        }
+                    }
+
+                    $db->updateDb( $oneSPriceObject );
+                }
+
+                // ------------------------------------------
                 header( 'Location: /tools/admin/' );
                 die();
             } else {

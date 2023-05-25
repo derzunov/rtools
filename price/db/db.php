@@ -103,11 +103,21 @@
     }
 
     // Saving changes
+    private function saveChangedPricesDb ( $dbArray ) {
+      // Unicode Ru fix & convert to json
+      $changedPricesJson = getCorrectRu( json_encode( $dbArray ) );
+
+      $fd = fopen( $this->changedPricesUrl, 'w' ) or die( 'Can not write to changed prices db json' );
+      fwrite( $fd, $dbJson );
+      fclose( $fd );
+    }
+
+    // Saving changed prices
     private function saveDb( $dbArray ) {
       // Unicode Ru fix & convert to json
       $dbJson = getCorrectRu( json_encode( $dbArray ) );
 
-      $fd = fopen( $this->dbUrl, 'w' ) or die( 'Can\'t update db json' );
+      $fd = fopen( $this->dbUrl, 'w' ) or die( 'Can not write to main db json' );
       fwrite( $fd, $dbJson );
       fclose( $fd );
     }

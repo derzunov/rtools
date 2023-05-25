@@ -352,7 +352,7 @@ export default {
         markup_factor: markup_factor.value,
         one_s_codes: one_s_codes.value,
         group: group.value, // Enum - индекс группы в массиве групп для фильтрации и сортировки
-        updateDate: Date.now(),
+        update_date: Date.now(),
       }
     }
 

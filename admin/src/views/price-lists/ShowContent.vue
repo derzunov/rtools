@@ -152,7 +152,7 @@ export default {
 
     const subgroup = ref( 0 ) // Index in array
 
-    const updatedate = ref( 0 )
+    const update_date = ref( 0 )
 
     // Table object
     const table = ref({
@@ -198,7 +198,7 @@ export default {
       need_update.value = response.data?.need_update
       group.value = response.data.group
       subgroup.value = response.data.subgroup
-      updatedate.value = response.data.updatedate
+      update_date.value = response.data.update_date
 
       // Table object
       table.value = response.data.table
@@ -218,7 +218,7 @@ export default {
         need_update: need_update.value,
         group: group.value, // Enum - индекс группы в массиве групп для фильтрации и сортировки
         subgroup: subgroup.value,
-        updateDate: updatedate.value,
+        update_date: update_date.value,
       }
     }
 
