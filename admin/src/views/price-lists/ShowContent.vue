@@ -17,44 +17,72 @@
       </div>
     </div>
 
-    <form id="add-price" class="mb-3 col-md-12" action="#">
-      <table style="width: 100%;">
-        <tr>
-          <td>
-            <div class="mb-3" style="display: flex; justify-content: space-between;">
-              <div>
-                <h5>
-                  <span class="_gray">{{ file_name + '.html' }}</span>
+    <table style="width: 100%;">
+      <tr>
+        <td>
+          <div class="mb-3" style="display: flex; justify-content: space-between;">
+            <div>
+              <h5>
+                <span class="_gray">{{ file_name + '.html' }}</span>
 
-                  <router-link :to="`/prices/content/${ file_name }`" title="Редактировать">
-                    <font-awesome-icon
-                        style="width: 22px; height: 22px;"
-                        :icon="['fas', 'pencil-square']"
-                    />
-                  </router-link>
-                </h5>
-              </div>
+                <router-link :to="`/prices/content/${ file_name }`" title="Редактировать">
+                  <font-awesome-icon
+                      style="width: 22px; height: 22px;"
+                      :icon="['fas', 'pencil-square']"
+                  />
+                </router-link>
+              </h5>
+            </div>
+            <div>
               <div>
-                <div>
 
-                  <h5><span class="_gray">{{ R.find( R.propEq( 'id', group ) )( groups )?.name }}</span></h5>
-                  <p><span class="_gray">
-                    {{
-                      R.find( R.propEq( 'id', subgroup ) )(
-                          R.find( R.propEq( 'id', group ) )( groups )?.subgroups
-                      ).name
-                    }}
-                  </span></p>
-                </div>
+                <h5><span class="_gray">{{ R.find( R.propEq( 'id', group ) )( groups )?.name }}</span></h5>
+                <p><span class="_gray">
+                  {{
+                    R.find( R.propEq( 'id', subgroup ) )(
+                        R.find( R.propEq( 'id', group ) )( groups )?.subgroups
+                    ).name
+                  }}
+                </span></p>
               </div>
             </div>
-          </td>
-          <td style="width: 100px;"></td>
-        </tr>
-      </table>
-    </form>
+          </div>
+        </td>
+        <td style="width: 100px;"></td>
+      </tr>
+    </table>
 
-    <h5 v-if="need_update" >Прайс нуждается в перерассчёте, тк изменились цены по следующим позициям</h5>
+    <h4 class="_red" v-if="relatedChangedPrices?.length || relatedOutOfStock?.length" >
+      Прайс нуждается в перерассчёте
+    </h4>
+
+    <div v-if="relatedChangedPrices?.length" >
+      <h5>Позиции с изменившейся ценой</h5>
+      <ul>
+        <li
+            v-for="changedPrice in relatedChangedPrices"
+            :key="changedPrice.one_s_code"
+        >
+          {{ changedPrice.value.split( ';' )[ 1 ] }}
+          -
+          <b>{{ changedPrice.value.split( ';' )[ 5 ] }} ₽</b>
+        </li>
+      </ul>
+    </div>
+
+    <div v-if="relatedOutOfStock?.length" >
+      <h5>Отсутствуют на складе</h5>
+      <ul>
+        <li
+            v-for="changedPrice in relatedOutOfStock"
+            :key="changedPrice.one_s_code"
+        >
+          {{ changedPrice.value.split( ';' )[ 1 ] }}
+          -
+          <b>{{ changedPrice.value.split( ';' )[ 5 ] }} ₽</b>
+        </li>
+      </ul>
+    </div>
 
     <table style="width: 100%;">
       <tr>
@@ -76,7 +104,7 @@
 <script>
 import axios from "axios"
 import * as R from "ramda"
-import { onBeforeMount, ref } from 'vue'
+import { onBeforeMount, onMounted, ref } from 'vue'
 import {
   useRoute,
 } from 'vue-router'
@@ -126,9 +154,6 @@ export default {
 
     const updatedate = ref( 0 )
 
-    //const changedPrices = ref( '' )
-
-
     // Table object
     const table = ref({
       thead: {
@@ -153,9 +178,14 @@ export default {
 
     const toastSavedRef = ref( null )
 
+    // 1s changes
+    const relatedChangedPrices = ref( [] )
+    const relatedOutOfStock = ref( [] )
+
     // Functions: -------------------------------------------------------
 
     const fetchPriceList = async () => {
+      tracer.debug( 'fetchPriceList called' )
       const response = await axios.get( `${ BASE_URL }/tools/price/?action=file&name=${ route.params.passedFileName }` )
 
       file_name.value = response.data.file_name
@@ -175,6 +205,7 @@ export default {
     }
 
     const makePriceObject = () => {
+      tracer.debug( 'makePriceObject called' )
       return {
         file_name: file_name.value,
         header: header.value,
@@ -192,20 +223,48 @@ export default {
     }
 
     const fetchGroups = async () => {
+      tracer.debug( 'fetchGroups called' )
       const reqStr = `${ BASE_URL }/tools/price/?action=groups&populate=subgroups`
       const response = await axios.get( reqStr )
       groups.value = response.data
     }
 
+    const fetchRelatedOneSChangedCodes = async () => {
+      tracer.debug( 'fetchRelatedOneSChangedCodes called' )
+      const reqStr = `${ BASE_URL }/tools/price/?action=changed`
+      const response = await axios.get( reqStr )
+      if ( response.data ) {
+
+        one_s_codes.value.split( ';' ).forEach( ( relatedCode ) => {
+
+          // Есть ли связанный с прайсом код в объекте изменившихся кодов
+          if ( response.data[ relatedCode.trim() ] ) {
+
+            // Отсутствует на складе?
+            if ( response.data[ relatedCode.trim() ].value[ 0 ] === '?' ) {
+              relatedOutOfStock.value.push( response.data[ relatedCode.trim() ] )
+            } else {
+              // Или просто изменилась цена
+              relatedChangedPrices.value.push( response.data[ relatedCode.trim() ] )
+            }
+          }
+        } )
+      }
+    }
+
     onBeforeMount( async () => {
       await fetchGroups()
-      tracer.debug( 'Groups fetched' )
+      // tracer.debug( 'Groups fetched' )
       await fetchPriceList()
-      tracer.info( 'Price fetched' )
+      // tracer.info( 'Price fetched' )
       const priceObject = makePriceObject()
       htmlResultString.value = await parsePriceToHtml( priceObject )
-      tracer.error( 'html result built' )
+      // tracer.error( 'html result built' )
     })
+
+    onMounted( async () => {
+      await fetchRelatedOneSChangedCodes()
+    } )
 
     return {
       isDev,
@@ -225,6 +284,8 @@ export default {
       group,
       subgroup,
       toastSavedRef,
+      relatedChangedPrices,
+      relatedOutOfStock,
 
       // Functions
       pluralize,

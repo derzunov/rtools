@@ -154,6 +154,10 @@ button {
   color: gray !important;
 }
 
+._red {
+  color: red !important;
+}
+
 .url__active-count {
   color: #000 !important;
   text-decoration: none;
