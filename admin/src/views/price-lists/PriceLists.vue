@@ -79,12 +79,12 @@
 
         <td>
           <span v-if="priceList.needRecalculate">!!!</span>
-          {{ R.find( R.propEq( 'id', priceList[ 'group' ] ) )( groups ).name  }}
+          {{ R?.find( R.propEq( 'id', priceList[ 'group' ] ) )( groups ).name  }}
         </td>
         <td>
           {{
-            R.find( R.propEq( 'id', priceList[ 'subgroup' ] ) )(
-                R.find( R.propEq( 'id', priceList[ 'group' ] ) )( groups ).subgroups
+            R?.find( R.propEq( 'id', priceList[ 'subgroup' ] ) )(
+                R?.find( R.propEq( 'id', priceList[ 'group' ] ) )( groups ).subgroups
             ).name
           }}
         </td>
@@ -230,7 +230,10 @@ export default {
 
     const setNeedUpdate = ( priceList ) => {
       priceList.one_s_codes.split( ';' ).every( ( code ) => {
-        if ( changedPriceCodes.value[ code.trim() ] ) {
+        if ( changedPriceCodes.value[ code.trim() ] &&
+            ( ( changedPriceCodes.value[ code.trim() ].percents >= priceList.change_threshold ) ||
+            ( changedPriceCodes.value[ code.trim() ]?.value[ 0 ] === '?' ) )
+        ) {
           priceList.needRecalculate = true
           // Stop the loop
           return false

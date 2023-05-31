@@ -38,7 +38,10 @@
           <span> => </span>
           <b>{{ chengedCodeItem.current_price }} ₽</b>
           <span> | </span>
-          <b :class="{ _red: chengedCodeItem.percents > 0, _green: chengedCodeItem.percents < 0 }" >{{ chengedCodeItem.percents }}%</b>
+          <b :class="{
+            _red: chengedCodeItem.percents > 0,
+            _green: chengedCodeItem.percents < 0 }"
+          >{{ chengedCodeItem.percents }}%</b>
         </li>
       </ul>
 

@@ -149,7 +149,8 @@
                     $db->updateDb( $oneSPriceObject );
                 }
 
-                //TODO: вернуть: header( 'Location: /tools/admin/' );
+                //TODO: вернуть: 
+                header( 'Location: /tools/admin/' );
                 die();
             } else {
                 echo 'Ошибка перемещения загруженного файла';

@@ -35,15 +35,8 @@
             </div>
             <div>
               <div>
-
-                <h5><span class="_gray">{{ R.find( R.propEq( 'id', group ) )( groups )?.name }}</span></h5>
-                <p><span class="_gray">
-                  {{
-                    R.find( R.propEq( 'id', subgroup ) )(
-                        R.find( R.propEq( 'id', group ) )( groups )?.subgroups
-                    ).name
-                  }}
-                </span></p>
+                <h5><span class="_gray">{{ groupName }}</span></h5>
+                <p><span class="_gray">{{ subgroupName }}</span></p>
               </div>
             </div>
           </div>
@@ -51,6 +44,11 @@
         <td style="width: 100px;"></td>
       </tr>
     </table>
+
+    <h5>
+      Комментарий администратора
+    </h5>
+    <p>{{ admin_comment }}</p>
 
     <h4 class="_red" v-if="relatedChangedPrices?.length || relatedOutOfStock?.length" >
       Прайс нуждается в перерассчёте
@@ -65,7 +63,14 @@
         >
           {{ changedPrice.value.split( ';' )[ 1 ] }}
           -
-          <b>{{ changedPrice.value.split( ';' )[ 5 ] }} ₽</b>
+          <b>{{ changedPrice.old_price }} ₽</b>
+          <span> => </span>
+          <b>{{ changedPrice.current_price }} ₽</b>
+          <span> - </span>
+          <b :class="{
+            _red: changedPrice.percents > 0,
+            _green: changedPrice.percents < 0 }"
+          > {{ changedPrice.percents }} % </b>
         </li>
       </ul>
     </div>
@@ -104,7 +109,7 @@
 <script>
 import axios from "axios"
 import * as R from "ramda"
-import { onBeforeMount, onMounted, ref } from 'vue'
+import { onBeforeMount, ref } from 'vue'
 import {
   useRoute,
 } from 'vue-router'
@@ -145,14 +150,17 @@ export default {
     const markup_factor = ref( 1.5 ) // Коэфициент наценки, на  него будет умножаться цена из файла-выгрузки из 1C
     const change_threshold = ref( 5 ) // Порог изменения цены из 1с в %, при превышении которого будем помечать прайс подлежащиим пересчёту
     const one_s_codes = ref( 'Загружается' ) // Строка связанных кодов 1с. Если какой-то из них элемент прайса выгрузки 1с изменится, по каждому прайсу будет оповещён владелец
-    const need_update = ref( '' ) // Изменившиеся коды
+    const need_update = ref( false )
 
-    const group = ref( 2 ) // index in array
+    const group = ref( 0 ) // index in array
     const groups = ref( [ { id: 'default value', name: 'empty' } ] )
-
     const subgroup = ref( 0 ) // Index in array
 
+    const groupName = ref( '' )
+    const subgroupName = ref( '' )
+
     const update_date = ref( 0 )
+    const admin_comment = ref( '' )
 
     // Table object
     const table = ref({
@@ -199,6 +207,20 @@ export default {
       group.value = response.data.group
       subgroup.value = response.data.subgroup
       update_date.value = response.data.update_date
+      admin_comment.value = response.data.admin_comment || 'no comments yet'
+
+      const _getGroup = () => {
+        return groups.value.filter( groupItem => groupItem.id === group.value )[ 0 ]
+      }
+      const getGroupName = () => {
+        return _getGroup()?.name
+      }
+      const getSubroupName = () => {
+        return _getGroup()?.subgroups?.filter( subgroupItem => subgroupItem.id === subgroup.value )[ 0 ]?.name
+      }
+
+      groupName.value = getGroupName()
+      subgroupName.value = getSubroupName()
 
       // Table object
       table.value = response.data.table
@@ -219,6 +241,7 @@ export default {
         group: group.value, // Enum - индекс группы в массиве групп для фильтрации и сортировки
         subgroup: subgroup.value,
         update_date: update_date.value,
+        admin_comment: admin_comment.value,
       }
     }
 
@@ -245,7 +268,10 @@ export default {
               relatedOutOfStock.value.push( response.data[ relatedCode.trim() ] )
             } else {
               // Или просто изменилась цена
-              relatedChangedPrices.value.push( response.data[ relatedCode.trim() ] )
+              if ( response.data[ relatedCode.trim() ].percents >= change_threshold.value ) {
+                // И изменения превысили заданный в прайсе порог
+                relatedChangedPrices.value.push( response.data[ relatedCode.trim() ] )
+              }
             }
           }
         } )
@@ -260,11 +286,8 @@ export default {
       const priceObject = makePriceObject()
       htmlResultString.value = await parsePriceToHtml( priceObject )
       // tracer.error( 'html result built' )
-    })
-
-    onMounted( async () => {
       await fetchRelatedOneSChangedCodes()
-    } )
+    })
 
     return {
       isDev,
@@ -279,7 +302,7 @@ export default {
       markup_factor,
       change_threshold,
       one_s_codes,
-      need_update,
+      admin_comment,
       groups,
       group,
       subgroup,
@@ -292,6 +315,8 @@ export default {
       addRow,
       deleteRow,
       route,
+      groupName,
+      subgroupName,
 
       // Utils
       R,

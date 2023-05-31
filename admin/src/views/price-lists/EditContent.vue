@@ -179,7 +179,6 @@
             </div>
 
             <div>
-
               <div class="b-price-form-table_wrapper mb-3">
                 <table style="width: 100%;">
                   <tr>
@@ -221,6 +220,15 @@
                     </td>
                   </tr>
                 </table>
+              </div>
+              <div class="b-price-form-table_wrapper mb-3">
+                <h5>Комментарий администратора</h5>
+                <textarea
+                    class="form-control mb-3"
+                    v-model="admin_comment"
+                    name="admin_comment"
+                    id="admin_comment"
+                    rows="5"></textarea>
               </div>
             </div>
 
@@ -322,6 +330,7 @@ export default {
     const groups = ref( [ { id: 1, subgroups: [] } ] )
 
     const subgroup = ref( 0 ) // Enum
+    const admin_comment = ref( '' )
 
 
     // Table object
@@ -373,6 +382,7 @@ export default {
       subgroup.value = R.findIndex( R.propEq( 'id', response.data.subgroup  ) )(
           ( R.find( R.propEq( 'id', response.data.group  ) )( groups.value ) ).subgroups
       )
+      admin_comment.value = response.data.admin_comment || 'no comments yet'
 
       // Table object
       table.value = response.data.table
@@ -410,6 +420,7 @@ export default {
         group: groups.value[ group.value ]?.id, // group.value - индекс группы в массиве групп для фильтрации и сортировки по нему просто заберём наш id
         subgroup: groups.value[ group.value ]?.subgroups[ subgroup.value ]?.id, // subgroup.value - индекс подгруппы в массиве подгрупп
         update_date: Date.now(),
+        admin_comment: admin_comment.value,
       }
     }
 
@@ -492,6 +503,7 @@ export default {
       group,
       // subgroups,
       subgroup,
+      admin_comment,
       toastSavedRef,
 
       // Functions
