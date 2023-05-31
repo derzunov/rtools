@@ -231,7 +231,7 @@ export default {
     const setNeedUpdate = ( priceList ) => {
       priceList.one_s_codes.split( ';' ).every( ( code ) => {
         if ( changedPriceCodes.value[ code.trim() ] &&
-            ( ( changedPriceCodes.value[ code.trim() ].percents >= priceList.change_threshold ) ||
+            ( ( Math.abs( changedPriceCodes.value[ code.trim() ].percents ) >= priceList.change_threshold ) ||
             ( changedPriceCodes.value[ code.trim() ]?.value[ 0 ] === '?' ) )
         ) {
           priceList.needRecalculate = true

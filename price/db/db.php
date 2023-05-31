@@ -95,16 +95,6 @@
       return 0;
     }
 
-    // Saving changed prices ( 1s codes )
-    public function saveChangedPricesDb( $dbArray ) {
-      // Unicode Ru fix & convert to json
-      $changedPricesJson = getCorrectRu( json_encode( $dbArray ) );
-
-      $fd = fopen( $this->changedPricesUrl, 'w' ) or die( 'Can not write to changed prices db json' );
-      fwrite( $fd, $changedPricesJson );
-      fclose( $fd );
-    }
-
     // Saving changes
     private function saveDb( $dbArray ) {
       // Unicode Ru fix & convert to json
@@ -222,6 +212,25 @@
       // Обновляем индекс
       $this->updateAllPricelistsIndex();
       return ( $isJsonDeleted && $isHtmlDeleted );
+    }
+
+    // Saving changed prices ( 1s codes )
+    public function saveChangedPricesDb( $dbArray ) {
+      // Unicode Ru fix & convert to json
+      $changedPricesJson = getCorrectRu( json_encode( $dbArray ) );
+
+      $fd = fopen( $this->changedPricesUrl, 'w' ) or die( 'Can not write to changed prices db json' );
+      fwrite( $fd, $changedPricesJson );
+      fclose( $fd );
+    }
+
+    public function deleteChangedPriceByCode( $one_s_changed_code ) {
+
+      $changedPricesDb = $this->getChangedPricesDb();
+      // Удаляем из базы
+      unset( $changedPricesDb[ $one_s_changed_code ] );
+      echo( "Success: $one_s_changed_code deleted" );
+      $this->saveChangedPricesDb( $changedPricesDb );
     }
 
     // Groups api

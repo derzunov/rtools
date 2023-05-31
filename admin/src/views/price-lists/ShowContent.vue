@@ -268,7 +268,7 @@ export default {
               relatedOutOfStock.value.push( response.data[ relatedCode.trim() ] )
             } else {
               // Или просто изменилась цена
-              if ( response.data[ relatedCode.trim() ].percents >= change_threshold.value ) {
+              if ( Math.abs( response.data[ relatedCode.trim() ].percents ) >= change_threshold.value ) {
                 // И изменения превысили заданный в прайсе порог
                 relatedChangedPrices.value.push( response.data[ relatedCode.trim() ] )
               }

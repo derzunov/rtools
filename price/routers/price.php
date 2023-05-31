@@ -184,12 +184,17 @@
     /*
     params in $data:
         file_name
+        one_s_changed_code
     */
     function delete( $data ) {
         $db = Db::getInstance();
 
         if ( isset( $data[ 'file_name' ] ) ) {
             $db->deletePriceByName( $data[ 'file_name' ] );
+        }
+        
+        if ( isset( $data[ 'one_s_changed_code' ] ) ) {
+            $db->deleteChangedPriceByCode( $data[ 'one_s_changed_code' ] );
         }
     }
 
@@ -265,6 +270,5 @@
 
         // Сохраняем новый объект изменений
         $db->saveChangedPricesDb( $updatedChangedPrices );
-        var_dump( $updatedChangedPrices );
     }
  ?>

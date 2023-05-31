@@ -32,6 +32,8 @@
             v-for="( chengedCodeItem ) in changedPrice"
             :key="chengedCodeItem.id"
         >
+          <i>{{ chengedCodeItem.one_s_code }}</i>
+          -
           {{ chengedCodeItem.value?.split( ';' )[ 1 ] }}
           -
           <b>{{ chengedCodeItem.old_price }} ₽</b>
@@ -42,6 +44,14 @@
             _red: chengedCodeItem.percents > 0,
             _green: chengedCodeItem.percents < 0 }"
           >{{ chengedCodeItem.percents }}%</b>
+          <span> - </span>
+          <span @click.prevent="() => deleteChangedOneSPriceByCode( chengedCodeItem.one_s_code )" class="">
+            <font-awesome-icon
+                class="edit-control edit-control_danger"
+                @click="() => { return 0; }"
+                :icon="['fas', 'xmark']"
+            />
+          </span>
         </li>
       </ul>
 
@@ -52,9 +62,11 @@
             v-for="( outItem ) in outOfStock"
             :key="outItem.id"
         >
-          {{ outItem.value?.split( ';' )[ 1 ] }}
+          <i>{{ outItem.one_s_code }}</i>
           -
-          <b>{{ outItem.value?.split( ';' )[ 5 ] }}</b>
+          {{ outItem.value?.split( ';' )[ 1 ] }}
+<!--          - -->
+<!--          <b>{{ outItem.value?.split( ';' )[ 5 ] }} ₽</b>-->
         </li>
       </ul>
     </form>
@@ -64,6 +76,7 @@
 <script>
 import axios from 'axios'
 import { onMounted, ref } from 'vue'
+import { tracer } from '@/utils'
 
 // TODO: Расчет этой константы и будущих других вынести в отдельный сервис
 const IS_DEV = window.location.host.includes( 'localhost' )
@@ -78,6 +91,8 @@ export default {
     const outOfStock = ref( [] )
 
     const fetchOneSChangedCodes = async () => {
+      changedPrice.value = []
+      outOfStock.value = []
       const reqStr = `${ BASE_URL }/tools/price/?action=changed`
       const response = await axios.get( reqStr )
       if ( response.data ) {
@@ -92,14 +107,25 @@ export default {
       }
     }
 
+    // Depricated
     const saveOneSChangedCodes = async () => {
       const reqStr = `${ BASE_URL }/tools/price/`
       const formData = new FormData()
 
       formData.append( 'action', 'codes' )
-      formData.append( 'codes', JSON.stringify( [...changedPrice, ...outOfStock] ) )
+      formData.append( 'codes', JSON.stringify( {...changedPrice, ...outOfStock } ) )
 
       await axios.post( reqStr, formData )
+    }
+
+    const deleteChangedOneSPriceByCode = async ( one_s_changed_code ) => {
+      tracer.debug( `deleteChangedOneSPriceByCode called: Delete price with one_s_changed_code: ${ one_s_changed_code })` )
+
+      const requestUrl = `${ BASE_URL }/tools/price/`
+      await axios.delete( requestUrl, {
+        data: new URLSearchParams( { one_s_changed_code } )
+      } )
+      fetchOneSChangedCodes()
     }
 
     onMounted( async () => {
@@ -112,6 +138,7 @@ export default {
       outOfStock,
 
       saveOneSChangedCodes,
+      deleteChangedOneSPriceByCode,
     }
   }
 }
