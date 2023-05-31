@@ -157,6 +157,9 @@ button {
 ._red {
   color: red !important;
 }
+._green {
+  color: green !important;
+}
 
 .url__active-count {
   color: #000 !important;

@@ -74,7 +74,7 @@
       return $this->groupsDb;
     }
 
-    public function getСhangedPricesDb() {
+    public function getChangedPricesDb() {
       return $this->changedPricesDb;
     }
 
@@ -84,13 +84,6 @@
 
     // Номенклатура из 1с обновилась
     public function updateDb( $newPriceObject ) {
-
-      // Проставляем признак отсутствия (знак "?"), для позиций, которых не оказалось в новопришедшем списке
-      foreach ( $this->allDb as $priceOneSId => $priceString ) {
-        if ( !isset( $newPriceObject[ $priceOneSId ] ) && $this->allDb[ $priceOneSId ][ 0 ] != '?' ) {
-          $this->allDb[ $priceOneSId ] = '?' . $this->allDb[ $priceOneSId ];
-        }
-      }
 
       foreach ( $newPriceObject as $newPriceOneSId => $newPriceString ) {
         // Обновляем все новопришедшие позиции
@@ -102,17 +95,17 @@
       return 0;
     }
 
-    // Saving changes
-    private function saveChangedPricesDb ( $dbArray ) {
+    // Saving changed prices ( 1s codes )
+    public function saveChangedPricesDb( $dbArray ) {
       // Unicode Ru fix & convert to json
       $changedPricesJson = getCorrectRu( json_encode( $dbArray ) );
 
       $fd = fopen( $this->changedPricesUrl, 'w' ) or die( 'Can not write to changed prices db json' );
-      fwrite( $fd, $dbJson );
+      fwrite( $fd, $changedPricesJson );
       fclose( $fd );
     }
 
-    // Saving changed prices
+    // Saving changes
     private function saveDb( $dbArray ) {
       // Unicode Ru fix & convert to json
       $dbJson = getCorrectRu( json_encode( $dbArray ) );

@@ -34,7 +34,11 @@
         >
           {{ chengedCodeItem.value?.split( ';' )[ 1 ] }}
           -
-          <b>{{ chengedCodeItem.value?.split( ';' )[ 5 ] }}</b>
+          <b>{{ chengedCodeItem.old_price }} ₽</b>
+          <span> => </span>
+          <b>{{ chengedCodeItem.current_price }} ₽</b>
+          <span> | </span>
+          <b :class="{ _red: chengedCodeItem.percents > 0, _green: chengedCodeItem.percents < 0 }" >{{ chengedCodeItem.percents }}%</b>
         </li>
       </ul>
 
