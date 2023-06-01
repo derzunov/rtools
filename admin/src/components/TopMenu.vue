@@ -19,24 +19,21 @@ navbar-dark bg-dark
           <!-- Prices -->
           <li class="nav-item dropdown">
             <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-              Цены
+              Ценообразование
             </a>
             <ul class="dropdown-menu">
               <li>
-                <router-link class="dropdown-item" to="/prices/add">Добавить</router-link>
-              </li>
-              <li>
-                <router-link class="dropdown-item" to="/prices">Список прайсов</router-link>
+                <router-link class="dropdown-item" to="/prices">Прайсы</router-link>
               </li>
               <li>
                 <router-link class="dropdown-item" to="/prices/groups/show">Группы</router-link>
               </li>
               <li><hr class="dropdown-divider"></li>
               <li>
-                <a class="dropdown-item" target="_blank" data-bs-toggle="modal" data-bs-target="#exampleModal" href="#">Загрузить 1С номенклатуру</a>
+                <a class="dropdown-item" target="_blank" data-bs-toggle="modal" data-bs-target="#exampleModal" href="#">Загрузить номенклатуру 1С</a>
               </li>
               <li>
-                <router-link class="dropdown-item" to="/prices/changed">Изменения 1С</router-link>
+                <router-link class="dropdown-item" to="/prices/changed">Изменения цен в 1С</router-link>
               </li>
             </ul>
           </li>

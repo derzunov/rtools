@@ -80,9 +80,9 @@
       >
 
         <td>
-          <span v-if="priceList.needRecalculate">
+          <router-link style="text-decoration: none; color: black;" v-if="priceList.needRecalculate" :to="`/prices/show/${ priceList[ 'file_name' ] }`" title="Открыть прайс">
             <font-awesome-icon :icon="['fas', 'exclamation-triangle']" />
-          </span>
+          </router-link>
         </td>
 
         <td>
@@ -104,13 +104,14 @@
           <span @click.prevent="() => { goToPriceList( priceList[ 'file_name' ] ) }"
                 class="_gray"
                 style="cursor: pointer;"
+                title="Открыть html"
           >
              {{ priceList[ 'file_name' ] }}
           </span>
         </td>
 
         <td>
-          <span :title="priceList[ 'admin_comment' ].substring( 0, 500 ) ">
+          <span class="_gray" :title="priceList[ 'admin_comment' ].substring( 0, 500 ) ">
              {{ priceList[ 'admin_comment' ].substring( 0, 30 ).trim() + '...' }}
           </span>
         </td>
@@ -410,7 +411,9 @@ export default {
 
 .b-prices-table {}
 
-.b-prices-table__row {}
+.b-prices-table__row {
+  vertical-align: middle;
+}
 .b-prices-table__row_need-update {
   background: rgba(255, 182, 193, 0.05);
 }
