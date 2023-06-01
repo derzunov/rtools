@@ -50,7 +50,8 @@
     <table class="table b-prices-table">
       <thead>
       <tr>
-        <th scope="col" class="col-md-3">
+        <th class="col-md-1"></th>
+        <th scope="col" class="col-md-2">
           <font-awesome-icon
               style="cursor:pointer;"
               @click="toggleAlphaSort"
@@ -63,10 +64,11 @@
               :icon="['fas', 'sort-desc']" />
           Группа
         </th>
-        <th scope="col" class="col-md-3">Подгруппа</th>
-        <th scope="col" class="col-md-3">Продукт</th>
+        <th scope="col" class="col-md-2">Подгруппа</th>
+        <th scope="col" class="col-md-2">Продукт</th>
         <th scope="col" class="col-md-2">Имя файла</th>
-        <th scope="col" class="col-md-2 right"></th>
+        <th scope="col" class="col-md-2">Комментарий</th>
+        <th scope="col" class="col-md-1 right"></th>
       </tr>
       </thead>
       <tbody>
@@ -78,7 +80,12 @@
       >
 
         <td>
-          <span v-if="priceList.needRecalculate">!!!</span>
+          <span v-if="priceList.needRecalculate">
+            <font-awesome-icon :icon="['fas', 'wrench']" />
+          </span>
+        </td>
+
+        <td>
           {{ R?.find( R.propEq( 'id', priceList[ 'group' ] ) )( groups ).name  }}
         </td>
         <td>
@@ -94,8 +101,14 @@
           </router-link>
         </td>
         <td>
-          <span href="#" @click.prevent="() => { goToPriceList( priceList[ 'file_name' ] ) }">
+          <span @click.prevent="() => { goToPriceList( priceList[ 'file_name' ] ) }">
              {{ priceList[ 'file_name' ] }}
+          </span>
+        </td>
+
+        <td>
+          <span>
+             {{ priceList[ 'admin_comment' ] }}
           </span>
         </td>
         <td class="right">
@@ -396,7 +409,7 @@ export default {
 
 .b-prices-table__row {}
 .b-prices-table__row_need-update {
-  background: pink;
+  background: rgba(255, 182, 193, 0.05);
 }
 
 .b-prices-table__edit-control {

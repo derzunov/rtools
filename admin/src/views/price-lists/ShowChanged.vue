@@ -91,11 +91,14 @@ export default {
     const outOfStock = ref( [] )
 
     const fetchOneSChangedCodes = async () => {
-      changedPrice.value = []
-      outOfStock.value = []
       const reqStr = `${ BASE_URL }/tools/price/?action=changed`
       const response = await axios.get( reqStr )
       if ( response.data ) {
+        // Обнуляем списки
+        changedPrice.value = []
+        outOfStock.value = []
+
+        // Обновляем списки
         Object.values( response.data ).forEach( ( codeItem ) => {
 
           if ( codeItem.value[ 0 ] === '?' ) {
