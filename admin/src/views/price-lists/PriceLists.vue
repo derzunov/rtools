@@ -81,7 +81,7 @@
 
         <td>
           <span v-if="priceList.needRecalculate">
-            <font-awesome-icon :icon="['fas', 'wrench']" />
+            <font-awesome-icon :icon="['fas', 'exclamation-triangle']" />
           </span>
         </td>
 
@@ -101,14 +101,17 @@
           </router-link>
         </td>
         <td>
-          <span @click.prevent="() => { goToPriceList( priceList[ 'file_name' ] ) }">
+          <span @click.prevent="() => { goToPriceList( priceList[ 'file_name' ] ) }"
+                class="_gray"
+                style="cursor: pointer;"
+          >
              {{ priceList[ 'file_name' ] }}
           </span>
         </td>
 
         <td>
-          <span>
-             {{ priceList[ 'admin_comment' ] }}
+          <span :title="priceList[ 'admin_comment' ].substring( 0, 500 ) ">
+             {{ priceList[ 'admin_comment' ].substring( 0, 30 ).trim() + '...' }}
           </span>
         </td>
         <td class="right">

@@ -211,8 +211,7 @@
                       <label for="one_s_codes" class="form-label _gray">
                         Связанные с прайсом коды 1с
                       </label>
-                      <input required
-                             class="form-control mb-3"
+                      <input class="form-control mb-3"
                              type="text"
                              id="one_s_codes"
                              v-model="one_s_codes"
