@@ -17,7 +17,7 @@ export default async ( priceObject ) => {
             ${ tableCode }
             <p>${ priceObject.bottomtext }</p>
             
-            <p>Дата обновления: ${ ( new Date( priceObject.update_date ) ).toLocaleDateString( 'ru-RU' ) }</p>
+            <p class="b-price-table__update-date" >Дата обновления: ${ ( new Date( priceObject.update_date ) ).toLocaleDateString( 'ru-RU' ) }</p>
         <div>
         <style>
           .b-price-table {

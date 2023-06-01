@@ -1,7 +1,7 @@
 <template>
   <div class="main">
     <div class="row ipm-top-menu">
-      <div class="col-md-12">
+      <div class="col-md-10">
         <h5>
           <router-link style="color: black" to="/" title="На главную">
             <font-awesome-icon :icon="['fas', 'house']" />
@@ -15,94 +15,108 @@
           <span>/{{ header }} </span>
         </h5>
       </div>
+      <div class="col-md-2 right">
+        <router-link class="btn btn-outline-success" :to="`/prices/content/${ file_name }`" title="Редактировать">
+          Редактировать
+        </router-link>
+      </div>
     </div>
 
-    <table style="width: 100%;">
-      <tr>
-        <td>
-          <div class="mb-3" style="display: flex; justify-content: space-between;">
-            <div>
-              <h5>
-                <span class="_gray">{{ file_name + '.html' }}</span>
+    <div class="mb-3" style="float: right; padding: 10px 0 0 0;">
+      <h5 class="_gray">
+        {{ groupName }} / {{ subgroupName }}
+      </h5>
+    </div>
 
-                <router-link :to="`/prices/content/${ file_name }`" title="Редактировать">
-                  <font-awesome-icon
-                      style="width: 22px; height: 22px;"
-                      :icon="['fas', 'pencil-square']"
-                  />
-                </router-link>
-              </h5>
-            </div>
-            <div>
-              <div>
-                <h5><span class="_gray">{{ groupName }}</span></h5>
-                <p><span class="_gray">{{ subgroupName }}</span></p>
-              </div>
-            </div>
-          </div>
+    <!-- Превью таблицы -->
+    <div class="mb-3" v-html="htmlResultString"></div>
+
+    <div class="mb-3">
+      Дата обновления
+      <span style="cursor: pointer;" @click="goToPriceList( file_name )">{{ file_name }}.html</span>
+      : {{ new Date( update_date ).toLocaleString() }}
+    </div>
+
+    <hr>
+
+    <!-- Блок обновившихся связанных кодов 1с -->
+
+    <table width="100%">
+      <!-- Изменилась цена -->
+      <tr class="mb-3" v-if="relatedChangedPrices?.length" style="vertical-align: top;">
+        <td><h5>Изменения цен:</h5></td>
+        <td>
+
+          <table width="100%">
+            <tr v-for="changedPrice in relatedChangedPrices"
+                :key="changedPrice.one_s_code">
+
+              <td>{{ changedPrice.one_s_code }}</td>
+              <td>{{ changedPrice.value.split( ';' )[ 1 ] }}</td>
+              <td>
+                <b>{{ changedPrice.old_price }} ₽</b>
+                <span> => </span>
+                <b>{{ changedPrice.current_price }} ₽</b>
+              </td>
+
+              <td>
+                <b :class="{ _red: changedPrice.percents > 0, _green: changedPrice.percents < 0 }"
+                > {{ changedPrice.percents }} % </b>
+              </td>
+            </tr>
+          </table>
         </td>
-        <td style="width: 100px;"></td>
       </tr>
+
+      <tr v-if="relatedChangedPrices?.length">
+        <td>
+          <hr>
+        </td>
+        <td>
+          <hr>
+        </td>
+      </tr>
+
+      <!-- Нет на складе -->
+      <tr class="mb-3" v-if="relatedOutOfStock?.length" style="vertical-align: top;">
+        <td><h5>Нет на складе:</h5></td>
+        <td>
+          <table width="100%">
+            <tr v-for="changedPrice in relatedOutOfStock"
+                :key="changedPrice.one_s_code">
+
+              <td>{{ changedPrice.one_s_code }}</td>
+              <td>{{ changedPrice.value.split( ';' )[ 1 ] }}</td>
+              <td>
+                <b>{{ changedPrice.old_price }} ₽</b>
+              </td>
+
+            </tr>
+          </table>
+        </td>
+      </tr>
+
+      <tr v-if="relatedOutOfStock?.length">
+        <td>
+          <hr>
+        </td>
+        <td>
+          <hr>
+        </td>
+      </tr>
+
+      <!-- Комментарий -->
+      <tr style="vertical-align: top;">
+        <td>
+          <h5>Комментарий:</h5>
+        </td>
+        <td>
+          {{ admin_comment }}
+        </td>
+      </tr>
+
     </table>
 
-    <h5>
-      Комментарий администратора
-    </h5>
-    <p>{{ admin_comment }}</p>
-
-    <h4 class="_red" v-if="relatedChangedPrices?.length || relatedOutOfStock?.length" >
-      Прайс нуждается в перерассчёте
-    </h4>
-
-    <div v-if="relatedChangedPrices?.length" >
-      <h5>Позиции с изменившейся ценой</h5>
-      <ul>
-        <li
-            v-for="changedPrice in relatedChangedPrices"
-            :key="changedPrice.one_s_code"
-        >
-          {{ changedPrice.value.split( ';' )[ 1 ] }}
-          -
-          <b>{{ changedPrice.old_price }} ₽</b>
-          <span> => </span>
-          <b>{{ changedPrice.current_price }} ₽</b>
-          <span> - </span>
-          <b :class="{
-            _red: changedPrice.percents > 0,
-            _green: changedPrice.percents < 0 }"
-          > {{ changedPrice.percents }} % </b>
-        </li>
-      </ul>
-    </div>
-
-    <div v-if="relatedOutOfStock?.length" >
-      <h5>Отсутствуют на складе</h5>
-      <ul>
-        <li
-            v-for="changedPrice in relatedOutOfStock"
-            :key="changedPrice.one_s_code"
-        >
-          {{ changedPrice.value.split( ';' )[ 1 ] }}
-          -
-          <b>{{ changedPrice.value.split( ';' )[ 5 ] }} ₽</b>
-        </li>
-      </ul>
-    </div>
-
-    <table style="width: 100%;">
-      <tr>
-        <td>
-          <!-- Превью таблицы -->
-          <div class="mb-3" v-html="htmlResultString"></div>
-        </td>
-        <td style="width: 100px;"></td>
-      </tr>
-    </table>
-
-    <ToastUniversal toastId="price-list_saved"
-                    ref="toastSavedRef">
-      Изменения прайс-листа сохранены
-    </ToastUniversal>
   </div>
 </template>
 
@@ -122,8 +136,6 @@ import {
 } from '@/utils'
 import pluralize from 'pluralizr'
 
-import ToastUniversal from '@/components/ToastUniversal'
-
 // TODO: Расчет этой константы и будущих других вынести в отдельный сервис
 const IS_DEV = window.location.host.includes( 'localhost' )
 const BASE_URL = IS_DEV ?
@@ -131,11 +143,6 @@ const BASE_URL = IS_DEV ?
     'https://r-color.ru'
 
 export default {
-
-  components: {
-    ToastUniversal,
-  },
-
   setup() {
     const route = useRoute()
     const isDev = ref( IS_DEV )
@@ -228,9 +235,16 @@ export default {
 
     const makePriceObject = () => {
       tracer.debug( 'makePriceObject called' )
+
+      // Если имеются измененные прайсы связанных кодов, подставляем иконку с восклицательным знаком
+      let signedHeader = header.value
+      if ( relatedChangedPrices.value.length || relatedOutOfStock.value.length ) {
+        signedHeader = '<svg class="svg-inline--fa fa-triangle-exclamation" aria-hidden="true" focusable="false" data-prefix="fas" data-icon="triangle-exclamation" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path class="" fill="currentColor" d="M256 32c14.2 0 27.3 7.5 34.5 19.8l216 368c7.3 12.4 7.3 27.7 .2 40.1S486.3 480 472 480H40c-14.3 0-27.6-7.7-34.7-20.1s-7-27.8 .2-40.1l216-368C228.7 39.5 241.8 32 256 32zm0 128c-13.3 0-24 10.7-24 24V296c0 13.3 10.7 24 24 24s24-10.7 24-24V184c0-13.3-10.7-24-24-24zm32 224c0-17.7-14.3-32-32-32s-32 14.3-32 32s14.3 32 32 32s32-14.3 32-32z"></path></svg> ' + signedHeader
+      }
+
       return {
         file_name: file_name.value,
-        header: header.value,
+        header: signedHeader,
         toptext: toptext.value,
         table: table.value,
         bottomtext: bottomtext.value,
@@ -278,15 +292,19 @@ export default {
       }
     }
 
+    const goToPriceList = ( file_name ) => {
+      window.open( `${ BASE_URL }/tools/price/db/price-lists/html/${ file_name }.html`, '_blank' ).focus()
+    }
+
     onBeforeMount( async () => {
       await fetchGroups()
       // tracer.debug( 'Groups fetched' )
       await fetchPriceList()
       // tracer.info( 'Price fetched' )
+      await fetchRelatedOneSChangedCodes()
       const priceObject = makePriceObject()
       htmlResultString.value = await parsePriceToHtml( priceObject )
       // tracer.error( 'html result built' )
-      await fetchRelatedOneSChangedCodes()
     })
 
     return {
@@ -295,6 +313,7 @@ export default {
 
       table,
       file_name,
+      update_date,
       header,
       toptext,
       bottomtext,
@@ -309,14 +328,15 @@ export default {
       toastSavedRef,
       relatedChangedPrices,
       relatedOutOfStock,
+      groupName,
+      subgroupName,
 
       // Functions
       pluralize,
       addRow,
       deleteRow,
       route,
-      groupName,
-      subgroupName,
+      goToPriceList,
 
       // Utils
       R,
@@ -325,3 +345,9 @@ export default {
   }
 }
 </script>
+
+<style>
+  .b-price-table__update-date {
+    display: none;
+  }
+</style>
