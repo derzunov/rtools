@@ -84,9 +84,13 @@
             <font-awesome-icon :icon="['fas', 'exclamation-triangle']" />
           </router-link>
         </td>
-
-        <td>
-          {{ R?.find( R.propEq( 'id', priceList[ 'group' ] ) )( groups ).name  }}
+        <td >
+          <span
+              @click="() => { chooseGroupByClickOnPriceGroup( priceList ) }"
+              style="cursor: pointer;"
+          >
+            {{ R?.find( R.propEq( 'id', priceList[ 'group' ] ) )( groups ).name  }}
+          </span>
         </td>
         <td>
           {{
@@ -344,6 +348,10 @@ export default {
       }
     }
 
+    const chooseGroupByClickOnPriceGroup = ( priceList ) => {
+      groupId.value = priceList[ 'group' ]
+    }
+
     onMounted( async () => {
       await fetchGroups()
       // await fetchSubgroups()
@@ -393,6 +401,8 @@ export default {
       goToEditStruct,
       toggleAlphaSort,
       deletePrice,
+
+      chooseGroupByClickOnPriceGroup,
 
       // Tools
       R,
