@@ -15,14 +15,19 @@ export default async ( priceObject ) => {
             <h3 class="b-price__header">${ priceObject.header }</h3>
             <p>${ priceObject.toptext }</p>
             ${ tableCode }
+            <p class="b-price__update-date" >Дата обновления цен на ${ priceObject.header } - ${ ( new Date( priceObject.update_date ) ).toLocaleDateString( 'ru-RU' ) }</p>
             <p>${ priceObject.bottomtext }</p>
             
-            <p class="b-price-table__update-date" >Дата обновления: ${ ( new Date( priceObject.update_date ) ).toLocaleDateString( 'ru-RU' ) }</p>
         <div>
         <style>
+          .b-price__update-date {
+            color: #888;
+            font-size: 0.8rem;
+            text-align: right;
+          }
           .b-price-table {
             border-color: rgb( 185, 190, 185 );
-            margin-bottom: 30px;
+            margin-bottom: 20px;
           }
           .b-price-table .b-price-table__col,
           .b-price-table .b-price-table__thead-col {
