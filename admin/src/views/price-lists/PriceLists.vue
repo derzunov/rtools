@@ -74,11 +74,10 @@
       <tbody>
       <tr v-for="( priceList, index ) in allPriceLists"
           :data-index="index"
-          :key="priceList.id"
+          :key="priceList.file_name"
           class="b-prices-table__row"
           :class="{ 'b-prices-table__row_need-update': priceList.needRecalculate }"
       >
-
         <td>
           <router-link style="text-decoration: none; color: black;" v-if="priceList.needRecalculate" :to="`/prices/show/${ priceList[ 'file_name' ] }`" title="Открыть прайс">
             <font-awesome-icon :icon="['fas', 'exclamation-triangle']" />
