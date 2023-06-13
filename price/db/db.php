@@ -131,6 +131,47 @@
       $this->updateAllPricelistsIndex();
     }
 
+    private function getAllPriceListsNames() {
+      // Сканируем папку с прайсами
+      $allPriceListsFiles = scandir( $this->jsonPricelistsDir );
+      // array_values переиндексирует все ключи массива без пропусков с 0 до конца,
+      // чтобы все элементы были по порядку
+      return array_values( array_filter( $allPriceListsFiles, function( $fileName ) {
+        return $fileName != '.' && $fileName != '..';
+      } ) );
+    }
+    
+    
+    public function resetActualizedPricesByCode( $oneSCode ) {
+
+      // Найти все прайс-листы для кода $oneSCode
+      // Для каждого обнулить is_actualized
+      // После этого обновить индекс
+
+      $allPriceListsFiles = $this->getAllPriceListsNames();
+      foreach ( $allPriceListsFiles as $priceFile ) {
+        $priceListJson = file_get_contents( $this->jsonPricelistsDir . $priceFile );
+        $priceListObject = json_decode(
+                    $priceListJson,
+                    true,
+                    16,
+                    0
+        );
+
+        // Если прайс привязан к этому коду, то обновляем  is_actualized
+        if ( str_contains( $priceListObject[ 'one_s_codes' ], $oneSCode . ';' ) ) {
+          $priceListObject[ 'is_actualized' ] = false;
+
+          $priceListJson = json_encode( $priceListObject );
+          $fd = fopen( $this->jsonPricelistsDir . $priceListObject[ 'file_name' ] . ".json", 'w' ) or die( "Can not create/update " . $priceListObject[ 'file_name' ] . " db json" );
+          fwrite( $fd, getCorrectRu( $priceListJson ) );
+          fclose( $fd );
+        }
+      }
+
+      $this->updateAllPricelistsIndex();
+    }
+
     // Пробежится по файлам прайслистов, создаст массив с именами и нужной инфой и сохранит в индексный json
     // Предполагается вызывать при каждом создании/измененении/удалении прайса
     // Индексный json будет использоваться для страницы со списком прайсов
@@ -179,7 +220,7 @@
       return $allPriceLists;
     }
 
-    public function getAllPriceLists() {
+    public function getAllPriceListsIndex() {
       $allPriceListsJson = file_get_contents( $this->allPriceListsIndexUrl );
 
       $allPriceLists = json_decode(
