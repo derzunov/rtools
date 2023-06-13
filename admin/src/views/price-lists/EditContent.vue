@@ -307,7 +307,7 @@
 
             <div style="text-align: right;" >
               <button v-if="!is_actualized" @click.prevent="markAsActualized" class="btn btn-warning">Актуализировать</button>
-              <button v-if="is_actualized" @click.prevent="markAsNotActualized" class="btn btn-danger">Деактуализировать</button>
+              <button v-if="is_actualized && ( relatedChangedPrices.length || relatedOutOfStock.length )" @click.prevent="markAsNotActualized" class="btn btn-danger">Деактуализировать</button>
               <button type="submit" :disabled="isSaving" class="btn btn-primary">Сохранить</button>
               <router-link to="/prices" type="submit" class="btn btn-secondary">Отмена</router-link>
             </div>
