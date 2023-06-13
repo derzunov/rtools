@@ -483,6 +483,7 @@ export default {
             bottomtext,
             markup_factor,
             change_threshold,
+            actualized_date,
           ],
           async () => {
             const priceObject = makePriceObject()
