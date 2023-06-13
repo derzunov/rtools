@@ -179,6 +179,74 @@
             </div>
 
             <div>
+
+              <!-- Блок обновившихся связанных кодов 1с -->
+
+              <table width="100%">
+                <!-- Изменилась цена -->
+                <tr class="mb-3" v-if="relatedChangedPrices?.length" style="vertical-align: top;">
+                  <td><h5>Изменения цен:</h5></td>
+                  <td>
+
+                    <table width="100%">
+                      <tr v-for="changedPrice in relatedChangedPrices"
+                          :key="changedPrice.one_s_code">
+
+                        <td>{{ changedPrice.one_s_code }}</td>
+                        <td>{{ changedPrice.value.split( ';' )[ 1 ] }}</td>
+                        <td>
+                          <b>{{ changedPrice.old_price }} ₽</b>
+                          <span> => </span>
+                          <b>{{ changedPrice.current_price }} ₽</b>
+                        </td>
+
+                        <td>
+                          <b :class="{ _red: changedPrice.percents > 0, _green: changedPrice.percents < 0 }"
+                          > {{ changedPrice.percents }} % </b>
+                        </td>
+                      </tr>
+                    </table>
+                  </td>
+                </tr>
+
+                <tr v-if="relatedChangedPrices?.length">
+                  <td>
+                    <hr>
+                  </td>
+                  <td>
+                    <hr>
+                  </td>
+                </tr>
+
+                <!-- Нет на складе -->
+                <tr class="mb-3" v-if="relatedOutOfStock?.length" style="vertical-align: top;">
+                  <td><h5>Нет на складе:</h5></td>
+                  <td>
+                    <table width="100%">
+                      <tr v-for="changedPrice in relatedOutOfStock"
+                          :key="changedPrice.one_s_code">
+
+                        <td>{{ changedPrice.one_s_code }}</td>
+                        <td>{{ changedPrice.value.split( ';' )[ 1 ] }}</td>
+                        <td>
+                          <b>{{ changedPrice.old_price }} ₽</b>
+                        </td>
+
+                      </tr>
+                    </table>
+                  </td>
+                </tr>
+
+                <tr v-if="relatedOutOfStock?.length">
+                  <td>
+                    <hr>
+                  </td>
+                  <td>
+                    <hr>
+                  </td>
+                </tr>
+              </table>
+
               <div class="b-price-form-table_wrapper mb-3">
                 <table style="width: 100%;">
                   <tr>
@@ -231,9 +299,14 @@
                     id="admin_comment"
                     rows="5"></textarea>
               </div>
+              <div class="mb-3">
+                <p>is_actualized: {{ is_actualized }}</p>
+                <p>actualized_date: {{ new Date( actualized_date ).toLocaleString( 'ru-Ru' ) }}</p>
+              </div>
             </div>
 
             <div style="text-align: right;" >
+              <button v-if="!is_actualized" @click.prevent="markAsActualized" class="btn btn-warning">Актуализировать</button>
               <button type="submit" :disabled="isSaving" class="btn btn-primary">Сохранить</button>
               <router-link to="/prices" type="submit" class="btn btn-secondary">Отмена</router-link>
             </div>
@@ -280,7 +353,7 @@
 <script>
 import axios from "axios"
 import * as R from "ramda"
-import { onMounted, ref, watch } from 'vue'
+import { onBeforeMount, ref, watch } from 'vue'
 import {
   useRouter,
   useRoute
@@ -333,6 +406,9 @@ export default {
     const subgroup = ref( 0 ) // Enum
     const admin_comment = ref( '' )
 
+    const is_actualized = ref( true )
+    const actualized_date = ref( null )
+
 
     // Table object
     const table = ref({
@@ -366,6 +442,10 @@ export default {
 
     const toastSavedRef = ref( null )
 
+    // 1s changes
+    const relatedChangedPrices = ref( [] )
+    const relatedOutOfStock = ref( [] )
+
     // Functions: -------------------------------------------------------
 
     const fetchPriceList = async () => {
@@ -384,6 +464,9 @@ export default {
           ( R.find( R.propEq( 'id', response.data.group  ) )( groups.value ) ).subgroups
       )
       admin_comment.value = response.data.admin_comment || 'no comments yet'
+
+      is_actualized.value = response.data.is_actualized
+      actualized_date.value = response.data.actualized_date
 
       // Table object
       table.value = response.data.table
@@ -408,7 +491,34 @@ export default {
       )
     }
 
+    const fetchRelatedOneSChangedCodes = async () => {
+      tracer.debug( 'fetchRelatedOneSChangedCodes called' )
+      const reqStr = `${ BASE_URL }/tools/price/?action=changed`
+      const response = await axios.get( reqStr )
+      if ( response.data ) {
+
+        one_s_codes.value.split( ';' ).forEach( ( relatedCode ) => {
+
+          // Есть ли связанный с прайсом код в объекте изменившихся кодов
+          if ( response.data[ relatedCode.trim() ] ) {
+
+            // Отсутствует на складе?
+            if ( response.data[ relatedCode.trim() ].value[ 0 ] === '?' ) {
+              relatedOutOfStock.value.push( response.data[ relatedCode.trim() ] )
+            } else {
+              // Или просто изменилась цена
+              if ( Math.abs( response.data[ relatedCode.trim() ].percents ) >= change_threshold.value ) {
+                // И изменения превысили заданный в прайсе порог
+                relatedChangedPrices.value.push( response.data[ relatedCode.trim() ] )
+              }
+            }
+          }
+        } )
+      }
+    }
+
     const makePriceObject = () => {
+
       return {
         file_name: file_name.value,
         header: header.value,
@@ -422,7 +532,14 @@ export default {
         subgroup: groups.value[ group.value ]?.subgroups[ subgroup.value ]?.id, // subgroup.value - индекс подгруппы в массиве подгрупп
         update_date: Date.now(),
         admin_comment: admin_comment.value,
+        is_actualized: is_actualized.value,
+        actualized_date: actualized_date.value,
       }
+    }
+
+    const markAsActualized = () => {
+      is_actualized.value = true
+      actualized_date.value = Date.now()
     }
 
     const savePrice = async () => {
@@ -468,6 +585,7 @@ export default {
       try {
         await fetchGroups()
         await fetchPriceList()
+        await fetchRelatedOneSChangedCodes()
         const priceObject = makePriceObject()
         htmlResultString.value = await parsePriceToHtml( priceObject )
 
@@ -477,15 +595,14 @@ export default {
       }
     }
 
-    prepareData()
+    onBeforeMount( async () => {
+      await prepareData()
+    } )
 
     watch( [ group ], () => {
       subgroup.value = 0
     } )
 
-    onMounted( async () => {
-      await prepareData()
-    })
 
     return {
       isDev,
@@ -502,13 +619,19 @@ export default {
       one_s_codes,
       groups,
       group,
-      // subgroups,
       subgroup,
       admin_comment,
+      is_actualized,
+      actualized_date,
+
+      relatedChangedPrices,
+      relatedOutOfStock,
+
       toastSavedRef,
 
       // Functions
       savePrice,
+      markAsActualized,
       pluralize,
       addRow,
       deleteRow,

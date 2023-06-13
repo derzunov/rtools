@@ -114,8 +114,8 @@
         </td>
 
         <td>
-          <span class="_gray" :title="priceList[ 'admin_comment' ].substring( 0, 500 ) ">
-             {{ priceList[ 'admin_comment' ].substring( 0, 30 ).trim() + '...' }}
+          <span class="_gray" :title="priceList[ 'admin_comment' ]?.substring( 0, 500 ) ">
+             {{ priceList[ 'admin_comment' ]?.substring( 0, 30 ).trim() + '...' }}
           </span>
         </td>
         <td class="right">

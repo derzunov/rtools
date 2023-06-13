@@ -399,6 +399,9 @@ export default {
 
     const subgroup = ref( 0 ) // или Enum
 
+    const is_actualized = ref( true )
+    const actualized_date = ref( Date.now() )
+
     // Table object
     const table = ref( {
       thead: {
@@ -490,6 +493,9 @@ export default {
         group: groups.value[ group.value ].id, // group.value - индекс группы в массиве групп для фильтрации и сортировки по нему просто заберём наш id
         subgroup: groups.value[ group.value ].subgroups[ subgroup.value ].id, // subgroup.value - индекс подгруппы в массиве подгрупп
         update_date: Date.now(),
+        admin_comment: '',
+        is_actualized: true,
+        actualized_date: Date.now(),
       }
     }
 
@@ -606,8 +612,10 @@ export default {
       one_s_codes,
       groups,
       group,
-
       subgroup,
+
+      is_actualized,
+      actualized_date,
 
       toastSavedRef,
 

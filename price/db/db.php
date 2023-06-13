@@ -163,6 +163,9 @@
         $FinalPriceListsItem[ 'change_threshold' ] = $priceListObject[ 'change_threshold' ];
         $FinalPriceListsItem[ 'admin_comment' ] = $priceListObject[ 'admin_comment' ];
 
+        $FinalPriceListsItem[ 'is_actualized' ] = $priceListObject[ 'is_actualized' ];
+        $FinalPriceListsItem[ 'actualized_date' ] = $priceListObject[ 'actualized_date' ];
+
         array_push( $allPriceLists, $FinalPriceListsItem );
       }
 

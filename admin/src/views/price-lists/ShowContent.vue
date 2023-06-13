@@ -169,6 +169,9 @@ export default {
     const update_date = ref( 0 )
     const admin_comment = ref( '' )
 
+    const is_actualized = ref( true )
+    const actualized_date = ref( null )
+
     // Table object
     const table = ref({
       thead: {
@@ -216,6 +219,9 @@ export default {
       update_date.value = response.data.update_date
       admin_comment.value = response.data.admin_comment || 'no comments yet'
 
+      is_actualized.value = response.data.is_actualized
+      actualized_date.value = response.data.actualized_date
+
       const _getGroup = () => {
         return groups.value.filter( groupItem => groupItem.id === group.value )[ 0 ]
       }
@@ -256,6 +262,8 @@ export default {
         subgroup: subgroup.value,
         update_date: update_date.value,
         admin_comment: admin_comment.value,
+        is_actualized: is_actualized.value,
+        actualized_date: actualized_date.value,
       }
     }
 
