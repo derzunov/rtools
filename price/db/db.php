@@ -160,7 +160,6 @@
         $FinalPriceListsItem[ 'group' ] = $priceListObject[ 'group' ];
         $FinalPriceListsItem[ 'subgroup' ] = $priceListObject[ 'subgroup' ];
         $FinalPriceListsItem[ 'one_s_codes' ] = $priceListObject[ 'one_s_codes' ];
-        $FinalPriceListsItem[ 'id' ] = $priceListObject[ 'id' ];
         $FinalPriceListsItem[ 'change_threshold' ] = $priceListObject[ 'change_threshold' ];
         $FinalPriceListsItem[ 'admin_comment' ] = $priceListObject[ 'admin_comment' ];
 

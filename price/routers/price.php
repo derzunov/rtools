@@ -216,6 +216,8 @@
         // Найти позиции с изменившейся ценой
         // Посчитать размер изменившейся цены в процентах
         // Сохранить предыдущую и текущую цены
+
+        // * Проверить, привязанные прайс-листы текущего объекта обновляемой позиции (если он есть) на предмет их текущей актуализации. и если все они числятся актуализированными, а наши прошлое значение текущей цены и значение цены в db
         // Собрать объект позиции: // Положить этот объект в объект базы ( $updatedChangedPrices ). Ключ - код 1с
         // "00-00002244": {
         //     "one_s_code": "00-00002244",
@@ -225,21 +227,22 @@
         //     "current_price": 222,
         //     "increased": true,
         //     "date": 1684933559122
+        //     "
         // }
 
-        foreach ( $newPricesObject as $currentId => $newPriceItemString ) {
+        foreach ( $newPricesObject as $oneSCode => $newPriceItemString ) {
 
             if ( isset( explode( ';', $newPriceItemString )[ 2 ] ) ) {
 
                 
-                if ( !isset( $oldPricesObject[ $currentId ] ) ) {
+                if ( !isset( $oldPricesObject[ $oneSCode ] ) ) {
                     // Товар новый. Добавился в этой номенклатуре. Помечаем.
                     $newPriceItemString = 'NEW: ' . $newPriceItemString;
                     // Что-то потом делаем, а может и не делаем :)
                 } else {
-                    // Товар уже числится в нашей базе. Работаем дальше
+                    // Товар уже числится в нашей БД цен (index.json). Работаем дальше
 
-                    $oldPrice = explode( ';', $oldPricesObject[ $currentId ] )[ 5 ];
+                    $oldPrice = explode( ';', $oldPricesObject[ $oneSCode ] )[ 5 ];
                     $newPrice = explode( ';', $newPriceItemString )[ 5 ];
                     
                     // Цена изменилась
@@ -250,19 +253,19 @@
                     // и проставляем знак '?' в начале строки-значения
                     if ( $oldPrice != $newPrice || $newPriceItemString[ 0 ] == '?' ) {
 
-                        if ( !isset( $updatedChangedPrices[ $currentId ] ) ) {
-                            $updatedChangedPrices[ $currentId ] = [];
+                        if ( !isset( $updatedChangedPrices[ $oneSCode ] ) ) {
+                            $updatedChangedPrices[ $oneSCode ] = [];
                         }
 
                         $percents = intval( ( $newPrice * 100 / $oldPrice ) - 100, 10 );
 
-                        $updatedChangedPrices[ $currentId ] [ 'one_s_code' ] = $currentId;
-                        $updatedChangedPrices[ $currentId ] [ 'value' ] = $newPriceItemString;
-                        $updatedChangedPrices[ $currentId ] [ 'old_price' ] = $oldPrice;
-                        $updatedChangedPrices[ $currentId ] [ 'current_price' ] = $newPrice;
-                        $updatedChangedPrices[ $currentId ] [ 'percents' ] = $percents;
-                        $updatedChangedPrices[ $currentId ] [ 'increased' ] = $percents > 0 ? true : false;
-                        $updatedChangedPrices[ $currentId ] [ 'date' ] = time() * 1000;
+                        $updatedChangedPrices[ $oneSCode ] [ 'one_s_code' ] = $oneSCode;
+                        $updatedChangedPrices[ $oneSCode ] [ 'value' ] = $newPriceItemString;
+                        $updatedChangedPrices[ $oneSCode ] [ 'old_price' ] = $oldPrice;
+                        $updatedChangedPrices[ $oneSCode ] [ 'current_price' ] = $newPrice;
+                        $updatedChangedPrices[ $oneSCode ] [ 'percents' ] = $percents;
+                        $updatedChangedPrices[ $oneSCode ] [ 'increased' ] = $percents > 0 ? true : false;
+                        $updatedChangedPrices[ $oneSCode ] [ 'date' ] = time() * 1000;
                     }
                 }
             }
