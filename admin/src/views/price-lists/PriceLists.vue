@@ -249,6 +249,10 @@ export default {
     }
 
     const setNeedUpdate = ( priceList ) => {
+
+      // Если прайс помечен как актуальный, то и нечего дальше по кодам ходить
+      if ( priceList.is_actualized ) return false
+
       priceList.one_s_codes.split( ';' ).every( ( code ) => {
         if ( changedPriceCodes.value[ code.trim() ] &&
             ( ( Math.abs( changedPriceCodes.value[ code.trim() ].percents ) >= priceList.change_threshold ) ||

@@ -182,7 +182,7 @@
 
               <!-- Блок обновившихся связанных кодов 1с -->
 
-              <table width="100%">
+              <table v-if="!is_actualized" width="100%">
                 <!-- Изменилась цена -->
                 <tr class="mb-3" v-if="relatedChangedPrices?.length" style="vertical-align: top;">
                   <td><h5>Изменения цен:</h5></td>
@@ -307,6 +307,7 @@
 
             <div style="text-align: right;" >
               <button v-if="!is_actualized" @click.prevent="markAsActualized" class="btn btn-warning">Актуализировать</button>
+              <button v-if="is_actualized" @click.prevent="markAsNotActualized" class="btn btn-danger">Деактуализировать</button>
               <button type="submit" :disabled="isSaving" class="btn btn-primary">Сохранить</button>
               <router-link to="/prices" type="submit" class="btn btn-secondary">Отмена</router-link>
             </div>
@@ -483,10 +484,12 @@ export default {
             bottomtext,
             markup_factor,
             change_threshold,
+            is_actualized,
             actualized_date,
           ],
           async () => {
             const priceObject = makePriceObject()
+            console.table( priceObject )
             htmlResultString.value = await parsePriceToHtml( priceObject )
           }
       )
@@ -541,6 +544,10 @@ export default {
     const markAsActualized = () => {
       is_actualized.value = true
       actualized_date.value = Date.now()
+    }
+
+    const markAsNotActualized = () => {
+      is_actualized.value = false
     }
 
     const savePrice = async () => {
@@ -633,6 +640,7 @@ export default {
       // Functions
       savePrice,
       markAsActualized,
+      markAsNotActualized,
       pluralize,
       addRow,
       deleteRow,

@@ -159,7 +159,7 @@
         );
 
         // Если прайс привязан к этому коду, то обновляем  is_actualized
-        if ( str_contains( $priceListObject[ 'one_s_codes' ], $oneSCode . ';' ) ) {
+        if ( str_contains( $priceListObject[ 'one_s_codes' ], $oneSCode ) ) {
           $priceListObject[ 'is_actualized' ] = false;
 
           $priceListJson = json_encode( $priceListObject );
