@@ -19,57 +19,72 @@
       <div class="col-md-2 center"></div>
     </div>
 
-    <form method="post"
-          id="ipm-edit-1s"
-          class="mb-5 col-md-8"
-          :action="`${ BASE_URL }/`"
-          @submit.prevent="saveOneSChangedCodes">
+    <div class="mb-5 col-md-12">
 
       <!-- Позиции с изменившейся ценой -->
       <h5>Позиции с изменившейся ценой</h5>
-      <ul>
-        <li class="mb-3"
-            v-for="( chengedCodeItem ) in changedPrice"
-            :key="chengedCodeItem.id"
-        >
-          <i>{{ chengedCodeItem.one_s_code }}</i>
-          -
-          {{ chengedCodeItem.value?.split( ';' )[ 1 ] }}
-          -
-          <b>{{ chengedCodeItem.old_price }} ₽</b>
-          <span> => </span>
-          <b>{{ chengedCodeItem.current_price }} ₽</b>
-          <span> | </span>
-          <b :class="{
-            _red: chengedCodeItem.percents > 0,
-            _green: chengedCodeItem.percents < 0 }"
-          >{{ chengedCodeItem.percents }}%</b>
-          <span> - </span>
-          <span @click.prevent="() => deleteChangedOneSPriceByCode( chengedCodeItem.one_s_code )" class="">
-            <font-awesome-icon
-                class="edit-control edit-control_danger"
-                @click="() => { return 0; }"
-                :icon="['fas', 'xmark']"
-            />
-          </span>
-        </li>
-      </ul>
+      <table width="100%" class="table center mb-5">
+        <tbody>
+          <tr class="mb-3"
+              v-for="( chengedCodeItem ) in changedPrice"
+              :key="chengedCodeItem.id"
+          >
+            <td class="left">
+              <i>{{ chengedCodeItem.one_s_code }}</i>
+            </td>
+            <td>
+              {{ chengedCodeItem.value?.split( ';' )[ 1 ] }}
+            </td>
+
+            <td class="center">
+              {{ chengedCodeItem.value?.split( ';' )[ 3 ] }}
+            </td>
+
+            <td>
+              <b>{{ chengedCodeItem.old_price }}</b>
+            </td>
+
+            <td>
+              <b>{{ chengedCodeItem.current_price }} ₽</b>
+            </td>
+
+            <td>
+              <b :class="{
+                _red: chengedCodeItem.percents > 0,
+                _green: chengedCodeItem.percents < 0 }"
+              >{{ chengedCodeItem.percents }}%</b>
+            </td>
+            <td>
+              <span @click.prevent="() => deleteChangedOneSPriceByCode( chengedCodeItem.one_s_code )" class="">
+              <font-awesome-icon
+                  class="edit-control edit-control_danger"
+                  @click="() => { return 0; }"
+                  :icon="['fas', 'xmark']"
+              />
+            </span>
+            </td>
+          </tr>
+        </tbody>
+      </table>
 
       <!-- Нет в наличии -->
-      <h5>Нет на складе</h5>
-      <ul>
-        <li class="mb-3"
-            v-for="( outItem ) in outOfStock"
-            :key="outItem.id"
-        >
-          <i>{{ outItem.one_s_code }}</i>
-          -
-          {{ outItem.value?.split( ';' )[ 1 ] }}
-<!--          - -->
-<!--          <b>{{ outItem.value?.split( ';' )[ 5 ] }} ₽</b>-->
-        </li>
-      </ul>
-    </form>
+      <h5>Нет на остатках:</h5>
+      <table class="table">
+        <tbody>
+          <tr class="mb-3"
+              v-for="( outItem ) in outOfStock"
+              :key="outItem.id"
+          >
+            <td>
+              <i>{{ outItem.one_s_code }}</i>
+            </td>
+            <td>
+              {{ outItem.value?.split( ';' )[ 1 ] }}
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
   </div>
 </template>
 
@@ -110,17 +125,6 @@ export default {
       }
     }
 
-    // Depricated
-    const saveOneSChangedCodes = async () => {
-      const reqStr = `${ BASE_URL }/tools/price/`
-      const formData = new FormData()
-
-      formData.append( 'action', 'codes' )
-      formData.append( 'codes', JSON.stringify( {...changedPrice, ...outOfStock } ) )
-
-      await axios.post( reqStr, formData )
-    }
-
     const deleteChangedOneSPriceByCode = async ( one_s_changed_code ) => {
       tracer.debug( `deleteChangedOneSPriceByCode called: Delete price with one_s_changed_code: ${ one_s_changed_code })` )
 
@@ -140,7 +144,6 @@ export default {
       changedPrice,
       outOfStock,
 
-      saveOneSChangedCodes,
       deleteChangedOneSPriceByCode,
     }
   }

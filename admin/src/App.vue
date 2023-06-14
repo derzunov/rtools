@@ -172,6 +172,9 @@ button {
 .right {
   text-align: right;
 }
+.left {
+  text-align: left;
+}
 .ipm-top-menu {
   margin-top: 40px;
   margin-bottom: 25px;
