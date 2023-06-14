@@ -64,13 +64,15 @@
             </td>
 
             <td class="right">
-              <p>{{ new Date( chengedCodeItem.old_date ).toLocaleDateString() }}</p>
-              <b>{{ chengedCodeItem.old_price }}</b>
+              <b style="cursor: context-menu;" :title="new Date( chengedCodeItem.old_date ).toLocaleDateString()">
+                {{ chengedCodeItem.old_price }}
+              </b>
             </td>
 
             <td class="right">
-              <p>{{ new Date( chengedCodeItem.date ).toLocaleDateString() }}</p>
-              <b>{{ chengedCodeItem.current_price }}</b>
+              <b style="cursor: context-menu;" :title="new Date( chengedCodeItem.date ).toLocaleDateString()">
+                {{ chengedCodeItem.current_price }}
+              </b>
             </td>
 
             <td>
