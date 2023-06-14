@@ -27,7 +27,7 @@
         <tbody>
           <tr class="mb-3"
               v-for="( chengedCodeItem ) in changedPrice"
-              :key="chengedCodeItem.id"
+              :key="chengedCodeItem.one_s_code"
           >
             <td class="left">
               <i>{{ chengedCodeItem.one_s_code }}</i>
@@ -36,7 +36,7 @@
               {{ chengedCodeItem.value?.split( ';' )[ 1 ] }}
             </td>
 
-            <td class="center">
+            <td>
               {{ chengedCodeItem.value?.split( ';' )[ 3 ] }}
             </td>
 
@@ -45,7 +45,7 @@
             </td>
 
             <td>
-              <b>{{ chengedCodeItem.current_price }} ₽</b>
+              <b>{{ chengedCodeItem.current_price }}</b>
             </td>
 
             <td>
@@ -55,13 +55,28 @@
               >{{ chengedCodeItem.percents }}%</b>
             </td>
             <td>
-              <span @click.prevent="() => deleteChangedOneSPriceByCode( chengedCodeItem.one_s_code )" class="">
-              <font-awesome-icon
-                  class="edit-control edit-control_danger"
-                  @click="() => { return 0; }"
-                  :icon="['fas', 'xmark']"
-              />
-            </span>
+              <!-- Модалка подтверждения удаления -->
+              <ModalUniversal :modalId="`delete_position_${ chengedCodeItem.one_s_code }`"
+                              title="Подтверждение удаления"
+                              actionButtonText="Удалить"
+                              :action="() => deleteChangedOneSPriceByCode( chengedCodeItem.one_s_code )"
+              >
+                <template #trigger>
+
+                  <span>
+                    <font-awesome-icon
+                        class="edit-control edit-control_danger"
+                        @click="() => { return 0 }"
+                        :icon="[ 'fas', 'xmark' ]"
+                    />
+                  </span>
+
+                </template>
+                <div style="text-align: left;">
+                  <p>Подтвердите удаление позиции:</p>
+                  <p>{{ chengedCodeItem.value?.split( ';' )[ 1 ] }}</p>
+                </div>
+              </ModalUniversal>
             </td>
           </tr>
         </tbody>
@@ -92,6 +107,7 @@
 import axios from 'axios'
 import { onMounted, ref } from 'vue'
 import { tracer } from '@/utils'
+import ModalUniversal from '@/components/ModalUniversal'
 
 // TODO: Расчет этой константы и будущих других вынести в отдельный сервис
 const IS_DEV = window.location.host.includes( 'localhost' )
@@ -100,6 +116,9 @@ const BASE_URL = IS_DEV ?
     'https://r-color.ru'
 
 export default {
+  components: {
+    ModalUniversal,
+  },
 
   setup() {
     const changedPrice = ref( [] )
@@ -132,7 +151,7 @@ export default {
       await axios.delete( requestUrl, {
         data: new URLSearchParams( { one_s_changed_code } )
       } )
-      fetchOneSChangedCodes()
+      await fetchOneSChangedCodes()
     }
 
     onMounted( async () => {
