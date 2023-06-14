@@ -220,7 +220,7 @@
 
                 <!-- Нет на складе -->
                 <tr class="mb-3" v-if="relatedOutOfStock?.length" style="vertical-align: top;">
-                  <td><h5>Нет на складе:</h5></td>
+                  <td><h5>Нет на остатках:</h5></td>
                   <td>
                     <table width="100%">
                       <tr v-for="changedPrice in relatedOutOfStock"
@@ -306,9 +306,30 @@
             </div>
 
             <div style="text-align: right;" >
-              <button v-if="!is_actualized" @click.prevent="markAsActualized" class="btn btn-warning">Актуализировать</button>
+<!--              <button v-if="!is_actualized" @click.prevent="markAsActualized" class="btn btn-warning">Актуализировать</button>-->
+              <!-- Модалка подтверждения актуализации -->
+              <ModalUniversal modalId="actualize"
+                              title="Подтверждение актуализации"
+                              actionButtonText="Подтвердить и сохранить прайс"
+                              :action="() => { markAsActualized(); savePrice(); }"
+                              v-if="!is_actualized"
+              >
+                <template #trigger>
+
+                  <button @click.prevent="() => { return }"
+                          class="btn btn-warning"
+                          title="Актуализировать и сохранить"
+                          style="margin-left: 5px; border: 1px solid #eee;">
+                    Актуализировать
+                  </button>
+
+                </template>
+                <div style="text-align: left;">
+                  Пересчёт цен завершён, цены в прайсе актуализированы
+                </div>
+              </ModalUniversal>
               <button v-if="is_actualized && ( relatedChangedPrices.length || relatedOutOfStock.length )" @click.prevent="markAsNotActualized" class="btn btn-danger">Деактуализировать</button>
-              <button type="submit" :disabled="isSaving" class="btn btn-primary">Сохранить</button>
+              <button type="submit" :disabled="isSaving" class="btn btn-primary" title="Сохранить без актуализации">Сохранить</button>
               <router-link to="/prices" type="submit" class="btn btn-secondary">Отмена</router-link>
             </div>
           </td>

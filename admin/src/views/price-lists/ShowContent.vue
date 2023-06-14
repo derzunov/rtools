@@ -31,9 +31,9 @@
     <!-- Превью таблицы -->
     <div class="mb-3" v-html="htmlResultString"></div>
 
-    <div class="mb-3">
-      Дата обновления
-      <span style="cursor: pointer;" @click="goToPriceList( file_name )">{{ file_name }}.html</span>
+    <div class="mb-3 right" style="font-size: 0.8rem;">
+      Дата сохранения
+      <b style="cursor: pointer;" @click="goToPriceList( file_name )">{{ file_name }}.html</b>
       : {{ new Date( update_date ).toLocaleString() }}
     </div>
 
@@ -79,7 +79,7 @@
 
       <!-- Нет на складе -->
       <tr class="mb-3" v-if="relatedOutOfStock?.length" style="vertical-align: top;">
-        <td><h5>Нет на складе:</h5></td>
+        <td><h5>Нет на остатках:</h5></td>
         <td>
           <table width="100%">
             <tr v-for="changedPrice in relatedOutOfStock"
@@ -117,7 +117,7 @@
       </tr>
 
     </table>
-
+    <br>
   </div>
 </template>
 

@@ -79,7 +79,7 @@
           :class="{ 'b-prices-table__row_need-update': priceList.needRecalculate }"
       >
         <td>
-          <router-link style="text-decoration: none; color: black;" v-if="priceList.needRecalculate" :to="`/prices/show/${ priceList[ 'file_name' ] }`" title="Открыть прайс">
+          <router-link style="text-decoration: none; color: black;" v-if="priceList.needRecalculate" :to="`/prices/show/${ priceList[ 'file_name' ] }`" title="Требуется пересчёт цен">
             <font-awesome-icon :icon="['fas', 'exclamation-triangle']" />
           </router-link>
         </td>
