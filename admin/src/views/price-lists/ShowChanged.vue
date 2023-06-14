@@ -24,6 +24,29 @@
       <!-- Позиции с изменившейся ценой -->
       <h5>Позиции с изменившейся ценой</h5>
       <table width="100%" class="table center mb-5">
+        <thead>
+          <tr>
+            <th class="left">
+              Код 1с
+            </th>
+            <th>
+              Наименование
+            </th>
+            <th>
+              Ед. Изм.
+            </th>
+            <th>
+              Старая цена
+            </th>
+            <th>
+              Новая цена
+            </th>
+            <th>
+              %
+            </th>
+            <th></th>
+          </tr>
+        </thead>
         <tbody>
           <tr class="mb-3"
               v-for="( chengedCodeItem ) in changedPrice"
