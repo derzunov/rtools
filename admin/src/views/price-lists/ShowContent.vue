@@ -54,9 +54,13 @@
               <td>{{ changedPrice.one_s_code }}</td>
               <td>{{ changedPrice.value.split( ';' )[ 1 ] }}</td>
               <td>
-                <b>{{ changedPrice.old_price }} ₽</b>
+                <router-link target="_blank" style="color: black; text-decoration: none;" to="/prices/changed" title="Перейти к изменениям цен">
+                  <b>{{ changedPrice.old_price }} ₽</b>
+                </router-link>
                 <span> => </span>
-                <b>{{ changedPrice.current_price }} ₽</b>
+                <router-link target="_blank" style="color: black; text-decoration: none;" to="/prices/changed" title="Перейти к изменениям цен">
+                  <b>{{ changedPrice.current_price }} ₽</b>
+                </router-link>
               </td>
 
               <td>

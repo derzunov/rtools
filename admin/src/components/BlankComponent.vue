@@ -5,22 +5,21 @@
       На этой странице будет отображажаться дашборд всех подсистем
     </p>
 
-    <h3>Prices</h3>
-    <ul>
-      <li>
-        <router-link class="" to="/prices/add">Добавить прайс</router-link>
-      </li>
-      <li>
-        <router-link class="" to="/prices">Список прайсов</router-link>
-      </li>
-    </ul>
+    <h3>Прайсы</h3>
+
+    <router-link class="" to="/prices/add">Добавить</router-link>
+    <span> | </span>
+    <router-link class="" to="/prices">Список</router-link>
+    <span> | </span>
+    <router-link class="" to="/prices/groups/show">Группы</router-link>
+
 
     <h3>IPM</h3>
-    <ul>
-      <li><router-link class="" to="/ipm/add">Добавить</router-link></li>
-      <li><router-link class="" to="/ipm">Список</router-link></li>
-      <li><router-link class="" to="/variants/edit">Варианты отображения</router-link></li>
-    </ul>
+    <router-link class="" to="/ipm/add">Добавить</router-link>
+    <span> | </span>
+    <router-link class="" to="/ipm">Список</router-link>
+    <span> | </span>
+    <router-link class="" to="/variants/edit">Варианты отображения</router-link>
   </div>
 </template>
 
@@ -38,15 +37,11 @@ export default {
 h3 {
   margin: 40px 0 0;
 }
-ul {
-  list-style-type: none;
-  padding: 0;
-}
-li {
-  display: inline-block;
-  margin: 0 10px;
-}
 a {
   color: #42b983;
+}
+
+span {
+  color: lightgray;
 }
 </style>

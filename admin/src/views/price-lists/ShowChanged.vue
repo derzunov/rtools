@@ -22,23 +22,23 @@
     <div class="mb-5 col-md-12">
 
       <!-- Позиции с изменившейся ценой -->
-      <h5>Позиции с изменившейся ценой</h5>
-      <table width="100%" class="table center mb-5">
+      <h5 class="bold">Изменения цен</h5>
+      <table width="100%" class="table center mb-5 b-changes-table">
         <thead>
           <tr>
             <th class="left">
               Код 1с
             </th>
-            <th>
+            <th class="left">
               Наименование
             </th>
             <th>
               Ед. Изм.
             </th>
-            <th>
+            <th class="right">
               Старая цена
             </th>
-            <th>
+            <th class="right">
               Новая цена
             </th>
             <th>
@@ -48,26 +48,26 @@
           </tr>
         </thead>
         <tbody>
-          <tr class="mb-3"
+          <tr class="mb-3 b-changes-table__row"
               v-for="( chengedCodeItem ) in changedPrice"
               :key="chengedCodeItem.one_s_code"
           >
             <td class="left">
               <i>{{ chengedCodeItem.one_s_code }}</i>
             </td>
-            <td>
+            <td class="left">
               {{ chengedCodeItem.value?.split( ';' )[ 1 ] }}
             </td>
 
-            <td>
+            <td class="_gray">
               {{ chengedCodeItem.value?.split( ';' )[ 3 ] }}
             </td>
 
-            <td>
+            <td class="right">
               <b>{{ chengedCodeItem.old_price }}</b>
             </td>
 
-            <td>
+            <td class="right">
               <b>{{ chengedCodeItem.current_price }}</b>
             </td>
 
@@ -93,7 +93,6 @@
                         :icon="[ 'fas', 'xmark' ]"
                     />
                   </span>
-
                 </template>
                 <div style="text-align: left;">
                   <p>Подтвердите удаление позиции:</p>
@@ -106,7 +105,7 @@
       </table>
 
       <!-- Нет в наличии -->
-      <h5>Нет на остатках:</h5>
+      <h5 class="bold">Нет на остатках:</h5>
       <table class="table">
         <tbody>
           <tr class="mb-3"
@@ -191,3 +190,14 @@ export default {
   }
 }
 </script>
+
+<style scoped>
+  .b-changes-table {}
+  .b-changes-table .edit-control {
+    visibility: hidden;
+  }
+
+  .b-changes-table__row:hover .edit-control {
+    visibility: visible;
+  }
+</style>
