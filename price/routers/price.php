@@ -102,6 +102,7 @@
                 $oneSFileLastUpdateTimestamp = filectime( $_ONE_S_PRICE_FILE_PATH );
 
                 // Если файл из 1с был обновлен позднее нашей БД, значит нужно обновить базу
+                // TODO: !Нужно добавить люфт в 1 сутки, например ( то есть файл должен быть старше минимум на сутки )
                 if ( $oneSFileLastUpdateTimestamp > $dbLastUpdateTimestamp ) {
                     $oneSPriceContent = file_get_contents( $_ONE_S_PRICE_FILE_PATH );
 
@@ -123,7 +124,7 @@
                     foreach ( $oldDb as $oldPriceOneSId => $oldPriceString ) {
                         if ( !isset( $oneSPriceObject[ $oldPriceOneSId ] ) ) {
                             if ( $oldPriceString [ 0 ] != '?' ) {
-                                $oneSPriceObject[ $oldPriceOneSId ] = '???' . $oldPriceString;
+                                $oneSPriceObject[ $oldPriceOneSId ] = '?' . $oldPriceString;
                             } else {
                                 // Мы уже знаем, что товар отсутствовал, дополнительный знак вопроса не ставим
                                 $oneSPriceObject[ $oldPriceOneSId ] = $oldPriceString;
@@ -250,20 +251,24 @@
                     // и проставляем знак '?' в начале строки-значения
                     if ( $oldPrice != $newPrice || $newPriceItemString[ 0 ] == '?' ) {
 
+                        $oldDate = 0;
+
                         if ( !isset( $updatedChangedPrices[ $oneSCode ] ) ) {
                             // В нашей БД изменений нет записи о прошлых изменениях цены этой позиции
                             $updatedChangedPrices[ $oneSCode ] = [];
+                            // Значит и старой даты у нас нет и нужно ее получить 
+                            // из даты последнего обновления нашей !!!базы цен!!!              
+                            $oldDate = $db->getLastUpdateTimestamp() * 1000;
                         } else {
 
-                            // TODO: !!! Если объект уже есть в !!!базе изменений!!!  (а не в базе цен!)
-                            // Прикапывать как старую цену $oldPrice, ту цену, которая была старой ценой в объекте изменений, а не в нашей текущей БД цен, которую мы сейчас обновляем !!!
-
-                            // *Следующий шаг, хранить историю изменений, а не только было/стало
+                            // * Следующий шаг, хранить историю изменений, а не только было/стало (но скорее всего не нужно)
 
                             // В нашей БД изменений уже есть запись о прошлом изменении цены этой позиции
                             // Поэтому старой ценой будет не запись из текущей номенклатуры ( бд цен )
                             // А будет та самая старая цена из уже имеющейся записи в бд изменений
                             $oldPrice = $updatedChangedPrices[ $oneSCode ][ 'old_price' ];
+                            // То же самое и со старой датой
+                            $oldDate = $updatedChangedPrices[ $oneSCode ] [ 'old_date' ];
                         }
 
                         $percents = intval( ( $newPrice * 100 / $oldPrice ) - 100, 10 );
@@ -275,6 +280,7 @@
                         $updatedChangedPrices[ $oneSCode ] [ 'percents' ] = $percents;
                         $updatedChangedPrices[ $oneSCode ] [ 'increased' ] = $percents > 0 ? true : false;
                         $updatedChangedPrices[ $oneSCode ] [ 'date' ] = time() * 1000;
+                        $updatedChangedPrices[ $oneSCode ] [ 'old_date' ] = $oldDate;
 
                         // TODO: Обнуляем все is_actualized для всех прайс-листов связанных с изменившимся 1с-кодом
                         $db->resetActualizedPricesByCode( $oneSCode );

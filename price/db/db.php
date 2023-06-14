@@ -86,7 +86,7 @@
     public function updateDb( $newPriceObject ) {
 
       foreach ( $newPriceObject as $newPriceOneSId => $newPriceString ) {
-        // Обновляем все новопришедшие позиции
+        // Обновляем все новопришедшие позиции и дописываем к ним время обновления
         $this->allDb[ $newPriceOneSId ] = $newPriceString;
       }
 
