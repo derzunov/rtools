@@ -49,6 +49,10 @@
                 case 'changed':
                     sendJsonResponse( $db->getChangedPricesDb() );
                     break;
+                    
+                case 'related-changed':
+                    sendJsonResponse( $db->getRelatedChangedPrices() );
+                    break;
                 case 'all':
                     sendJsonResponse( $db->getAllPriceListsIndex() );
                     break;

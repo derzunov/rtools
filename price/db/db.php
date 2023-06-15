@@ -74,8 +74,33 @@
       return $this->groupsDb;
     }
 
+    // Все изменившиеся в цене 1с-позиции
     public function getChangedPricesDb() {
       return $this->changedPricesDb;
+    }
+    
+    // Только те измененившиеся 1с-позиции, которые упомянуты в прайс-листах
+    public function getRelatedChangedPrices() {
+      $relatedChangedPrices = [];
+
+      foreach( $this->getAllPriceListsIndex() as $priceListObject ) {
+        // Если привязанных к прайсу 1с-кодов нет, то идем к следующему прайсу
+        if ( !strlen( $priceListObject[ 'one_s_codes' ] ) ) {
+          break;
+        }
+        // Прикапываем каждый упомянутый в прайсе 1c-код
+        foreach ( explode( ';', $priceListObject[ 'one_s_codes' ] ) as $relatedOneSCode ) {
+          $relatedOneSCode = trim( $relatedOneSCode );
+
+          // Есть ли вообще такой 1с-код в нашей базе цен 1с
+          if ( isset( $this->changedPricesDb[ $relatedOneSCode ] ) ) {
+            // Есть, прикапываем
+            $relatedChangedPrices[ $relatedOneSCode ] = $this->changedPricesDb[ $relatedOneSCode ];
+          }
+        }
+      }
+
+      return $relatedChangedPrices;
     }
 
     public function getLastUpdateTimestamp() {
