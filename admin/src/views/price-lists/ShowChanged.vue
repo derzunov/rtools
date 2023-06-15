@@ -21,6 +21,16 @@
 
     <div class="mb-5 col-md-12">
 
+      <div class="form-check form-switch">
+        <input v-model="isShowAll"
+               class="form-check-input"
+               type="checkbox"
+               id="show-all-changes-checkbox"
+               style="cursor: pointer;"
+        >
+        <label class="form-check-label" for="show-all-changes-checkbox">Показать все изменившиеся цены</label>
+      </div>
+
       <!-- Позиции с изменившейся ценой -->
       <h5 class="bold">Изменения цен</h5>
       <table width="100%" class="table center mb-5 b-changes-table">
@@ -131,7 +141,7 @@
 
 <script>
 import axios from 'axios'
-import { onMounted, ref } from 'vue'
+import { onBeforeMount, watch, ref } from 'vue'
 import { tracer } from '@/utils'
 import ModalUniversal from '@/components/ModalUniversal'
 
@@ -147,11 +157,16 @@ export default {
   },
 
   setup() {
+    const isShowAll = ref( false ) // Показать все изменившиеся цены или только упомянутые в прайсах
     const changedPrice = ref( [] )
     const outOfStock = ref( [] )
 
     const fetchOneSChangedCodes = async () => {
-      const reqStr = `${ BASE_URL }/tools/price/?action=changed`
+      let reqStr = `${ BASE_URL }/tools/price/?action=changed`
+      if ( !isShowAll.value ) {
+        reqStr = `${ BASE_URL }/tools/price/?action=related-changed`
+      }
+
       const response = await axios.get( reqStr )
       if ( response.data ) {
         // Обнуляем списки
@@ -180,12 +195,17 @@ export default {
       await fetchOneSChangedCodes()
     }
 
-    onMounted( async () => {
+    onBeforeMount( async () => {
       await fetchOneSChangedCodes()
+    } )
+
+    watch( [ isShowAll ], () => {
+      fetchOneSChangedCodes()
     } )
 
     return {
       BASE_URL,
+      isShowAll,
       changedPrice,
       outOfStock,
 
