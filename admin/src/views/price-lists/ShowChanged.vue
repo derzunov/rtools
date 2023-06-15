@@ -21,15 +21,19 @@
 
     <div class="mb-5 col-md-12">
 
-      <div class="form-check form-switch">
-        <input v-model="isShowAll"
-               class="form-check-input"
-               type="checkbox"
-               id="show-all-changes-checkbox"
-               style="cursor: pointer;"
-        >
-        <label class="form-check-label" for="show-all-changes-checkbox">Показать все изменившиеся цены</label>
+      <div class="right">
+        <span class="form-check-label">Изменившиеся цены в прайсах </span>
+        <span style="display: inline-block" class="form-check form-switch">
+          <input v-model="isShowAll"
+                 class="form-check-input"
+                 type="checkbox"
+                 id="show-all-changes-checkbox"
+                 style="cursor: pointer;"
+          >
+          <label class="form-check-label" for="show-all-changes-checkbox">Все изменившиеся цены</label>
+        </span>
       </div>
+
 
       <!-- Позиции с изменившейся ценой -->
       <h5 class="bold">Изменения цен</h5>
