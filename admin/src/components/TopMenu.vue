@@ -67,7 +67,7 @@ navbar-dark bg-dark
 <!--          </li>-->
 
           <li class="nav-item">
-            <a class="nav-link py-2 px-0 px-lg-2" aria-current="page" href="/tools/admin/">Оплата</a>
+            <router-link class="nav-link py-2 px-0 px-lg-2" to="/calculators">Калькуляторы</router-link>
           </li>
 
           <!-- Настройки и разное -->

@@ -88,11 +88,15 @@ const routes = [
     name: 'Show subgroups',
     component: () => import( /* webpackChunkName: "subgroups.edit" */ '../views/price-lists/EditSubgroups.vue' )
   },
-
   {
     path: '/prices/changed',
     name: 'Show changed 1s codes',
     component: () => import( /* webpackChunkName: "ones.changed" */ '../views/price-lists/ShowChanged.vue' )
+  },
+  {
+    path: '/calculators',
+    name: 'Calculators page',
+    component: () => import( /* webpackChunkName: "calculators" */ '../views/CalculatorsView.vue' )
   },
 ]
 
