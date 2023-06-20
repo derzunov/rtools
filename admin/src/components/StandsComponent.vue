@@ -9,6 +9,12 @@
         <span class="input-group-text">Изображение для фона</span>
         <input class="form-control" type="file" accept="image/jpeg, image/gif, image/png"  @change="onBackgroundImageChange"/>
       </div>
+
+      <div class="input-group mb-3">
+        <span class="input-group-text">Изображение для стенда</span>
+        <input class="form-control" type="file" accept="image/jpeg, image/gif, image/png"  @change="onStandImageChange"/>
+      </div>
+
       <div class="input-group mb-3">
         <span class="input-group-text">
           <input v-model="state.isHead" class="form-check-input mt-0" type="checkbox" value="" aria-label="Checkbox for following text input">
@@ -77,6 +83,7 @@ export default {
     headText: String,
     orientation: String, // v - вертикальная, h - горизонтальная
     backgroundImage: String,
+    standImage: String,
   },
   setup( props ) {
 
@@ -89,6 +96,7 @@ export default {
       pocketsRowsCount: props.pocketsRowsCount || 2,
       pocketSize: props.pocketSize || 'A3',
       backgroundImage: props.backgroundImage || backgroundImage,
+      standImage: props.standImage || '',
       isHead: props.isHead || true,
       headText: props.headText || 'Информация',
       orientation: props.orientation || 'v', // v - вертикальная, h - горизонтальная
@@ -125,7 +133,7 @@ export default {
         const image = await loadImage( params.backgroundImage )
         context.drawImage( image, 0, 0, canvasWidth, canvasHeight )
       }
-      const drawStand = ( params ) => {
+      const drawStand = async ( params ) => {
         // TODO: Добавить картинку для стенда
         const standX = ( canvasWidth - params.standWidth * scale ) / 2
         const standY = ( canvasHeight - params.standHeight * scale ) / 2
@@ -140,6 +148,12 @@ export default {
         // Сбрасываем тень
         context.shadowColor = "none"
         context.shadowBlur = 0
+
+        // Если передана картинка стенда, отображаем её
+        if ( params.standImage ) {
+          const image = await loadImage( params.standImage )
+          context.drawImage( image, standX, standY, params.standWidth * scale, params.standHeight * scale )
+        }
       }
 
       const drawHead = ( params ) => {
@@ -227,7 +241,7 @@ export default {
 
       // Рисуем
       await drawBackground( params )
-      drawStand( params )
+      await drawStand( params )
       drawHead( params )
       drawPockets( params )
       drawSize( params )
@@ -269,6 +283,17 @@ export default {
       }
     }
 
+    const onStandImageChange = ( event ) => {
+      const input = event.target
+      if ( input.files && input.files[ 0 ] ) {
+        const reader = new FileReader()
+        reader.onload = function ( event ) {
+          state.standImage = event.target.result
+        }
+        reader.readAsDataURL( input.files[ 0 ] )
+      }
+    }
+
     onMounted( () => {
       setOrientation()
       draw( canvas.value, state )
@@ -287,7 +312,8 @@ export default {
       sizes,
 
       // Functions
-      onBackgroundImageChange
+      onBackgroundImageChange,
+      onStandImageChange,
     }
   }
 }
