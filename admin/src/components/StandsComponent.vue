@@ -27,9 +27,9 @@
 
       <div class="input-group mb-3">
         <span class="input-group-text">Ширина</span>
-        <input type="number" v-model="state.standWidth" class="form-control" id="stand_width">
+        <input type="number" v-model="state.standWidth" step="50" min="200" max="2000" class="form-control" id="stand_width">
         <span class="input-group-text">Высота</span>
-        <input type="number" v-model="state.standHeight" class="form-control" id="stand_height">
+        <input type="number" v-model="state.standHeight" step="50" min="300" max="2000" class="form-control" id="stand_height">
       </div>
 
       <div class="input-group mb-3">
