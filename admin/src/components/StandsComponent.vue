@@ -5,11 +5,11 @@
   <div class="row stands-constructor">
     <div class="col-md-6 stands-constructor__controls">
 
-      <!-- Фон -->
-      <img src="@/assets/wall.jpg" style="display: none;">
-
       <div class="input-group mb-3">
-
+        <span class="input-group-text">Изображение для фона</span>
+        <input class="form-control" type="file" accept="image/jpeg, image/gif, image/png"  @change="onBackgroundImageChange"/>
+      </div>
+      <div class="input-group mb-3">
         <span class="input-group-text">
           <input v-model="state.isHead" class="form-check-input mt-0" type="checkbox" value="" aria-label="Checkbox for following text input">
           &nbsp;С шапкой
@@ -101,7 +101,7 @@ export default {
       // Размеры канвы (соотношение, как соотношение "стены")
       const canvasWidth = canvas.getBoundingClientRect().width
       canvas.width = canvasWidth // Проставляем атрибут явно (так надо)
-      const canvasHeight = canvas.height = canvasWidth
+      const canvasHeight = canvas.height = canvasWidth // Квадратная канва
 
       const CANVAS_STAND_SPACE = canvasWidth - CANVAS_PADDING * 2 // px - допустимое место для стенда
 
@@ -118,10 +118,10 @@ export default {
 
 
       const drawBackground = async ( params ) => {
-        // TODO: Добавить картинку для фона
         context.fillStyle = 'rgba( 245, 245, 220, 1 )'
         context.fillRect( 0, 0, canvasWidth, canvasHeight )
 
+        // Рисуем стандартную картинку фона
         const image = await loadImage( params.backgroundImage )
         context.drawImage( image, 0, 0, canvasWidth, canvasHeight )
       }
@@ -258,6 +258,17 @@ export default {
      }
     }
 
+    const onBackgroundImageChange = ( event ) => {
+      const input = event.target
+      if ( input.files && input.files[ 0 ] ) {
+        const reader = new FileReader()
+        reader.onload = function ( event ) {
+          state.backgroundImage = event.target.result
+        }
+        reader.readAsDataURL( input.files[ 0 ] )
+      }
+    }
+
     onMounted( () => {
       setOrientation()
       draw( canvas.value, state )
@@ -274,6 +285,9 @@ export default {
       canvas,
       state,
       sizes,
+
+      // Functions
+      onBackgroundImageChange
     }
   }
 }
