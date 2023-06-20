@@ -54,7 +54,7 @@
 
     </div>
     <div class="col-md-6 stands-constructor__canvas">
-      <canvas ref="canvas"></canvas>
+      <canvas @click="saveCanvasToImage" ref="canvas" style="cursor: copy;"></canvas>
     </div>
   </div>
 </template>
@@ -294,6 +294,16 @@ export default {
       }
     }
 
+    const saveCanvasToImage = () => {
+      const dataURL = canvas.value.toDataURL( 'image/jpeg' )
+      const link = document.createElement( 'a' )
+      document.body.appendChild( link ) // Firefox requires the link to be in the body
+      link.href = dataURL
+      link.download = 'stand.jpg'
+      link.click()
+      document.body.removeChild( link )
+    }
+
     onMounted( () => {
       setOrientation()
       draw( canvas.value, state )
@@ -314,6 +324,7 @@ export default {
       // Functions
       onBackgroundImageChange,
       onStandImageChange,
+      saveCanvasToImage,
     }
   }
 }

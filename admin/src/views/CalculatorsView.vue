@@ -15,7 +15,6 @@
     <StandsComponent
         :standWidth="1500"
         :standHeight="1000"
-
     />
   </div>
 
