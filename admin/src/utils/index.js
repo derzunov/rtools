@@ -6,6 +6,7 @@ import { default as parsePriceToHtml } from './parse-price-to-html'
 import { calculateCampaignPeriodInDays } from './calculate-campaign-period'
 import { filterActiveItems, filterItemsByType, isItemActive } from './filters'
 import { default as tracer } from './tracer'
+import { default as loadImage } from './load-image'
 import {
     addRow,
     deleteRow,
@@ -28,4 +29,5 @@ export {
     deleteCol,
     ruToLat,
     tracer,
+    loadImage,
 }
