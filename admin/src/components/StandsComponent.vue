@@ -2,6 +2,9 @@
   <h4>
     Конструктор стендов
   </h4>
+
+  <h4>{{ productName }}</h4>
+  <p>{{ productDescription }}</p>
   <div class="row stands-constructor">
     <div class="col-md-6 stands-constructor__controls">
 
@@ -13,6 +16,16 @@
       <div class="input-group mb-3">
         <span class="input-group-text">Изображение для стенда</span>
         <input class="form-control" type="file" accept="image/jpeg, image/gif, image/png"  @change="onStandImageChange"/>
+      </div>
+
+      <div class="input-group mb-3">
+        <span class="input-group-text">Цвет стенда</span>
+        <input v-model="state.standColor" type="color" class="form-control" style="height: 40px;"/>
+        <span class="input-group-text" style="width: 250px;" id="stand_cmyk">
+          {{ (() => {
+          const rgb = hexToRgb( state.standColor )
+          return rgbToCmyk( rgb.r, rgb.g, rgb.b ) })() }}
+        </span>
       </div>
 
       <div class="input-group mb-3">
@@ -61,7 +74,7 @@
 
 <script>
 import { ref, reactive, watch, onMounted } from 'vue'
-import { loadImage } from '@/utils'
+import { loadImage, rgbToCmyk, hexToRgb } from '@/utils'
 import sizes from '@/constants/sizes'
 import backgroundImage from '@/assets/wall.jpg'
 
@@ -69,8 +82,8 @@ export default {
   name: "StandsComponent",
   props: {
     // Что касается карточки товара (так и оставим нереактивными пропсами)
-    productName: Number,
-    productDescription: Number,
+    productName: String,
+    productDescription: String,
 
     // Что касается конструктора (значения запишем в реактивный state)
     background: String,
@@ -83,6 +96,7 @@ export default {
     headText: String,
     orientation: String, // v - вертикальная, h - горизонтальная
     backgroundImage: String,
+    standColor: String,
     standImage: String,
   },
   setup( props ) {
@@ -96,6 +110,7 @@ export default {
       pocketsRowsCount: props.pocketsRowsCount || 2,
       pocketSize: props.pocketSize || 'A3',
       backgroundImage: props.backgroundImage || backgroundImage,
+      standColor: props.standColor || '#ffffff',
       standImage: props.standImage || '',
       isHead: props.isHead || true,
       headText: props.headText || 'Информация',
@@ -123,8 +138,6 @@ export default {
 
       const context = canvas.getContext( '2d' )
 
-
-
       const drawBackground = async ( params ) => {
         context.fillStyle = 'rgba( 245, 245, 220, 1 )'
         context.fillRect( 0, 0, canvasWidth, canvasHeight )
@@ -133,20 +146,21 @@ export default {
         const image = await loadImage( params.backgroundImage )
         context.drawImage( image, 0, 0, canvasWidth, canvasHeight )
       }
+
       const drawStand = async ( params ) => {
         // TODO: Добавить картинку для стенда
         const standX = ( canvasWidth - params.standWidth * scale ) / 2
         const standY = ( canvasHeight - params.standHeight * scale ) / 2
 
         // Тень
-        context.shadowColor = "#888"
+        context.shadowColor = '#888'
         context.shadowBlur = 15
 
-        context.fillStyle = 'rgb( 250, 250, 250 )'
+        context.fillStyle = params.standColor
         context.fillRect( standX, standY, params.standWidth * scale, params.standHeight * scale )
 
         // Сбрасываем тень
-        context.shadowColor = "none"
+        context.shadowColor = 'none'
         context.shadowBlur = 0
 
         // Если передана картинка стенда, отображаем её
@@ -191,25 +205,33 @@ export default {
         const rowsHeight = params.pocketsRowsCount * sizes[ state.pocketSize ].height + POCKETS_PADDING * ( params.pocketsRowsCount + 1 ) // mm
         const rowStartX = standX + ( ( ( params.standWidth - rowWidth ) / 2 )  + POCKETS_PADDING ) * scale // px
 
+        // Тень
+        context.shadowColor = '#888'
+        context.shadowBlur = 10
+
         // Ряды
         for ( let row = 0; row < params.pocketsRowsCount; row++ ) {
           const rowStartY = standY + ( ( ( params.standHeight - rowsHeight ) / 2 )  + POCKETS_PADDING  + row * ( sizes[ state.pocketSize ].height + POCKETS_PADDING ) ) * scale  // px
 
           // Карманы в ряду
           for ( let pocket = 0; pocket < params.pocketsCountInRow; pocket++ ) {
-            context.fillStyle = 'rgb( 100, 200, 150 )'
+            context.fillStyle = 'rgba( 255, 255, 255, 0.6 )'
             context.fillRect( rowStartX + pocket * ( ( sizes[ state.pocketSize ].width * scale ) + POCKETS_PADDING * scale ), rowStartY, sizes[ state.pocketSize ].width * scale, sizes[ state.pocketSize ].height * scale )
           }
         }
+
+        // Сбрасываем тень
+        context.shadowColor = 'none'
+        context.shadowBlur = 0
       }
 
       const drawSize = ( params ) => {
         // Shadow
-        context.shadowColor = "#888"
+        context.shadowColor = '#888'
         context.shadowBlur = 15
 
         // Triangle
-        context.fillStyle = "#fff"
+        context.fillStyle = '#fff'
         const TRIANGLE_SIZE = 150
 
         context.beginPath();
@@ -228,12 +250,12 @@ export default {
         const centeredRotatedXDelta = textWidth / 2
 
         context.fillStyle = "#000"
-        context.rotate( (-rotateAngle * Math.PI) / 180 )
+        context.rotate( ( -rotateAngle * Math.PI ) / 180 )
         context.fillText( sizesText, -centeredRotatedXDelta, rotatedYDelta - 10 )
 
         context.resetTransform()
         // Сбрасываем тень
-        context.shadowColor = "none"
+        context.shadowColor = 'none'
         context.shadowBlur = 0
       }
 
@@ -325,6 +347,9 @@ export default {
       onBackgroundImageChange,
       onStandImageChange,
       saveCanvasToImage,
+
+      hexToRgb,
+      rgbToCmyk,
     }
   }
 }
