@@ -66,7 +66,11 @@
 
       <div class="input-group mb-3">
         <button
-            @click="() => { saveObjectToJSONFile( state, `stand_${ state.standWidth }x${ state.standHeight }_${ ruToLat( productName ) }`  ) }"
+            @click="() => {
+              const fileName = `stand_${ state.standWidth }x${ state.standHeight }_${ ruToLat( productName ) }`
+              saveObjectToJSONFile( state, fileName  )
+              saveSvgToFile( state.svg, fileName  )
+            }"
             class="btn btn-primary" >
           Сохранить состояние
         </button>
@@ -75,6 +79,10 @@
     </div>
     <div class="col-md-6 stands-constructor__canvas">
       <canvas @click="saveCanvasToImage" ref="canvas" style="cursor: copy;"></canvas>
+
+      <h5>SVG:</h5>
+      <div v-html="state.svg"></div>
+
     </div>
   </div>
 </template>
@@ -86,7 +94,9 @@ import {
   rgbToCmyk,
   hexToRgb,
   saveObjectToJSONFile,
+  saveSvgToFile,
   ruToLat,
+  C2S, //(https://github.com/derzunov/canvas2svg)
 } from '@/utils'
 
 import sizes from '@/constants/sizes'
@@ -112,6 +122,7 @@ export default {
     backgroundImage: String,
     standColor: String,
     standImage: String,
+    svg: String,
   },
   setup( props ) {
 
@@ -129,6 +140,7 @@ export default {
       isHead: props.isHead || true,
       headText: props.headText || 'Информация',
       orientation: props.orientation || 'v', // v - вертикальная, h - горизонтальная
+      svg: props.svg || ''
     } )
 
 
@@ -151,8 +163,10 @@ export default {
       }
 
       const context = canvas.getContext( '2d' )
+      // контекст для SVG (https://github.com/derzunov/canvas2svg)
+      const svgContext = new C2S( canvasWidth, canvasHeight )
 
-      const drawBackground = async ( params ) => {
+      const drawBackground = async ( params, context ) => {
         context.fillStyle = 'rgba( 245, 245, 220, 1 )'
         context.fillRect( 0, 0, canvasWidth, canvasHeight )
 
@@ -161,8 +175,7 @@ export default {
         context.drawImage( image, 0, 0, canvasWidth, canvasHeight )
       }
 
-      const drawStand = async ( params ) => {
-        // TODO: Добавить картинку для стенда
+      const drawStand = async ( params, context ) => {
         const standX = ( canvasWidth - params.standWidth * scale ) / 2
         const standY = ( canvasHeight - params.standHeight * scale ) / 2
 
@@ -170,10 +183,16 @@ export default {
         context.shadowColor = '#888'
         context.shadowBlur = 15
 
+        // Закрашиваем стенд
         context.fillStyle = params.standColor
         context.fillRect( standX, standY, params.standWidth * scale, params.standHeight * scale )
 
-        // Сбрасываем тень
+        // Обводим стенд
+        context.strokeStyle = "#0000ff"
+        context.lineWidth   = 1
+        context.rect( standX, standY, params.standWidth * scale, params.standHeight * scale )
+        context.stroke()
+        // Сбрасываем тень и цвет
         context.shadowColor = 'none'
         context.shadowBlur = 0
 
@@ -184,7 +203,7 @@ export default {
         }
       }
 
-      const drawHead = ( params ) => {
+      const drawHead = ( params, context ) => {
         // Нужно ли вообще рисовать шапку
         if ( !params.isHead ) return
 
@@ -201,6 +220,12 @@ export default {
         context.lineTo( headX + params.standWidth * scale, headY + HEAD_HEIGHT * scale )
         context.stroke()
 
+        // Обводим шапку
+        context.strokeStyle = "#0000ff"
+        context.lineWidth   = 1
+        context.rect( headX, headY, params.standWidth * scale, HEAD_HEIGHT * scale )
+        context.stroke()
+
         // текст шапки
         context.font = "24px sans-serif"
         const headTextWidth = context.measureText( params.headText ).width
@@ -210,7 +235,7 @@ export default {
         context.fillText( params.headText, headTextX, headTextY, params.standWidth * scale )
       }
 
-      const drawPockets = ( params ) => {
+      const drawPockets = ( params, context ) => {
         const POCKETS_PADDING = 50 // mm
         // TODO: Добавить проверку помещается ли ряд карманов
         const standX = ( canvasWidth - params.standWidth * scale ) / 2 // px
@@ -220,8 +245,8 @@ export default {
         const rowStartX = standX + ( ( ( params.standWidth - rowWidth ) / 2 )  + POCKETS_PADDING ) * scale // px
 
         // Тень
-        context.shadowColor = '#888'
-        context.shadowBlur = 10
+        context.shadowColor = 'rgba( 0, 0, 0, 0.2 )'
+        context.shadowBlur = 5
 
         // Ряды
         for ( let row = 0; row < params.pocketsRowsCount; row++ ) {
@@ -229,7 +254,7 @@ export default {
 
           // Карманы в ряду
           for ( let pocket = 0; pocket < params.pocketsCountInRow; pocket++ ) {
-            context.fillStyle = 'rgba( 255, 255, 255, 0.6 )'
+            context.fillStyle = 'rgba( 220, 220, 220, 0.6 )'
             context.fillRect( rowStartX + pocket * ( ( sizes[ state.pocketSize ].width * scale ) + POCKETS_PADDING * scale ), rowStartY, sizes[ state.pocketSize ].width * scale, sizes[ state.pocketSize ].height * scale )
           }
         }
@@ -239,7 +264,7 @@ export default {
         context.shadowBlur = 0
       }
 
-      const drawSize = ( params ) => {
+      const drawSize = ( params, context ) => {
         // Shadow
         context.shadowColor = '#888'
         context.shadowBlur = 15
@@ -276,12 +301,18 @@ export default {
       const drawUps = () => {}
 
       // Рисуем
-      await drawBackground( params )
-      await drawStand( params )
-      drawHead( params )
-      drawPockets( params )
-      drawSize( params )
-      drawUps( params )
+      await drawBackground( params, context )
+      await drawStand( params, context )
+      drawHead( params, context )
+      drawPockets( params, context )
+      drawSize( params, context )
+      drawUps( params, context )
+
+      // SVG (see fork https://github.com/derzunov/canvas2svg)
+      await drawStand( params, svgContext )
+      drawHead( params, svgContext )
+      drawPockets( params, svgContext )
+      state.svg = svgContext.getSerializedSvg()
     }
 
     const setOrientation = () => {
@@ -366,6 +397,7 @@ export default {
       hexToRgb,
       rgbToCmyk,
       saveObjectToJSONFile,
+      saveSvgToFile,
       ruToLat,
     }
   }

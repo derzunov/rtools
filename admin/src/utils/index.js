@@ -36,3 +36,4 @@ export {
     hexToRgb,
 }
 export * from './files' // TODO: привести к такому виду все экспорты из index-а
+export { default as C2S } from './canvas2svg' // (https://github.com/derzunov/canvas2svg)
