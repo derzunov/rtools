@@ -78,7 +78,7 @@
 
     </div>
     <div class="col-md-6 stands-constructor__canvas">
-      <canvas @click="saveCanvasToImage" ref="canvas" style="cursor: copy;"></canvas>
+      <canvas @click="saveCanvasToJpeg( $event.target, 'stand_preview' )" ref="canvas" style="cursor: pointer;"></canvas>
 
       <h5>SVG:</h5>
       <div v-html="state.svg"></div>
@@ -93,10 +93,12 @@ import {
   loadImage,
   rgbToCmyk,
   hexToRgb,
+  saveCanvasToJpeg,
   saveObjectToJSONFile,
   saveSvgToFile,
+  readFileFromInput,
   ruToLat,
-  C2S, //(https://github.com/derzunov/canvas2svg)
+  C2S, // (https://github.com/derzunov/canvas2svg)
 } from '@/utils'
 
 import sizes from '@/constants/sizes'
@@ -353,36 +355,14 @@ export default {
      }
     }
 
-    const onBackgroundImageChange = ( event ) => {
+    const onBackgroundImageChange = async ( event ) => {
       const input = event.target
-      if ( input.files && input.files[ 0 ] ) {
-        const reader = new FileReader()
-        reader.onload = function ( event ) {
-          state.backgroundImage = event.target.result
-        }
-        reader.readAsDataURL( input.files[ 0 ] )
-      }
+      state.backgroundImage = await readFileFromInput( input )
     }
 
-    const onStandImageChange = ( event ) => {
+    const onStandImageChange = async ( event ) => {
       const input = event.target
-      if ( input.files && input.files[ 0 ] ) {
-        const reader = new FileReader()
-        reader.onload = function ( event ) {
-          state.standImage = event.target.result
-        }
-        reader.readAsDataURL( input.files[ 0 ] )
-      }
-    }
-
-    const saveCanvasToImage = () => {
-      const dataURL = canvas.value.toDataURL( 'image/jpeg' )
-      const link = document.createElement( 'a' )
-      document.body.appendChild( link ) // Firefox requires the link to be in the body
-      link.href = dataURL
-      link.download = 'stand.jpg'
-      link.click()
-      document.body.removeChild( link )
+      state.standImage = await readFileFromInput( input )
     }
 
     onMounted( () => {
@@ -405,7 +385,7 @@ export default {
       // Functions
       onBackgroundImageChange,
       onStandImageChange,
-      saveCanvasToImage,
+      saveCanvasToJpeg,
 
       // Utils
       hexToRgb,

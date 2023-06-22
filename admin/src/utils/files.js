@@ -19,4 +19,33 @@ const saveSvgToFile = ( svg, name = 'svg' ) => {
     document.body.removeChild( link )
 }
 
-export { saveObjectToJSONFile, saveSvgToFile }
+const readFileFromInput = ( input ) => {
+    return new Promise(( resolve, reject ) => {
+        if ( input.files && input.files[ 0 ] ) {
+            const reader = new FileReader()
+            reader.onload = function ( event ) {
+                resolve( event.target.result )
+            }
+            reader.readAsDataURL( input.files[ 0 ] )
+        } else {
+            reject()
+        }
+    } )
+}
+
+const saveCanvasToJpeg = ( canvas, fileName = 'image' ) => {
+    const dataURL = canvas.toDataURL( 'image/jpeg' )
+    const link = document.createElement( 'a' )
+    document.body.appendChild( link ) // Firefox requires the link to be in the body
+    link.href = dataURL
+    link.download = `${ fileName }.jpg`
+    link.click()
+    document.body.removeChild( link )
+}
+
+export {
+    saveObjectToJSONFile,
+    saveSvgToFile,
+    readFileFromInput,
+    saveCanvasToJpeg,
+}
