@@ -8,6 +8,7 @@ import { filterActiveItems, filterItemsByType, isItemActive } from './filters'
 import { default as tracer } from './tracer'
 import { default as loadImage } from './load-image'
 import { rgbToCmyk, hexToRgb } from './colors'
+
 import {
     addRow,
     deleteRow,
@@ -34,3 +35,4 @@ export {
     rgbToCmyk,
     hexToRgb,
 }
+export * from './files' // TODO: привести к такому виду все экспорты из index-а

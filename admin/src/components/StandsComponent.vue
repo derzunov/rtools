@@ -64,6 +64,13 @@
         </select>
       </div>
 
+      <div class="input-group mb-3">
+        <button
+            @click="() => { saveObjectToJSONFile( state, `stand_${ state.standWidth }x${ state.standHeight }_${ ruToLat( productName ) }`  ) }"
+            class="btn btn-primary" >
+          Сохранить состояние
+        </button>
+      </div>
 
     </div>
     <div class="col-md-6 stands-constructor__canvas">
@@ -74,7 +81,14 @@
 
 <script>
 import { ref, reactive, watch, onMounted } from 'vue'
-import { loadImage, rgbToCmyk, hexToRgb } from '@/utils'
+import {
+  loadImage,
+  rgbToCmyk,
+  hexToRgb,
+  saveObjectToJSONFile,
+  ruToLat,
+} from '@/utils'
+
 import sizes from '@/constants/sizes'
 import backgroundImage from '@/assets/wall.jpg'
 
@@ -348,8 +362,11 @@ export default {
       onStandImageChange,
       saveCanvasToImage,
 
+      // Utils
       hexToRgb,
       rgbToCmyk,
+      saveObjectToJSONFile,
+      ruToLat,
     }
   }
 }
