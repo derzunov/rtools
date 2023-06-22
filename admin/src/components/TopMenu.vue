@@ -35,6 +35,9 @@ navbar-dark bg-dark
               <li>
                 <router-link class="dropdown-item" to="/prices/changed">Изменения цен в 1С</router-link>
               </li>
+              <li>
+                <a class="dropdown-item" target="_blank" href="/tools/price/">Вся выгрузка 1С + Отсутствующие позиции</a>
+              </li>
             </ul>
           </li>
 

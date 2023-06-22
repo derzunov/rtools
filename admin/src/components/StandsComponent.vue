@@ -154,7 +154,7 @@ export default {
 
       const CANVAS_STAND_SPACE = canvasWidth - CANVAS_PADDING * 2 // px - допустимое место для стенда
 
-      // Масштаб (мм vs. px)
+      // Масштаб (px vs. mm)
       let scale = 1
       if ( params.standWidth > params.standHeight ) {
         scale = CANVAS_STAND_SPACE / params.standWidth // px/mm
@@ -244,24 +244,38 @@ export default {
         const rowsHeight = params.pocketsRowsCount * sizes[ state.pocketSize ].height + POCKETS_PADDING * ( params.pocketsRowsCount + 1 ) // mm
         const rowStartX = standX + ( ( ( params.standWidth - rowWidth ) / 2 )  + POCKETS_PADDING ) * scale // px
 
-        // Тень
-        context.shadowColor = 'rgba( 0, 0, 0, 0.2 )'
-        context.shadowBlur = 5
-
         // Ряды
         for ( let row = 0; row < params.pocketsRowsCount; row++ ) {
           const rowStartY = standY + ( ( ( params.standHeight - rowsHeight ) / 2 )  + POCKETS_PADDING  + row * ( sizes[ state.pocketSize ].height + POCKETS_PADDING ) ) * scale  // px
 
           // Карманы в ряду
           for ( let pocket = 0; pocket < params.pocketsCountInRow; pocket++ ) {
-            context.fillStyle = 'rgba( 220, 220, 220, 0.6 )'
-            context.fillRect( rowStartX + pocket * ( ( sizes[ state.pocketSize ].width * scale ) + POCKETS_PADDING * scale ), rowStartY, sizes[ state.pocketSize ].width * scale, sizes[ state.pocketSize ].height * scale )
+
+            const pocketStartX = rowStartX + pocket * ( ( sizes[ params.pocketSize ].width * scale ) + POCKETS_PADDING * scale )
+            const pocketStartY = rowStartY
+
+            // Тень
+            context.shadowColor = 'rgba( 0, 0, 0, 0.2 )'
+            context.shadowBlur = 5
+
+            //  Сам карман
+            context.fillStyle = 'rgba( 220, 220, 220, 0.7 )'
+            context.fillRect( pocketStartX, pocketStartY, sizes[ params.pocketSize ].width * scale, sizes[ params.pocketSize ].height * scale )
+
+            // Сбрасываем тень для текста
+            context.shadowColor = 'none'
+            context.shadowBlur = 0
+
+            // Текст размера кармана
+            const fontSize = 20
+            context.font = `${ fontSize }px sans-serif`
+            context.fillStyle = 'rgba( 0, 0, 0, 0.5 )'
+            const pocketSizeTextWidth = context.measureText( params.pocketSize ).width // px
+            const pocketSizeTextX = pocketStartX + sizes[ params.pocketSize ].width * scale / 2 - pocketSizeTextWidth / 2
+            const pocketSizeTextY = pocketStartY + sizes[ params.pocketSize ].height * scale / 2
+            context.fillText( params.pocketSize, pocketSizeTextX, pocketSizeTextY )
           }
         }
-
-        // Сбрасываем тень
-        context.shadowColor = 'none'
-        context.shadowBlur = 0
       }
 
       const drawSize = ( params, context ) => {
