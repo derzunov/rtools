@@ -9,6 +9,11 @@
     <div class="col-md-6 stands-constructor__controls">
 
       <div class="input-group mb-3">
+        <span class="input-group-text">Upload state</span>
+        <input class="form-control" type="file" accept="application/json"  @change="onLoadState"/>
+      </div>
+
+      <div class="input-group mb-3">
         <span class="input-group-text">Изображение для фона</span>
         <input class="form-control" type="file" accept="image/jpeg, image/gif, image/png"  @change="onBackgroundImageChange"/>
       </div>
@@ -96,7 +101,8 @@ import {
   saveCanvasToJpeg,
   saveObjectToJSONFile,
   saveSvgToFile,
-  readFileFromInput,
+  readFileAsDataFromInput,
+  readFileAsTextFromInput,
   ruToLat,
   C2S, // (https://github.com/derzunov/canvas2svg)
 } from '@/utils'
@@ -357,12 +363,21 @@ export default {
 
     const onBackgroundImageChange = async ( event ) => {
       const input = event.target
-      state.backgroundImage = await readFileFromInput( input )
+      state.backgroundImage = await readFileAsDataFromInput( input )
     }
 
     const onStandImageChange = async ( event ) => {
       const input = event.target
-      state.standImage = await readFileFromInput( input )
+      state.standImage = await readFileAsDataFromInput( input )
+    }
+
+    const onLoadState  = async ( event ) => {
+      const input = event.target
+      const loadedStateText = await readFileAsTextFromInput( input )
+      const loadedStateJson = await JSON.parse( loadedStateText )
+      for ( const stateKey in loadedStateJson ) {
+        state[ stateKey ] = loadedStateJson [ stateKey ]
+      }
     }
 
     onMounted( () => {
@@ -386,6 +401,7 @@ export default {
       onBackgroundImageChange,
       onStandImageChange,
       saveCanvasToJpeg,
+      onLoadState,
 
       // Utils
       hexToRgb,

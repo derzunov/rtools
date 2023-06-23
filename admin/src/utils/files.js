@@ -19,7 +19,7 @@ const saveSvgToFile = ( svg, name = 'svg' ) => {
     document.body.removeChild( link )
 }
 
-const readFileFromInput = ( input ) => {
+const readFileAsDataFromInput = ( input ) => {
     return new Promise(( resolve, reject ) => {
         if ( input.files && input.files[ 0 ] ) {
             const reader = new FileReader()
@@ -27,6 +27,20 @@ const readFileFromInput = ( input ) => {
                 resolve( event.target.result )
             }
             reader.readAsDataURL( input.files[ 0 ] )
+        } else {
+            reject()
+        }
+    } )
+}
+
+const readFileAsTextFromInput = ( input ) => {
+    return new Promise(( resolve, reject ) => {
+        if ( input.files && input.files[ 0 ] ) {
+            const reader = new FileReader()
+            reader.onload = function ( event ) {
+                resolve( event.target.result )
+            }
+            reader.readAsText( input.files[ 0 ] )
         } else {
             reject()
         }
@@ -46,6 +60,7 @@ const saveCanvasToJpeg = ( canvas, fileName = 'image' ) => {
 export {
     saveObjectToJSONFile,
     saveSvgToFile,
-    readFileFromInput,
+    readFileAsDataFromInput,
+    readFileAsTextFromInput,
     saveCanvasToJpeg,
 }
