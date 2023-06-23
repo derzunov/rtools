@@ -50,23 +50,43 @@
         <input type="number" v-model="state.standHeight" step="50" min="300" max="2000" class="form-control" id="stand_height">
       </div>
 
-      <div class="input-group mb-3">
-        <span class="input-group-text">Количество в ряду</span>
-        <input type="number" v-model="state.pocketsCountInRow" class="form-control" id="pockets_count_in_row">
-        <span class="input-group-text">Количество рядов</span>
-        <input type="number" v-model="state.pocketsRowsCount" class="form-control" id="pockets_rows_count">
+<!--      <div class="input-group mb-3">-->
+<!--        <span class="input-group-text">Количество в ряду</span>-->
+<!--        <input type="number" v-model="state.pocketsCountInRow" class="form-control" id="pockets_count_in_row">-->
+<!--        <span class="input-group-text">Количество рядов</span>-->
+<!--        <input type="number" v-model="state.pocketsRowsCount" class="form-control" id="pockets_rows_count">-->
+<!--      </div>-->
+
+<!--      <div class="input-group mb-3">-->
+<!--        <span class="input-group-text">Размер</span>-->
+<!--        <select class="form-control" v-model="state.pocketSize">-->
+<!--          <option v-for="( sizeObject, size ) in sizes" :key="size">{{ size }}</option>-->
+<!--        </select>-->
+<!--        <span class="input-group-text">Ориентация</span>-->
+<!--        <select v-model="state.orientation" class="form-control">-->
+<!--          <option value="v">Вертикально</option>-->
+<!--          <option value="h">Горизонтально</option>-->
+<!--        </select>-->
+<!--      </div>-->
+
+      <h5 v-if="state.pockets.length">Карманы</h5>
+      <div class="input-group mb-3" v-for="( pocket, index ) in state.pockets" :key="index">
+        <span class="input-group-text">Размер</span>
+        <select class="form-control" v-model="pocket.size">
+          <option v-for="( sizeObject, size ) in sizes" :key="size">{{ size }}</option>
+        </select>
+        <span class="input-group-text">x</span>
+        <input type="number" step="10" min="0" v-model="pocket.x" class="form-control">
+        <span class="input-group-text">y</span>
+        <input type="number" step="10" min="0" v-model="pocket.y" class="form-control">
       </div>
 
       <div class="input-group mb-3">
-        <span class="input-group-text">Размер</span>
-        <select class="form-control" v-model="state.pocketSize">
-          <option v-for="( sizeObject, size ) in sizes" :key="size">{{ size }}</option>
-        </select>
-        <span class="input-group-text">Ориентация</span>
-        <select v-model="state.orientation" class="form-control">
-          <option value="v">Вертикально</option>
-          <option value="h">Горизонтально</option>
-        </select>
+        <button
+            @click="addPocket"
+            class="btn btn-primary" >
+          Добавить карман
+        </button>
       </div>
 
       <div class="input-group mb-3">
@@ -131,6 +151,7 @@ export default {
     standColor: String,
     standImage: String,
     svg: String,
+    pockets: Array,
   },
   setup( props ) {
 
@@ -148,7 +169,8 @@ export default {
       isHead: props.isHead || true,
       headText: props.headText || 'Информация',
       orientation: props.orientation || 'v', // v - вертикальная, h - горизонтальная
-      svg: props.svg || ''
+      svg: props.svg || '',
+      pockets: props.pockets || [],
     } )
 
 
@@ -243,7 +265,7 @@ export default {
         context.fillText( params.headText, headTextX, headTextY, params.standWidth * scale )
       }
 
-      const drawPockets = ( params, context ) => {
+      const drawPockets_old = ( params, context ) => {
         const POCKETS_PADDING = 50 // mm
         // TODO: Добавить проверку помещается ли ряд карманов
         const standX = ( canvasWidth - params.standWidth * scale ) / 2 // px
@@ -284,6 +306,40 @@ export default {
             context.fillText( params.pocketSize, pocketSizeTextX, pocketSizeTextY )
           }
         }
+      }
+      console.log( drawPockets_old )
+
+      const drawPockets = ( params, context ) => {
+        // TODO: Добавить проверку помещается ли карманы
+        params.pockets.forEach( ( pocket ) => {
+
+          const standX = ( canvasWidth - params.standWidth * scale ) / 2 // px
+          const standY = ( canvasHeight - params.standHeight * scale ) / 2 // px
+
+          const pocketStartX = standX + pocket.x * scale
+          const pocketStartY = standY + pocket.y * scale
+
+          // Тень
+          context.shadowColor = 'rgba( 0, 0, 0, 0.2 )'
+          context.shadowBlur = 5
+
+          //  Сам карман
+          context.fillStyle = 'rgba( 220, 220, 220, 0.7 )'
+          context.fillRect( pocketStartX, pocketStartY, sizes[ pocket.size ].width * scale, sizes[ pocket.size ].height * scale )
+
+          // Сбрасываем тень для текста
+          context.shadowColor = 'none'
+          context.shadowBlur = 0
+
+          // Текст размера кармана
+          const fontSize = 20
+          context.font = `${ fontSize }px sans-serif`
+          context.fillStyle = 'rgba( 0, 0, 0, 0.5 )'
+          const pocketSizeTextWidth = context.measureText( pocket.size ).width // px
+          const pocketSizeTextX = pocketStartX + sizes[ pocket.size ].width * scale / 2 - pocketSizeTextWidth / 2
+          const pocketSizeTextY = pocketStartY + sizes[ pocket.size ].height * scale / 2
+          context.fillText( pocket.size, pocketSizeTextX, pocketSizeTextY )
+        } )
       }
 
       const drawSize = ( params, context ) => {
@@ -380,6 +436,11 @@ export default {
       }
     }
 
+    const addPocket = () => {
+      const defaultPocketObject = { size: 'A4', orientation: 'v', x: 10, y: 10 }
+      state.pockets.push( { ...defaultPocketObject } )
+    }
+
     onMounted( () => {
       setOrientation()
       draw( canvas.value, state )
@@ -402,6 +463,7 @@ export default {
       onStandImageChange,
       saveCanvasToJpeg,
       onLoadState,
+      addPocket,
 
       // Utils
       hexToRgb,
