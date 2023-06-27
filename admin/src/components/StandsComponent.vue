@@ -115,7 +115,7 @@
 <script>
 import { ref, reactive, watch, onMounted } from 'vue'
 import {
-  loadImage,
+  loadImageBySrc,
   rgbToCmyk,
   hexToRgb,
   saveCanvasToJpeg,
@@ -201,7 +201,7 @@ export default {
         context.fillRect( 0, 0, canvasWidth, canvasHeight )
 
         // Рисуем стандартную картинку фона
-        const image = await loadImage( params.backgroundImage )
+        const image = await loadImageBySrc( params.backgroundImage )
         context.drawImage( image, 0, 0, canvasWidth, canvasHeight )
       }
 
@@ -228,7 +228,7 @@ export default {
 
         // Если передана картинка стенда, отображаем её
         if ( params.standImage ) {
-          const image = await loadImage( params.standImage )
+          const image = await loadImageBySrc( params.standImage )
           context.drawImage( image, standX, standY, params.standWidth * scale, params.standHeight * scale )
         }
       }

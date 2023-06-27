@@ -57,10 +57,21 @@ const saveCanvasToJpeg = ( canvas, fileName = 'image' ) => {
     document.body.removeChild( link )
 }
 
+const loadImageBySrc =  ( src ) => {
+    return new Promise(( resolve, reject ) => {
+        let image = new Image()
+        image.onload = () => resolve( image )
+        image.onerror = reject
+        image.src = src
+    } )
+}
+
+
 export {
     saveObjectToJSONFile,
     saveSvgToFile,
     readFileAsDataFromInput,
     readFileAsTextFromInput,
     saveCanvasToJpeg,
+    loadImageBySrc,
 }
