@@ -42,6 +42,29 @@
 
         if ( isset( $data[ 'action' ] ) ) {
             switch ( $data[ 'action' ] ) {
+                case 'info':
+                    switch ( $data[ 'field' ] ) {
+                        case 'price': 
+                            // TODO: переучить всех потребителей цены из базы на этот эндпоинт
+                            $oneSPriceItem = $db->getPriсeByCode( $data[ 'one_s_code' ] );
+                            $oneSPrice = explode( ';', $oneSPriceItem )[ 5 ];
+                            sendResponse( $oneSPrice );
+                            break;
+                            
+                        case 'units': 
+                            $oneSPriceItem = $db->getPriсeByCode( $data[ 'one_s_code' ] );
+                            $oneSUnits = explode( ';', $oneSPriceItem )[ 3 ];
+                            sendResponse( $oneSUnits );
+                            break;
+                            
+                        case 'name': 
+                            $oneSPriceItem = $db->getPriсeByCode( $data[ 'one_s_code' ] );
+                            $oneSUnits = explode( ';', $oneSPriceItem )[ 1 ];
+                            sendResponse( $oneSUnits );
+                            break;
+                    }
+                    break;
+                    
                 case 'groups':
                     // TODO: populate=subgroups condition
                     sendJsonResponse( $db->getGroupsDb() );

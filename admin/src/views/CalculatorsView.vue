@@ -15,7 +15,7 @@
     <StandsComponent
         :standWidth="1500"
         :standHeight="1000"
-        productName="Имя продукта"
+        productName="Информационный стенд"
         productDescription="Описание продукта"
     />
   </div>

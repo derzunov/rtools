@@ -43,31 +43,32 @@
         <input :disabled="!state.isHead" type="string" v-model="state.headText" class="form-control" id="stand_height">
       </div>
 
+      <div v-if="state.isHead" class="input-group mb-3">
+        <select class="form-control" v-model="state.fontFamily" style="min-width: 117px;">
+          <option value="sans-serif">Без засечек</option>
+          <option value="serif">С засечками</option>
+        </select>
+
+        <span class="input-group-text">
+          <input v-model="state.isItalic" class="form-check-input mt-0" type="checkbox" value="" aria-label="Checkbox for following text input">
+          &nbsp;&nbsp;Курсив
+        </span>
+
+        <span class="input-group-text">
+          <input v-model="state.isBold" class="form-check-input mt-0" type="checkbox" value="" aria-label="Checkbox for following text input">
+          &nbsp;Жирный
+        </span>
+
+        <span class="input-group-text">Высота (мм):</span>
+        <input type="number" v-model="state.fontSize" class="form-control">
+      </div>
+
       <div class="input-group mb-3">
         <span class="input-group-text">Ширина</span>
         <input type="number" v-model="state.standWidth" step="50" min="200" max="2000" class="form-control" id="stand_width">
         <span class="input-group-text">Высота</span>
         <input type="number" v-model="state.standHeight" step="50" min="300" max="2000" class="form-control" id="stand_height">
       </div>
-
-<!--      <div class="input-group mb-3">-->
-<!--        <span class="input-group-text">Количество в ряду</span>-->
-<!--        <input type="number" v-model="state.pocketsCountInRow" class="form-control" id="pockets_count_in_row">-->
-<!--        <span class="input-group-text">Количество рядов</span>-->
-<!--        <input type="number" v-model="state.pocketsRowsCount" class="form-control" id="pockets_rows_count">-->
-<!--      </div>-->
-
-<!--      <div class="input-group mb-3">-->
-<!--        <span class="input-group-text">Размер</span>-->
-<!--        <select class="form-control" v-model="state.pocketSize">-->
-<!--          <option v-for="( sizeObject, size ) in sizes" :key="size">{{ size }}</option>-->
-<!--        </select>-->
-<!--        <span class="input-group-text">Ориентация</span>-->
-<!--        <select v-model="state.orientation" class="form-control">-->
-<!--          <option value="v">Вертикально</option>-->
-<!--          <option value="h">Горизонтально</option>-->
-<!--        </select>-->
-<!--      </div>-->
 
       <h5 v-if="state.pockets.length">Карманы</h5>
       <div class="input-group mb-3" v-for="( pocket, index ) in state.pockets" :key="index">
@@ -101,8 +102,19 @@
         </button>
       </div>
 
+      <hr>
+      <h5>Материалы</h5>
+
+      <div class="input-group mb-3">
+        <label class="input-group-text" for="inputGroupSelect01">Основа</label>
+        <select class="form-select" v-model="state.standMaterialOneSCode" >
+          <option v-for="( materialObject, materialCode ) in standMaterials" :value="materialCode" :key="materialCode">{{ materialObject.title }}</option>
+        </select>
+      </div>
+
     </div>
     <div class="col-md-6 stands-constructor__canvas">
+      <h5>Итоговая цена: {{ complexPrice }}</h5>
       <canvas @click="saveCanvasToJpeg( $event.target, 'stand_preview' )" ref="canvas" style="cursor: pointer;"></canvas>
 
       <h5>SVG:</h5>
@@ -125,6 +137,12 @@ import {
   readFileAsTextFromInput,
   ruToLat,
   C2S, // (https://github.com/derzunov/canvas2svg)
+
+  getOneSDb,
+  getPriceByOneSCode,
+  getUnitsByOneSCode,
+  getMaterialSheetSizesByOneSCode,
+  getPositionNameByOneSCode,
 } from '@/utils'
 
 import sizes from '@/constants/sizes'
@@ -146,18 +164,34 @@ export default {
     pocketSize: String, // A3, A4, A5
     isHead: Boolean,
     headText: String,
+    isItalic: Boolean,
+    isBold: Boolean,
+    fontSize: Number,
+    fontFamily: String,
     orientation: String, // v - вертикальная, h - горизонтальная
     backgroundImage: String,
     standColor: String,
     standImage: String,
     svg: String,
     pockets: Array,
+    standMaterialOneSCode: String,
   },
   setup( props ) {
 
+    console.log( 'getOneSDb result: ', getOneSDb() )
+    console.log( 'getPriceByOneSCode result: ', getPriceByOneSCode( '00-00001907' ) )
+    console.log( 'getUnitsByOneSCode result: ', getUnitsByOneSCode( '00-00001907' ) )
+
+    const IS_DEV = window.location.host.includes( 'localhost' )
+    const ROOT_HOST = IS_DEV ?
+        'http://localhost' :
+        'https://r-color.ru'
+    console.log( ROOT_HOST )
+    // const PRICES_PATH = ROOT_HOST + '/tools/price/'
     const canvas = ref( null )
 
     const state = reactive( {
+      // Конструктор стендов
       standWidth: props.standWidth || 1000,
       standHeight: props.standHeight || 1000,
       pocketsCountInRow: props.pocketsCountInRow || 3,
@@ -168,21 +202,90 @@ export default {
       standImage: props.standImage || '',
       isHead: props.isHead || true,
       headText: props.headText || 'Информация',
+      isItalic: props.isItalic || false,
+      isBold: props.isBold || false,
+      fontSize: props.fontSize || 80, // mm
+      fontFamily: props.fontFamily || 'sans-serif',
       orientation: props.orientation || 'v', // v - вертикальная, h - горизонтальная
       svg: props.svg || '',
       pockets: props.pockets || [],
+
+      // Материалы
+      standMaterialOneSCode: props.standMaterialOneSCode || '00-00002155'
     } )
 
+    const STAND_MATERIALS_CODES = [
+      // ПВХ
+      '00-00002155',
+      '00-00002198',
+      // Фанера
+      '00-00002263',
+      '00-00001907', // Просто для тестов, у этой позиции нет размеров вида ШШ*ВВ в названии
+    ]
+
+    // Кандидат на перенос в utils
+    // makeMaterialsList, makeWorksList, makeItemsList, makePocketsList...
+    // Списки 1с позиций, требующихся конкретным калькуляторам
+    // формируются общими мейкерами
+    // Набор полей объектов списка определяется конкретным мейкером
+    const makeMaterialsList = ( oneSCodes ) => {
+
+      const materials = {}
+
+      oneSCodes.forEach( ( oneSCode ) => {
+        materials[ oneSCode ] = {
+          oneSCode,
+          title: getPositionNameByOneSCode( oneSCode ),
+          sizes: getMaterialSheetSizesByOneSCode( oneSCode ),
+        }
+      } )
+      return materials
+    }
+
+    const standMaterials = makeMaterialsList( STAND_MATERIALS_CODES )
+
+    const complexPrice = ref( 0 )
+
+    const calculateStand = async ( params ) => {
+
+      // Получаем размеры листа выбранного материала
+      const {
+        materialSheetWidth,
+        materialSheetHeight
+      } = getMaterialSheetSizesByOneSCode( params.standMaterialOneSCode )
+
+      const materialSheetSquare = materialSheetWidth * materialSheetHeight // mm^2
+      const standSquare = params.standHeight * params.standWidth // mm^2
+
+      const priceString = getPriceByOneSCode( params.standMaterialOneSCode )
+
+      const materialSheetPrice = parseFloat( priceString )
+
+      const materialRate = materialSheetPrice * standSquare / materialSheetSquare
+
+      return Math.round( materialRate )
+    }
+    const calculatePockets = ( params ) => {
+      return params.pockets.length
+    }
+    const calculateWork = ( params ) => {
+      return params.pockets.length * 6 // Пока просто с потолка
+    }
+
+    const calculate = async ( params ) => {
+      // const materialsOfStand = []
+      // complexPrice.value = params.toString() + await getPriceFromOneS( '00-00002244' )
+      complexPrice.value =  await calculateStand( params ) + ' + ' + calculatePockets( params ) + ' + ' + calculateWork( params )
+    }
 
     const draw = async ( canvas, params ) => {
       const CANVAS_PADDING = 50 // px
 
-      // Размеры канвы (соотношение, как соотношение "стены")
       const canvasWidth = canvas.getBoundingClientRect().width
       canvas.width = canvasWidth // Проставляем атрибут явно (так надо)
       const canvasHeight = canvas.height = canvasWidth // Квадратная канва
 
-      const CANVAS_STAND_SPACE = canvasWidth - CANVAS_PADDING * 2 // px - допустимое место для стенда
+      const CANVAS_STAND_SPACE = canvasWidth - CANVAS_PADDING * 2 // px - допустимое место на канве для отрисовки стенда
 
       // Масштаб (px vs. mm)
       let scale = 1
@@ -258,56 +361,16 @@ export default {
 
         // текст шапки
         context.font = "24px sans-serif"
+        context.font = `${ params.isItalic ? 'italic' : '' }
+        ${ params.isBold ? 'bold' : '' }
+        ${ params.fontSize * scale }px
+        ${ params.fontFamily }`
         const headTextWidth = context.measureText( params.headText ).width
 
         const headTextX = headX + params.standWidth * scale / 2 - headTextWidth / 2
         const headTextY = headY + HEAD_HEIGHT * scale - 24 / 2 // Размер шрифта / 2
         context.fillText( params.headText, headTextX, headTextY, params.standWidth * scale )
       }
-
-      const drawPockets_old = ( params, context ) => {
-        const POCKETS_PADDING = 50 // mm
-        // TODO: Добавить проверку помещается ли ряд карманов
-        const standX = ( canvasWidth - params.standWidth * scale ) / 2 // px
-        const standY = ( canvasHeight - params.standHeight * scale ) / 2
-        const rowWidth = params.pocketsCountInRow * sizes[ state.pocketSize ].width + POCKETS_PADDING * ( params.pocketsCountInRow + 1 ) // mm
-        const rowsHeight = params.pocketsRowsCount * sizes[ state.pocketSize ].height + POCKETS_PADDING * ( params.pocketsRowsCount + 1 ) // mm
-        const rowStartX = standX + ( ( ( params.standWidth - rowWidth ) / 2 )  + POCKETS_PADDING ) * scale // px
-
-        // Ряды
-        for ( let row = 0; row < params.pocketsRowsCount; row++ ) {
-          const rowStartY = standY + ( ( ( params.standHeight - rowsHeight ) / 2 )  + POCKETS_PADDING  + row * ( sizes[ state.pocketSize ].height + POCKETS_PADDING ) ) * scale  // px
-
-          // Карманы в ряду
-          for ( let pocket = 0; pocket < params.pocketsCountInRow; pocket++ ) {
-
-            const pocketStartX = rowStartX + pocket * ( ( sizes[ params.pocketSize ].width * scale ) + POCKETS_PADDING * scale )
-            const pocketStartY = rowStartY
-
-            // Тень
-            context.shadowColor = 'rgba( 0, 0, 0, 0.2 )'
-            context.shadowBlur = 5
-
-            //  Сам карман
-            context.fillStyle = 'rgba( 220, 220, 220, 0.7 )'
-            context.fillRect( pocketStartX, pocketStartY, sizes[ params.pocketSize ].width * scale, sizes[ params.pocketSize ].height * scale )
-
-            // Сбрасываем тень для текста
-            context.shadowColor = 'none'
-            context.shadowBlur = 0
-
-            // Текст размера кармана
-            const fontSize = 20
-            context.font = `${ fontSize }px sans-serif`
-            context.fillStyle = 'rgba( 0, 0, 0, 0.5 )'
-            const pocketSizeTextWidth = context.measureText( params.pocketSize ).width // px
-            const pocketSizeTextX = pocketStartX + sizes[ params.pocketSize ].width * scale / 2 - pocketSizeTextWidth / 2
-            const pocketSizeTextY = pocketStartY + sizes[ params.pocketSize ].height * scale / 2
-            context.fillText( params.pocketSize, pocketSizeTextX, pocketSizeTextY )
-          }
-        }
-      }
-      console.log( drawPockets_old )
 
       const drawPockets = ( params, context ) => {
         // TODO: Добавить проверку помещается ли карманы
@@ -444,11 +507,13 @@ export default {
     onMounted( () => {
       setOrientation()
       draw( canvas.value, state )
+      calculate( state )
     } )
 
     watch( [ state ], () => {
       setOrientation()
       draw( canvas.value, state )
+      calculate( state )
     },{
       flush: 'post'
     } )
@@ -457,6 +522,9 @@ export default {
       canvas,
       state,
       sizes,
+
+      complexPrice,
+      standMaterials,
 
       // Functions
       onBackgroundImageChange,
