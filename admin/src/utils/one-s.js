@@ -1,7 +1,13 @@
 import axios from 'axios'
+
+const IS_DEV = window.location.host.includes( 'localhost' ) || window.location.host.includes( '8080' )
+const ROOT_HOST = IS_DEV ?
+    'http://localhost' : // CORS: Dev-Сервер XAMPP живёт на чистом localhost без порта:8080
+    'https://r-color.ru'
+
 // Стягиваем объект бд 1с единожды при загрузке этого модуля
-const oneSdbResponse = await axios.get( '/tools/price/db/index.json' )
-const oneSDb = oneSdbResponse.data
+const oneSDbResponse = await axios.get( `${ ROOT_HOST }/tools/price/db/index.json` )
+const oneSDb = oneSDbResponse.data
 
 const getOneSDb = () => {
     return oneSDb
