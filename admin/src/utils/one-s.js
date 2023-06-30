@@ -1,6 +1,6 @@
 import axios from 'axios'
 // Стягиваем объект бд 1с единожды при загрузке этого модуля
-const oneSdbResponse = await axios.get( 'http://localhost/tools/price/db/index.json' )
+const oneSdbResponse = await axios.get( '/tools/price/db/index.json' )
 const oneSDb = oneSdbResponse.data
 
 const getOneSDb = () => {
