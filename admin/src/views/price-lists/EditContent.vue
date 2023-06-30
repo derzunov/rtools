@@ -626,10 +626,11 @@ export default {
 
     onBeforeMount( async () => {
       await prepareData()
-    } )
 
-    watch( [ group ], () => {
-      subgroup.value = 0
+      // Даем возможность вотчеру сбрасывать подгруппу только после того, как данные были подготовлены
+      watch( [ group ], () => {
+        subgroup.value = 0
+      } )
     } )
 
 

@@ -9,6 +9,16 @@ const saveObjectToJSONFile = ( object, name = 'object' ) => {
     document.body.removeChild( link )
 }
 
+const saveHTMLToFile = ( htmlString, name = 'document' ) => {
+    const blob = new Blob( [ htmlString ], { type: 'text/html;charset=utf-8' } )
+    const link = document.createElement( 'a' )
+    link.href = URL.createObjectURL( blob )
+    link.download = `${ name }.html`
+    document.body.appendChild( link )
+    link.click()
+    document.body.removeChild( link )
+}
+
 const saveSvgToFile = ( svg, name = 'svg' ) => {
     const blob = new Blob( [ svg ], { type: 'image/svg+xml' } )
     const link = document.createElement( 'a' )
@@ -69,6 +79,7 @@ const loadImageBySrc =  ( src ) => {
 
 export {
     saveObjectToJSONFile,
+    saveHTMLToFile,
     saveSvgToFile,
     readFileAsDataFromInput,
     readFileAsTextFromInput,

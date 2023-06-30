@@ -13,8 +13,8 @@
 
   <div class="calculators">
     <StandsComponent
-        :standWidth="1500"
-        :standHeight="1000"
+        :standWidth="1200"
+        :standHeight="900"
         productName="Информационный стенд"
         productDescription="Описание продукта"
     />

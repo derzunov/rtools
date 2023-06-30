@@ -3,123 +3,127 @@
     Конструктор стендов
   </h4>
 
-  <h4>{{ productName }}</h4>
-  <p>{{ productDescription }}</p>
-  <div class="row stands-constructor">
-    <div class="col-md-6 stands-constructor__controls">
+  <div ref="calculatorContainer">
 
-      <div class="input-group mb-3">
-        <span class="input-group-text">Upload state</span>
-        <input class="form-control" type="file" accept="application/json"  @change="onLoadState"/>
+    <h4>{{ productName }}</h4>
+    <p>{{ productDescription }}</p>
+    <div class="row stands-constructor">
+      <div class="col-md-6 stands-constructor__controls">
+
+        <div class="input-group mb-3">
+          <span class="input-group-text">Upload state</span>
+          <input class="form-control" type="file" accept="application/json"  @change="onLoadState"/>
+        </div>
+
+        <div class="input-group mb-3">
+          <span class="input-group-text">Изображение для фона</span>
+          <input class="form-control" type="file" accept="image/jpeg, image/gif, image/png"  @change="onBackgroundImageChange"/>
+        </div>
+
+        <div class="input-group mb-3">
+          <span class="input-group-text">Изображение для стенда</span>
+          <input class="form-control" type="file" accept="image/jpeg, image/gif, image/png"  @change="onStandImageChange"/>
+        </div>
+
+        <div class="input-group mb-3">
+          <span class="input-group-text">Цвет стенда</span>
+          <input v-model="state.standColor" type="color" class="form-control" style="height: 40px;"/>
+          <span class="input-group-text" style="width: 250px;" id="stand_cmyk">
+            {{ (() => {
+            const rgb = hexToRgb( state.standColor )
+            return rgbToCmyk( rgb.r, rgb.g, rgb.b ) })() }}
+          </span>
+        </div>
+
+        <div class="input-group mb-3">
+          <span class="input-group-text">
+            <input v-model="state.isHead" class="form-check-input mt-0" type="checkbox" value="" aria-label="Checkbox for following text input">
+            &nbsp;С шапкой
+          </span>
+
+          <span class="input-group-text">Текст шапки</span>
+          <input :disabled="!state.isHead" type="string" v-model="state.headText" class="form-control" id="stand_height">
+        </div>
+
+        <div v-if="state.isHead" class="input-group mb-3">
+          <select class="form-control" v-model="state.fontFamily" style="min-width: 117px;">
+            <option value="sans-serif">Без засечек</option>
+            <option value="serif">С засечками</option>
+          </select>
+
+          <span class="input-group-text">
+            <input v-model="state.isItalic" class="form-check-input mt-0" type="checkbox" value="" aria-label="Checkbox for following text input">
+            &nbsp;&nbsp;Курсив
+          </span>
+
+          <span class="input-group-text">
+            <input v-model="state.isBold" class="form-check-input mt-0" type="checkbox" value="" aria-label="Checkbox for following text input">
+            &nbsp;Жирный
+          </span>
+
+          <span class="input-group-text">Высота (мм):</span>
+          <input type="number" v-model="state.fontSize" class="form-control">
+        </div>
+
+        <div class="input-group mb-3">
+          <span class="input-group-text">Ширина</span>
+          <input type="number" v-model="state.standWidth" step="50" min="200" max="2000" class="form-control" id="stand_width">
+          <span class="input-group-text">Высота</span>
+          <input type="number" v-model="state.standHeight" step="50" min="300" max="2000" class="form-control" id="stand_height">
+        </div>
+
+        <h5 v-if="state.pockets.length">Карманы</h5>
+        <div class="input-group mb-3" v-for="( pocket, index ) in state.pockets" :key="index">
+          <span class="input-group-text">Размер</span>
+          <select class="form-control" v-model="pocket.size">
+            <option v-for="( sizeObject, size ) in sizes" :key="size">{{ size }}</option>
+          </select>
+          <span class="input-group-text">x</span>
+          <input type="number" step="10" min="0" v-model="pocket.x" class="form-control">
+          <span class="input-group-text">y</span>
+          <input type="number" step="10" min="0" v-model="pocket.y" class="form-control">
+        </div>
+
+        <div class="input-group mb-3">
+          <button
+              @click="addPocket( 10, Math.round( state.standHeight / 1.5 ) )"
+              class="btn btn-primary" >
+            Добавить карман
+          </button>
+        </div>
+
+        <div class="input-group mb-3">
+          <button
+              @click="() => {
+                const fileName = `stand_${ state.standWidth }x${ state.standHeight }_${ ruToLat( productName ) }`
+                saveObjectToJSONFile( state, fileName  )
+                saveSvgToFile( state.svg, fileName  )
+                saveHTMLToFile( calculatorContainer.innerHTML, fileName )
+              }"
+              class="btn btn-primary" >
+            Сохранить состояние
+          </button>
+        </div>
+
+        <hr>
+        <h5>Материалы</h5>
+
+        <div class="input-group mb-3">
+          <label class="input-group-text" for="inputGroupSelect01">Основа</label>
+          <select class="form-select" v-model="state.standMaterialOneSCode" >
+            <option v-for="( materialObject, materialCode ) in standMaterials" :value="materialCode" :key="materialCode">{{ materialObject.title }}</option>
+          </select>
+        </div>
+
       </div>
+      <div class="col-md-6 stands-constructor__canvas">
+        <h5>Итоговая цена: {{ complexPrice }}</h5>
+        <canvas @click="saveCanvasToJpeg( $event.target, 'stand_preview' )" ref="canvas" style="cursor: pointer;"></canvas>
 
-      <div class="input-group mb-3">
-        <span class="input-group-text">Изображение для фона</span>
-        <input class="form-control" type="file" accept="image/jpeg, image/gif, image/png"  @change="onBackgroundImageChange"/>
+        <h5>SVG:</h5>
+        <div v-html="state.svg"></div>
+
       </div>
-
-      <div class="input-group mb-3">
-        <span class="input-group-text">Изображение для стенда</span>
-        <input class="form-control" type="file" accept="image/jpeg, image/gif, image/png"  @change="onStandImageChange"/>
-      </div>
-
-      <div class="input-group mb-3">
-        <span class="input-group-text">Цвет стенда</span>
-        <input v-model="state.standColor" type="color" class="form-control" style="height: 40px;"/>
-        <span class="input-group-text" style="width: 250px;" id="stand_cmyk">
-          {{ (() => {
-          const rgb = hexToRgb( state.standColor )
-          return rgbToCmyk( rgb.r, rgb.g, rgb.b ) })() }}
-        </span>
-      </div>
-
-      <div class="input-group mb-3">
-        <span class="input-group-text">
-          <input v-model="state.isHead" class="form-check-input mt-0" type="checkbox" value="" aria-label="Checkbox for following text input">
-          &nbsp;С шапкой
-        </span>
-
-        <span class="input-group-text">Текст шапки</span>
-        <input :disabled="!state.isHead" type="string" v-model="state.headText" class="form-control" id="stand_height">
-      </div>
-
-      <div v-if="state.isHead" class="input-group mb-3">
-        <select class="form-control" v-model="state.fontFamily" style="min-width: 117px;">
-          <option value="sans-serif">Без засечек</option>
-          <option value="serif">С засечками</option>
-        </select>
-
-        <span class="input-group-text">
-          <input v-model="state.isItalic" class="form-check-input mt-0" type="checkbox" value="" aria-label="Checkbox for following text input">
-          &nbsp;&nbsp;Курсив
-        </span>
-
-        <span class="input-group-text">
-          <input v-model="state.isBold" class="form-check-input mt-0" type="checkbox" value="" aria-label="Checkbox for following text input">
-          &nbsp;Жирный
-        </span>
-
-        <span class="input-group-text">Высота (мм):</span>
-        <input type="number" v-model="state.fontSize" class="form-control">
-      </div>
-
-      <div class="input-group mb-3">
-        <span class="input-group-text">Ширина</span>
-        <input type="number" v-model="state.standWidth" step="50" min="200" max="2000" class="form-control" id="stand_width">
-        <span class="input-group-text">Высота</span>
-        <input type="number" v-model="state.standHeight" step="50" min="300" max="2000" class="form-control" id="stand_height">
-      </div>
-
-      <h5 v-if="state.pockets.length">Карманы</h5>
-      <div class="input-group mb-3" v-for="( pocket, index ) in state.pockets" :key="index">
-        <span class="input-group-text">Размер</span>
-        <select class="form-control" v-model="pocket.size">
-          <option v-for="( sizeObject, size ) in sizes" :key="size">{{ size }}</option>
-        </select>
-        <span class="input-group-text">x</span>
-        <input type="number" step="10" min="0" v-model="pocket.x" class="form-control">
-        <span class="input-group-text">y</span>
-        <input type="number" step="10" min="0" v-model="pocket.y" class="form-control">
-      </div>
-
-      <div class="input-group mb-3">
-        <button
-            @click="addPocket"
-            class="btn btn-primary" >
-          Добавить карман
-        </button>
-      </div>
-
-      <div class="input-group mb-3">
-        <button
-            @click="() => {
-              const fileName = `stand_${ state.standWidth }x${ state.standHeight }_${ ruToLat( productName ) }`
-              saveObjectToJSONFile( state, fileName  )
-              saveSvgToFile( state.svg, fileName  )
-            }"
-            class="btn btn-primary" >
-          Сохранить состояние
-        </button>
-      </div>
-
-      <hr>
-      <h5>Материалы</h5>
-
-      <div class="input-group mb-3">
-        <label class="input-group-text" for="inputGroupSelect01">Основа</label>
-        <select class="form-select" v-model="state.standMaterialOneSCode" >
-          <option v-for="( materialObject, materialCode ) in standMaterials" :value="materialCode" :key="materialCode">{{ materialObject.title }}</option>
-        </select>
-      </div>
-
-    </div>
-    <div class="col-md-6 stands-constructor__canvas">
-      <h5>Итоговая цена: {{ complexPrice }}</h5>
-      <canvas @click="saveCanvasToJpeg( $event.target, 'stand_preview' )" ref="canvas" style="cursor: pointer;"></canvas>
-
-      <h5>SVG:</h5>
-      <div v-html="state.svg"></div>
-
     </div>
   </div>
 </template>
@@ -133,6 +137,7 @@ import {
   saveCanvasToJpeg,
   saveObjectToJSONFile,
   saveSvgToFile,
+  saveHTMLToFile,
   readFileAsDataFromInput,
   readFileAsTextFromInput,
   ruToLat,
@@ -189,6 +194,7 @@ export default {
     console.log( ROOT_HOST )
     // const PRICES_PATH = ROOT_HOST + '/tools/price/'
     const canvas = ref( null )
+    const calculatorContainer = ref( null )
 
     const state = reactive( {
       // Конструктор стендов
@@ -373,14 +379,13 @@ export default {
       }
 
       const drawPockets = ( params, context ) => {
-        // TODO: Добавить проверку помещается ли карманы
         params.pockets.forEach( ( pocket ) => {
 
           const standX = ( canvasWidth - params.standWidth * scale ) / 2 // px
           const standY = ( canvasHeight - params.standHeight * scale ) / 2 // px
 
           const pocketStartX = standX + pocket.x * scale
-          const pocketStartY = standY + pocket.y * scale
+          const pocketStartY = ( standY + params.standHeight * scale ) - pocket.y * scale
 
           // Тень
           context.shadowColor = 'rgba( 0, 0, 0, 0.2 )'
@@ -499,8 +504,8 @@ export default {
       }
     }
 
-    const addPocket = () => {
-      const defaultPocketObject = { size: 'A4', orientation: 'v', x: 10, y: 10 }
+    const addPocket = ( x = 10, y = 500 ) => {
+      const defaultPocketObject = { size: 'A4', orientation: 'v', x, y }
       state.pockets.push( { ...defaultPocketObject } )
     }
 
@@ -514,11 +519,13 @@ export default {
       setOrientation()
       draw( canvas.value, state )
       calculate( state )
+      console.log( calculatorContainer.value )
     },{
       flush: 'post'
     } )
 
     return {
+      calculatorContainer,
       canvas,
       state,
       sizes,
@@ -538,6 +545,7 @@ export default {
       rgbToCmyk,
       saveObjectToJSONFile,
       saveSvgToFile,
+      saveHTMLToFile,
       ruToLat,
     }
   }

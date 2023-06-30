@@ -29,11 +29,9 @@
             </option>
           </select>
       </div>
-<!--      <h1> {{ currentGroup }} </h1>-->
-<!--      <h1> {{ subgroupId }} </h1>-->
       <div>
-          <select v-if="currentGroup.subgroups?.length" class="form-select" name="subgroup" id="subgroup" v-model="subgroupId">
-<!--            <option selected="selected" value="all">Подгруппа не выбрана</option>-->
+          <select v-model="subgroupId" v-if="currentGroup.subgroups?.length" class="form-select" name="subgroup" id="subgroup">
+            <option selected="selected" value="all">Все подгруппы</option>
             <template v-if="groupId !== 'all'">
 
               <option v-for="subgroupItem in currentGroup.subgroups"
@@ -238,8 +236,13 @@ export default {
       }
       const foundedGroup = R.find( R.propEq( 'id', groupId ) )( groups.value )
       if ( foundedGroup ) {
-        // если у группы есть подгуппы, устанавливаем id первой из имеющихся, если нет - `all`
-        foundedGroup.subgroups?.length ? subgroupId.value = foundedGroup.subgroups[ 0 ].id : subgroupId.value = 'all'
+        // Deprecated:
+        // если у группы есть подгруппы, устанавливаем id первой из имеющихся, если нет - `all`
+        // foundedGroup.subgroups?.length ? subgroupId.value = foundedGroup.subgroups[ 0 ].id : subgroupId.value = 'all'
+
+        // По просьбе Дениса сделано по-другому при смене группы устнавливаем значение подгиуппы в all
+        subgroupId.value = 'all'
+
         return currentGroup.value = foundedGroup
       } else {
         console.error( `DE: setCurrentGroupById: Group with passed id (${ groupId }) not found in:` )
