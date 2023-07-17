@@ -286,10 +286,11 @@
                       Связанные с прайсом коды 1с
                     </label>
                     <textarea class="form-control mb-3"
-                           rows="3"
-                           id="one_s_codes"
-                           v-model="one_s_codes"
-                           title="Связанные с прайсом коды 1с через точку с запятой.
+                              rows="3"
+                              id="one_s_codes"
+                              v-model="one_s_codes"
+                              @blur="handleOneSCodesBlur"
+                              title="Связанные с прайсом коды 1с через точку с запятой.
       Пример: 00-00000001;00-00000002"
                     ></textarea>
                   </td>
@@ -355,6 +356,7 @@ import {
   addCol,
   deleteCol,
   ruToLat,
+  cleanOneSCodes,
 } from '@/utils'
 import pluralize from 'pluralizr'
 import ModalUniversal from "@/components/ModalUniversal"
@@ -563,6 +565,19 @@ export default {
       }
     }
 
+    const handleOneSCodesBlur = () => {
+      // Все описанные здесь преобразования совершаем только на расфокус,
+      // Ибо иначе невозможно работать с формой
+
+      // Если последний символ не точка с запятой, то мы добавляем точку с запятой.
+      // Все предыдущие "хитрые" условия учтены в вотчере "cleanOneSCodes" - так надо!
+      if ( one_s_codes.value.length &&
+          one_s_codes.value.trim()[ one_s_codes.value.length - 1 ] !== ';'
+      ) {
+        one_s_codes.value += ';'
+      }
+    }
+
     onBeforeMount( async () => {
       await fetchGroups()
       const priceObject = makePriceObject()
@@ -591,6 +606,12 @@ export default {
     watch( [ file_name ], () => {
       checkPriceFileName( file_name.value )
     } )
+
+    watch( [ one_s_codes ],
+        () => {
+          one_s_codes.value = cleanOneSCodes( one_s_codes.value )
+        },
+        { flush: 'post' } )
 
     watch( [ group ], () => {
       subgroup.value = 0
@@ -627,7 +648,8 @@ export default {
       deleteCol,
       ruToLat,
       checkIsPriceExist,
-      checkPriceFileName,
+
+      handleOneSCodesBlur,
     }
   }
 }
