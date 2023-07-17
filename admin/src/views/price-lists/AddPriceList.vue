@@ -409,7 +409,7 @@ export default {
           {
             id: Date.now() + random( 100 ),
             cols: [ {
-              value: 'Наименвание',
+              value: 'Наименование',
               colspan: 1,
               rowspan: 1,
             }, {

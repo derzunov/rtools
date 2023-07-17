@@ -10,8 +10,9 @@ export default async ( priceObject ) => {
     const tableCode = await createTable( priceObject )
 
     // Решаем проблему с "Цены на Цены на"
-    let priceUpdateString = `${ priceObject.header } -- ${ ( new Date( priceObject.actualized_date ) ).toLocaleDateString( 'ru-RU' ) }`
-    if ( !priceObject.header.includes( 'Цены на' ) ) {
+    let priceUpdateString = `${ priceObject.header } - ${ ( new Date( priceObject.actualized_date ) ).toLocaleDateString( 'ru-RU' ) }`
+    if ( !priceObject.header.includes( 'Цены на' )  &&
+        !priceObject.header.includes( 'Стоимость' ) ) {
         priceUpdateString = `Цены на ${ priceUpdateString }`
     }
 
@@ -19,11 +20,10 @@ export default async ( priceObject ) => {
         `<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
         <div class="b-price">
             <h3 class="b-price__header">${ priceObject.header }</h3>
-            <p>${ priceObject.toptext }</p>
+            <p>${ priceObject.toptext.split('\n').join('<br>') }</p>
             ${ tableCode }
             <p class="b-price__update-date" >${ priceUpdateString }</p>
-            <p>${ priceObject.bottomtext }</p>
-            
+            <p>${ priceObject.bottomtext.split('\n').join('<br>') }</p>
         <div>
         <style>
           .b-price__update-date {

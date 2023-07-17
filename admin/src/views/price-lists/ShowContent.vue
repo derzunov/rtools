@@ -222,7 +222,7 @@ export default {
       group.value = response.data.group
       subgroup.value = response.data.subgroup
       update_date.value = response.data.update_date
-      admin_comment.value = response.data.admin_comment || 'no comments yet'
+      admin_comment.value = response.data.admin_comment || ''
 
       is_actualized.value = response.data.is_actualized
       actualized_date.value = response.data.actualized_date

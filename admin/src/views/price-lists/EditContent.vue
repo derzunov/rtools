@@ -485,7 +485,7 @@ export default {
       subgroup.value = R.findIndex( R.propEq( 'id', response.data.subgroup  ) )(
           ( R.find( R.propEq( 'id', response.data.group  ) )( groups.value ) ).subgroups
       )
-      admin_comment.value = response.data.admin_comment || 'no comments yet'
+      admin_comment.value = response.data.admin_comment || ''
 
       is_actualized.value = response.data.is_actualized
       actualized_date.value = response.data.actualized_date
