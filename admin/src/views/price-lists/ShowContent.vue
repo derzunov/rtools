@@ -109,18 +109,13 @@
         </td>
       </tr>
     </table>
-    <table width="100%">
+    <div>
       <!-- Комментарий -->
-      <tr style="vertical-align: top;">
-        <td>
-          <h5>Комментарий:</h5>
-        </td>
-        <td>
-          {{ admin_comment }}
-        </td>
-      </tr>
-
-    </table>
+      <h5>Комментарий администратора:</h5>
+      <p>
+        {{ admin_comment }}
+      </p>
+    </div>
     <br>
   </div>
 </template>
