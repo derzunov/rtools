@@ -44,27 +44,27 @@
             switch ( $data[ 'action' ] ) {
                 case 'info':
                     switch ( $data[ 'field' ] ) {
-                        case 'price': 
+                        case 'price':
                             // TODO: переучить всех потребителей цены из базы на этот эндпоинт
                             $oneSPriceItem = $db->getPriсeByCode( $data[ 'one_s_code' ] );
                             $oneSPrice = explode( ';', $oneSPriceItem )[ 5 ];
                             sendResponse( $oneSPrice );
                             break;
-                            
-                        case 'units': 
+
+                        case 'units':
                             $oneSPriceItem = $db->getPriсeByCode( $data[ 'one_s_code' ] );
                             $oneSUnits = explode( ';', $oneSPriceItem )[ 3 ];
                             sendResponse( $oneSUnits );
                             break;
-                            
-                        case 'name': 
+
+                        case 'name':
                             $oneSPriceItem = $db->getPriсeByCode( $data[ 'one_s_code' ] );
                             $oneSUnits = explode( ';', $oneSPriceItem )[ 1 ];
                             sendResponse( $oneSUnits );
                             break;
                     }
                     break;
-                    
+
                 case 'groups':
                     // TODO: populate=subgroups condition
                     sendJsonResponse( $db->getGroupsDb() );
@@ -72,7 +72,7 @@
                 case 'changed':
                     sendJsonResponse( $db->getChangedPricesDb() );
                     break;
-                    
+
                 case 'related-changed':
                     sendJsonResponse( $db->getRelatedChangedPrices() );
                     break;
@@ -169,11 +169,11 @@
 
                     // ------------------------------------------------------------------------------------
 
-                    
+
                     $db->updateDb( $oneSPriceObject );
                 }
 
-                // TODO: вернуть: 
+                // TODO: вернуть:
                 header( 'Location: /tools/admin/' );
                 die();
             } else {
@@ -216,7 +216,7 @@
         if ( isset( $data[ 'file_name' ] ) ) {
             $db->deletePriceByName( $data[ 'file_name' ] );
         }
-        
+
         if ( isset( $data[ 'one_s_changed_code' ] ) ) {
             $db->deleteChangedPriceByCode( $data[ 'one_s_changed_code' ] );
         }
@@ -234,7 +234,7 @@
 
     function updateChangedPrices( $oldPricesObject, $newPricesObject ) {
         $db = Db::getInstance();
-        $updatedChangedPrices = $db->getChangedPricesDb(); // Сюда только добавляем изменившиеся в цене (или наличии) позиции. 
+        $updatedChangedPrices = $db->getChangedPricesDb(); // Сюда только добавляем изменившиеся в цене (или наличии) позиции.
         // Перезаписываем значения полей ТОЛЬКО при обнаружении изменений
 
         // ------------------------------------------------------------------------------------
@@ -259,22 +259,26 @@
 
             if ( isset( explode( ';', $newPriceItemString )[ 2 ] ) ) {
 
-                
+
                 if ( !isset( $oldPricesObject[ $oneSCode ] ) ) {
                     // Товар новый. Добавился в этой номенклатуре. Помечаем.
                     $newPriceItemString = 'NEW: ' . $newPriceItemString;
                     // Что-то потом делаем, а может и не делаем :)
                 } else {
                     // Товар уже числится в нашей БД цен (index.json). Работаем дальше
-                    
+
                     $oldPrice = explode( ';', $oldPricesObject[ $oneSCode ] )[ 5 ];
                     $newPrice = explode( ';', $newPriceItemString )[ 5 ];
-                    
+
+                    // Приводим к правильному формату
+                    $oldPrice = str_replace( ',', '.' , $oldPrice );
+                    $newPrice = str_replace( ',', '.' , $newPrice );
+
                     // Цена изменилась
                     // ИЛИ
                     // Товара нет на складе (Признак - знак '?'):
-                    // FYI: Мы предварительно подготавливаем новый объект $newPricesObject (до вызова этой функции), 
-                    // записывая в него позиции, которые уже имеются в нашей бд, но отсутствуют в загружаемой номенклатуре 
+                    // FYI: Мы предварительно подготавливаем новый объект $newPricesObject (до вызова этой функции),
+                    // записывая в него позиции, которые уже имеются в нашей бд, но отсутствуют в загружаемой номенклатуре
                     // и проставляем знак '?' в начале строки-значения
                     if ( $oldPrice != $newPrice || $newPriceItemString[ 0 ] == '?' ) {
 
@@ -283,8 +287,8 @@
                         if ( !isset( $updatedChangedPrices[ $oneSCode ] ) ) {
                             // В нашей БД изменений нет записи о прошлых изменениях цены этой позиции
                             $updatedChangedPrices[ $oneSCode ] = [];
-                            // Значит и старой даты у нас нет и нужно ее получить 
-                            // из даты последнего обновления нашей !!!базы цен!!!              
+                            // Значит и старой даты у нас нет и нужно ее получить
+                            // из даты последнего обновления нашей !!!базы цен!!!
                             $oldDate = $db->getLastUpdateTimestamp() * 1000;
                         } else {
 
@@ -305,11 +309,11 @@
                             } else {
                                 $oldDate = 0;
                             }
-                            
-                            
+
+
                         }
 
-                        $percents = intval( ( $newPrice * 100 / $oldPrice ) - 100, 10 );
+                        $percents = intval( ( floatval( $newPrice ) * 100 / floatval( $oldPrice ) ) - 100, 10 );
 
                         $updatedChangedPrices[ $oneSCode ] [ 'one_s_code' ] = $oneSCode;
                         $updatedChangedPrices[ $oneSCode ] [ 'value' ] = $newPriceItemString;

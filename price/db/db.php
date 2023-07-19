@@ -174,7 +174,9 @@
       // После этого обновить индекс
 
       $allPriceListsFiles = $this->getAllPriceListsNames();
+
       foreach ( $allPriceListsFiles as $priceFile ) {
+
         $priceListJson = file_get_contents( $this->jsonPricelistsDir . $priceFile );
         $priceListObject = json_decode(
                     $priceListJson,
@@ -184,7 +186,9 @@
         );
 
         // Если прайс привязан к этому коду, то обновляем  is_actualized
-        if ( str_contains( $priceListObject[ 'one_s_codes' ], $oneSCode ) ) {
+        // Содержит ли строка кодов искомый код
+        if ( strpos( $priceListObject[ 'one_s_codes' ], $oneSCode ) !== false ) {
+
           $priceListObject[ 'is_actualized' ] = false;
 
           $priceListJson = json_encode( $priceListObject );
