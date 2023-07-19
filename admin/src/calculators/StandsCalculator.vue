@@ -1,3 +1,4 @@
+<!-- При использовании этого калькулятора в другом проекте на vue не забыть забрать ещё и папку utils/ -->
 <template>
   <h4>
     Конструктор стендов
@@ -108,21 +109,61 @@
         <hr>
         <h5>Материалы</h5>
 
+        <!-- Основа -->
         <div class="input-group mb-3">
           <label class="input-group-text" for="inputGroupSelect01">Основа</label>
-          <select class="form-select" v-model="state.standMaterialOneSCode" >
-            <option v-for="( materialObject, materialCode ) in standMaterials" :value="materialCode" :key="materialCode">{{ materialObject.title }}</option>
+
+          <select class="form-select" v-model="state.materialOsnovy" >
+            <option v-for="( materialObject, materialName ) in materialyOsnovy" :value="materialName" :key="materialName">{{ materialObject.title }}</option>
           </select>
+        </div>
+        <div>
+          <p>{{ materialyOsnovy[ state.materialOsnovy ].description }}</p>
+        </div>
+
+        <!-- Карманы -->
+        <div class="input-group mb-3">
+          <label class="input-group-text" for="inputGroupSelect01">Карманы</label>
+
+          <select class="form-select" v-model="state.materialKarmanov" >
+            <option v-for="( materialObject, materialName ) in materialyKarmanov" :value="materialName" :key="materialName">{{ materialObject.title }}</option>
+          </select>
+        </div>
+        <div>
+          <p>{{ materialyKarmanov[ state.materialKarmanov ].description }}</p>
+        </div>
+
+        <hr>
+        <div class="input-group mb-3">
+          <button
+              @click="() => {
+                calculate( state )
+              }"
+              class="btn btn-primary" >
+            Рассчитать
+          </button>
         </div>
 
       </div>
+
+
       <div class="col-md-6 stands-constructor__canvas">
-        <h5>Итоговая цена: {{ complexPrice }}</h5>
         <canvas @click="saveCanvasToJpeg( $event.target, 'stand_preview' )" ref="canvas" style="cursor: pointer;"></canvas>
 
         <h5>SVG:</h5>
         <div v-html="state.svg"></div>
 
+      </div>
+      <div class="col-md-12">
+        <div v-if="!!clientPrice" class="mb-3">
+          <h4>Цена для клиента</h4>
+          <p>{{ clientPrice }}₽</p>
+        </div>
+
+        <div v-if="!!clientPrice" class="mb-3">
+          <h4>Отчёт для менеджера</h4>
+          <div v-if="!!managersReportHtml" v-html="managersReportHtml"></div>
+        </div>
       </div>
     </div>
   </div>
@@ -143,14 +184,15 @@ import {
   ruToLat,
   C2S, // (https://github.com/derzunov/canvas2svg)
 
-  getOneSDb,
-  getPriceByOneSCode,
-  getUnitsByOneSCode,
-  getMaterialSheetSizesByOneSCode,
-  getPositionNameByOneSCode,
 } from '@/utils'
 
-import sizes from '@/constants/sizes'
+import {
+  materialNames,
+  makeMaterialsList,
+  roundUpNumber,
+} from './data/'
+
+import sizes from './constants/sizes'
 import backgroundImage from '@/assets/wall.jpg'
 
 export default {
@@ -179,13 +221,11 @@ export default {
     standImage: String,
     svg: String,
     pockets: Array,
-    standMaterialOneSCode: String,
+
+    materialOsnovy: String,
+    materialKarmanov: String,
   },
   setup( props ) {
-
-    console.log( 'getOneSDb result: ', getOneSDb() )
-    console.log( 'getPriceByOneSCode result: ', getPriceByOneSCode( '00-00001907' ) )
-    console.log( 'getUnitsByOneSCode result: ', getUnitsByOneSCode( '00-00001907' ) )
 
     const IS_DEV = window.location.host.includes( 'localhost' )
     const ROOT_HOST = IS_DEV ?
@@ -217,72 +257,13 @@ export default {
       pockets: props.pockets || [],
 
       // Материалы
-      standMaterialOneSCode: props.standMaterialOneSCode || '00-00002155'
+      probka: { x: 100, y: 100, width: 297, height: 420 }, //  или null, если пробковая вставка не нужна
+      materialOsnovy: props.materialOsnovy || materialNames.FANERA_BERYOZA_3MM_CHYORNYJ,
+      materialKarmanov: props.materialKarmanov || materialNames.ORGSTEKLO_1_5MM_PROZRACHNYJ,
     } )
 
-    const STAND_MATERIALS_CODES = [
-      // ПВХ
-      '00-00002155',
-      '00-00002198',
-      // Фанера
-      '00-00002263',
-      '00-00001907', // Просто для тестов, у этой позиции нет размеров вида ШШ*ВВ в названии
-    ]
-
-    // Кандидат на перенос в utils
-    // makeMaterialsList, makeWorksList, makeItemsList, makePocketsList...
-    // Списки 1с позиций, требующихся конкретным калькуляторам
-    // формируются общими мейкерами
-    // Набор полей объектов списка определяется конкретным мейкером
-    const makeMaterialsList = ( oneSCodes ) => {
-
-      const materials = {}
-
-      oneSCodes.forEach( ( oneSCode ) => {
-        materials[ oneSCode ] = {
-          oneSCode,
-          title: getPositionNameByOneSCode( oneSCode ),
-          sizes: getMaterialSheetSizesByOneSCode( oneSCode ),
-        }
-      } )
-      return materials
-    }
-
-    const standMaterials = makeMaterialsList( STAND_MATERIALS_CODES )
-
-    const complexPrice = ref( 0 )
-
-    const calculateStand = async ( params ) => {
-
-      // Получаем размеры листа выбранного материала
-      const {
-        materialSheetWidth,
-        materialSheetHeight
-      } = getMaterialSheetSizesByOneSCode( params.standMaterialOneSCode )
-
-      const materialSheetSquare = materialSheetWidth * materialSheetHeight // mm^2
-      const standSquare = params.standHeight * params.standWidth // mm^2
-
-      const priceString = getPriceByOneSCode( params.standMaterialOneSCode )
-
-      const materialSheetPrice = parseFloat( priceString )
-
-      const materialRate = materialSheetPrice * standSquare / materialSheetSquare
-
-      return Math.round( materialRate )
-    }
-    const calculatePockets = ( params ) => {
-      return params.pockets.length
-    }
-    const calculateWork = ( params ) => {
-      return params.pockets.length * 6 // Пока просто с потолка
-    }
-
-    const calculate = async ( params ) => {
-      // const materialsOfStand = []
-      // complexPrice.value = params.toString() + await getPriceFromOneS( '00-00002244' )
-      complexPrice.value =  await calculateStand( params ) + ' + ' + calculatePockets( params ) + ' + ' + calculateWork( params )
-    }
+    const clientPrice = ref( 0 )
+    const managersReportHtml = ref( '' )
 
     const draw = async ( canvas, params ) => {
       const CANVAS_PADDING = 50 // px
@@ -509,17 +490,142 @@ export default {
       state.pockets.push( { ...defaultPocketObject } )
     }
 
+    // --------------------------------------------------------------------
+    // Калькуляция --------------------------------------------------------
+
+    // Создаём объект возможных материалов для основы
+    // Реактивность тут не нужна, этот список задаётся из кода руками
+    // TODO?! Возможно, реактивность понадобится,
+    // тк в зависимости от параметров список допустимых материалов может меняться
+    const materialyOsnovy = makeMaterialsList(
+        [
+          materialNames.PVH_10MM_BELYJ,
+          materialNames.FANERA_BERYOZA_3MM_CHYORNYJ,
+          materialNames.PVH_3MM_CHYORNYJ,
+        ]
+    )
+
+    // Создаём объект возможных материалов для карманов
+    // Реактивность тут не нужна, этот список задаётся из кода руками
+    // TODO?! Возможно, реактивность понадобится,
+    // тк в зависимости от параметров список допустимых материалов может меняться
+    const materialyKarmanov = makeMaterialsList(
+        [
+          materialNames.ORGSTEKLO_1_5MM_PROZRACHNYJ,
+          materialNames.ORGSTEKLO_2MM_PROZRACHNYJ,
+        ]
+    )
+
+    // Количество материалов
+    const calculateMaterialsRate = ( params ) => {
+
+      const materialsRateObject = {}
+
+      // Основа ----------------------------------------------------------------
+      const ploshadOsnovyMm2 = params.standHeight * params.standWidth // mm^2
+      // Расход на основу в кв. м
+      const ploshadOsnovyM2 = roundUpNumber( ploshadOsnovyMm2 / ( 1000 * 1000 ) ) // m^2
+
+      // Добавляем в итоговый объект израсходованных материалов материал основы с его количеством
+      materialsRateObject[ params.materialOsnovy ] = {
+        ...materialyOsnovy[ params.materialOsnovy ],
+        quantity: ploshadOsnovyM2,
+      }
+
+      // Карманы ----------------------------------------------------------------
+
+      // Есть ли вообще карманы
+      if ( params.pockets.length ) {
+
+        let obshayaPloshadKarmanovMM2 = 0
+        params.pockets.forEach( ( pocket ) => {
+          obshayaPloshadKarmanovMM2 += sizes[ pocket.size ].width * sizes[ pocket.size ].height
+        } )
+
+        // Общая площадь карманов в кв м
+        const ploshadKarmanovM2 = roundUpNumber( obshayaPloshadKarmanovMM2 / ( 1000 * 1000 ) )
+
+        // Добавляем в итоговый объект израсходованных материалов материал карманов с их общей площадью
+        materialsRateObject[ params.materialKarmanov ] = {
+          ...materialyKarmanov[ params.materialKarmanov ],
+          quantity: ploshadKarmanovM2,
+        }
+      }
+
+      return materialsRateObject
+    }
+
+    // Количество работ (пока заглушка)
+    const calculateWorksRate = ( params ) => {
+      console.log( params )
+      return {}
+    }
+
+    // Считаем цену для клиента
+    const calculateClientPrice = ( materialsRateObject, worksRateObject ) => {
+      const css = "font-size: 12px; color: #57F287"
+      console.log( '%c' + JSON.stringify( materialsRateObject ), css )
+      console.log( '%c' + JSON.stringify( worksRateObject ), css )
+
+      let cenaMaterialov = 0
+
+      // Идем по всем материалам, множим их расход на их цену и прибавляем к общим затратам на материалы
+      Object.values( materialsRateObject ).forEach( ( materialObj ) => {
+        // TODO: Здесь будут учитываться дополнительные условия для отдельных материалов, размеров и прочего
+        cenaMaterialov += ( materialObj.cena * materialObj.quantity )
+      } )
+
+      return roundUpNumber( cenaMaterialov )
+    }
+
+    // Формируем отчёт для менеджера text/html/csv/email/etc.
+    const createManagersReport = ( materialsRateObject, worksRateObject ) => {
+
+      const calculateMaterialItemPrice = ( materialItem ) => {
+        // Отчасти повторяет функцию calculateClientPrice только потому,
+        // что я предполагаю разные подсчёты для клиента и менеджера
+        // TODO: Здесь будут учитываться дополнительные условия для отдельных материалов, размеров и прочего
+        return roundUpNumber( materialItem.quantity * materialItem.cena )
+      }
+
+      const createMaterialItemHTML = ( materialItem ) => {
+        return `
+          <p>${ materialItem.title } x ${ materialItem.quantity } ${ materialItem.edIzm } = ${ calculateMaterialItemPrice( materialItem ) }₽</p>
+        `
+      }
+
+      let materialsHtml = ''
+
+      Object.values( materialsRateObject ).forEach( ( materialItem ) => {
+        materialsHtml = materialsHtml + createMaterialItemHTML( materialItem )
+      } )
+
+
+      const css = "font-size: 12px; color: #57F287"
+      console.log( '%c' + JSON.stringify( materialsRateObject ), css )
+      console.log( '%c' + JSON.stringify( worksRateObject ), css )
+      return materialsHtml
+    }
+
+
+    // Функция запускающая все расчёты
+    const calculate = ( params ) => {
+      const materialsRateObject = calculateMaterialsRate( params )
+      const worksRateObject = calculateWorksRate( params )
+      clientPrice.value = calculateClientPrice( materialsRateObject, worksRateObject )
+      managersReportHtml.value = createManagersReport( materialsRateObject, worksRateObject )
+    }
+
+    // / Калькуляция ------------------------------------------------------
+
     onMounted( () => {
       setOrientation()
       draw( canvas.value, state )
-      calculate( state )
     } )
 
     watch( [ state ], () => {
-      setOrientation()
+      setOrientation() // deprecated
       draw( canvas.value, state )
-      calculate( state )
-      console.log( calculatorContainer.value )
     },{
       flush: 'post'
     } )
@@ -530,8 +636,11 @@ export default {
       state,
       sizes,
 
-      complexPrice,
-      standMaterials,
+      clientPrice,
+      managersReportHtml,
+
+      materialyOsnovy,
+      materialyKarmanov,
 
       // Functions
       onBackgroundImageChange,
@@ -539,6 +648,8 @@ export default {
       saveCanvasToJpeg,
       onLoadState,
       addPocket,
+
+      calculate,
 
       // Utils
       hexToRgb,

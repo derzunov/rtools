@@ -293,9 +293,20 @@
                             // В нашей БД изменений уже есть запись о прошлом изменении цены этой позиции
                             // Поэтому старой ценой будет не запись из текущей номенклатуры ( бд цен )
                             // А будет та самая старая цена из уже имеющейся записи в бд изменений
-                            $oldPrice = $updatedChangedPrices[ $oneSCode ][ 'old_price' ];
+                            if ( isset( $updatedChangedPrices[ $oneSCode ][ 'old_price' ] ) ) {
+                                $oldPrice = $updatedChangedPrices[ $oneSCode ][ 'old_price' ];
+                            } else {
+                                $oldPrice = 0;
+                            }
+
                             // То же самое и со старой датой
-                            $oldDate = $updatedChangedPrices[ $oneSCode ] [ 'old_date' ];
+                            if ( isset( $updatedChangedPrices[ $oneSCode ][ 'old_date' ] ) ) {
+                                $oldDate = $updatedChangedPrices[ $oneSCode ][ 'old_date' ];
+                            } else {
+                                $oldDate = 0;
+                            }
+                            
+                            
                         }
 
                         $percents = intval( ( $newPrice * 100 / $oldPrice ) - 100, 10 );

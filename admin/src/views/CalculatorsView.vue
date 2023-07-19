@@ -12,7 +12,7 @@
   </div>
 
   <div class="calculators">
-    <StandsComponent
+    <StandsCalculator
         :standWidth="1200"
         :standHeight="900"
         productName="Информационный стенд"
@@ -23,11 +23,11 @@
 </template>
 
 <script>
-import StandsComponent from '@/components/StandsComponent.vue'
+import StandsCalculator from '@/calculators/StandsCalculator.vue'
 export default {
   name: "CalculatorsView",
   components: {
-    StandsComponent
+    StandsCalculator
   },
 }
 </script>
