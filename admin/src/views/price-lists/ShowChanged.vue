@@ -65,6 +65,7 @@
           <tr class="mb-3 b-changes-table__row"
               v-for="( chengedCodeItem ) in changedPrice"
               :key="chengedCodeItem.one_s_code"
+              :class="{ '_green': chengedCodeItem.is_all_actualized }"
           >
             <td class="left">
               <i>{{ chengedCodeItem.one_s_code }}</i>
