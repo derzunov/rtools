@@ -78,7 +78,7 @@
     public function getChangedPricesDb() {
       return $this->changedPricesDb;
     }
-    
+
     // Только те измененившиеся 1с-позиции, которые упомянуты в прайс-листах
     public function getRelatedChangedPrices() {
       $relatedChangedPrices = [];
@@ -86,7 +86,7 @@
       foreach( $this->getAllPriceListsIndex() as $priceListObject ) {
         // Если привязанных к прайсу 1с-кодов нет, то идем к следующему прайсу
         if ( !strlen( $priceListObject[ 'one_s_codes' ] ) ) {
-          break;
+          continue;
         }
         // Прикапываем каждый упомянутый в прайсе 1c-код
         foreach ( explode( ';', $priceListObject[ 'one_s_codes' ] ) as $relatedOneSCode ) {
@@ -165,8 +165,8 @@
         return $fileName != '.' && $fileName != '..';
       } ) );
     }
-    
-    
+
+
     public function resetActualizedPricesByCode( $oneSCode ) {
 
       // Найти все прайс-листы для кода $oneSCode
