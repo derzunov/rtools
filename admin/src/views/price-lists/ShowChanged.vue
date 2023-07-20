@@ -61,14 +61,18 @@
             <th></th>
           </tr>
         </thead>
-        <tbody>
-          <tr class="mb-3 b-changes-table__row"
-              v-for="( chengedCodeItem ) in changedPrice"
-              :key="chengedCodeItem.one_s_code"
-              :class="{ '_green': chengedCodeItem.is_all_actualized && !isShowAll }"
+        <tbody
+            v-for="( chengedCodeItem ) in changedPrice"
+            :key="chengedCodeItem.one_s_code"
+            :class="{ '_green': chengedCodeItem.is_all_actualized && !isShowAll }"
+            @click="() => { chengedCodeItem.is_expanded = !chengedCodeItem.is_expanded }"
+        >
+          <tr
+              class="mb-3 b-changes-table__row"
+              style="cursor: pointer;"
           >
             <td class="left">
-              <i>{{ chengedCodeItem.one_s_code }}</i>
+              <i>{{ chengedCodeItem[ 'one_s_code' ] }}</i>
             </td>
             <td class="left">
               {{ chengedCodeItem.value?.split( ';' )[ 1 ] }}
@@ -118,6 +122,20 @@
                   <p>{{ chengedCodeItem.value?.split( ';' )[ 1 ] }}</p>
                 </div>
               </ModalUniversal>
+            </td>
+          </tr>
+          <!-- Связанные неактуализированные прайс-листы -->
+          <tr
+              style="font-style: italic; font-size: 16px;"
+              v-for="( relatedNotActualizedPriseList ) in chengedCodeItem.related_not_actualized_price_lists"
+              :key="relatedNotActualizedPriseList.header"
+              v-show="chengedCodeItem.is_expanded"
+          >
+            <td style="border: none" class="right">Прайс:</td>
+            <td style="border: none"  class="left">
+              <router-link :to="`/prices/show/${ relatedNotActualizedPriseList[ 'file_name' ] }`" title="Открыть прайс">
+                {{ relatedNotActualizedPriseList[ 'header' ] }}
+              </router-link>
             </td>
           </tr>
         </tbody>
@@ -186,7 +204,7 @@ export default {
           } else {
 
             // Получаем список связанных неактуализированных прайс-листов
-            let relatedNotActualizedLists = []
+            let relatedNotActualizedPriceLists = []
 
             // Ходим на сервак и заполняем массив неактуализированных прайс-листов
             // только для списка позиций, имеющих связанные прайс-листы
@@ -196,13 +214,16 @@ export default {
             if ( !isShowAll.value ) {
               const req = `${ BASE_URL }/tools/price/?action=related-not-actualized&one_s_code=${ codeItem[ 'one_s_code' ] }`
               const response = await axios.get( req )
-              relatedNotActualizedLists = response.data
+              relatedNotActualizedPriceLists = response.data
             }
 
             // Проставляем для изменившейся позиции признак актуализированности всех связанных прайс-листов
             // (по принципу "если список неактуализированных пуст, значит все актуализированы")
-            codeItem.is_all_actualized = !relatedNotActualizedLists.length
-            codeItem.related_not_actualized_prices = relatedNotActualizedLists
+            codeItem.is_all_actualized = !relatedNotActualizedPriceLists.length
+            codeItem.related_not_actualized_price_lists = relatedNotActualizedPriceLists
+
+            // Раскрыт ли список связанных неактуализированных прайс-листов ()
+            codeItem.is_expanded = ref( false )
 
             changedPrice.value.push( codeItem )
           }
