@@ -76,6 +76,19 @@
                 case 'related-changed':
                     sendJsonResponse( $db->getRelatedChangedPrices() );
                     break;
+
+                // Получение связанных с 1с-кодом неактуализированных прайс-листов
+                case 'related-not-actualized':
+                    if ( isset( $data[ 'one_s_code' ] ) ) {
+                        sendJsonResponse( $db->getRelatedNotActualizedPriceListsByOneSCode( $data[ 'one_s_code'] ) );
+                    } else {
+                        sendError( 'related-not-actualized: one_s_code is not passed' );
+                    }
+                    break;
+
+                    sendJsonResponse( $db->getRelatedChangedPrices() );
+                    break;
+
                 case 'all':
                     sendJsonResponse( $db->getAllPriceListsIndex() );
                     break;

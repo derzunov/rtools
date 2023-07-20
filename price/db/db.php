@@ -103,6 +103,36 @@
       return $relatedChangedPrices;
     }
 
+    // Получение связанных с 1с-кодом неактуализированных прайс-листов
+    public function getRelatedNotActualizedPriceListsByOneSCode( $oneSCode ) {
+
+      $relatedNotActualizedPriceLists = [];
+
+      // Бежим по всем прайс-листам
+      foreach( $this->getAllPriceListsIndex() as $priceListObject ) {
+        // Если привязанных к прайсу 1с-кодов нет, то идем к следующему прайсу
+        if ( !strlen( $priceListObject[ 'one_s_codes' ] ) ) {
+          continue;
+        }
+        // Иначе бежим по привязанным к прайс--листу 1с-кодам и ищем наш
+        foreach ( explode( ';', $priceListObject[ 'one_s_codes' ] ) as $relatedOneSCode ) {
+          $relatedOneSCode = trim( $relatedOneSCode );
+
+          //  Нашли наш код, значит этот прайс лист привязан к нашему коду
+          if ( $relatedOneSCode == $oneSCode ) {
+            // Проверяем актуализирован ли этот прайс-лист,
+            // Если нет, поплняем массив связанных с кодом неактуализированных прайс-листов
+            if ( $priceListObject[ 'is_actualized' ] == false ) {
+              array_push( $relatedNotActualizedPriceLists, $priceListObject );
+            }
+          }
+        }
+      }
+
+      // Возвращаем список связанных с кодом неактуализированных прайс-листов
+      return $relatedNotActualizedPriceLists;
+    }
+
     public function getLastUpdateTimestamp() {
       return filectime( $this->dbUrl );
     }
