@@ -65,7 +65,7 @@
           <tr class="mb-3 b-changes-table__row"
               v-for="( chengedCodeItem ) in changedPrice"
               :key="chengedCodeItem.one_s_code"
-              :class="{ '_green': chengedCodeItem.is_all_actualized }"
+              :class="{ '_green': chengedCodeItem.is_all_actualized && !isShowAll }"
           >
             <td class="left">
               <i>{{ chengedCodeItem.one_s_code }}</i>
@@ -185,19 +185,24 @@ export default {
             outOfStock.value.push( codeItem )
           } else {
 
-            console.log( codeItem.one_s_code )
-
             // Получаем список связанных неактуализированных прайс-листов
-            const req = `${ BASE_URL }/tools/price/?action=related-not-actualized&one_s_code=${ codeItem.one_s_code }`
-            const response = await axios.get( req )
-            const relatedNotActualizedLists = response.data
+            let relatedNotActualizedLists = []
 
-            // Проставляем признак актуализированности всех связанных прайс-листов для изменившейся позиции
+            // Ходим на сервак и заполняем массив неактуализированных прайс-листов
+            // только для списка позиций, имеющих связанные прайс-листы
+            // Для общего списка позиций оставим этот массив пустым
+            // (Снижаем нагрузку на сервак в общем списке)
+            // (Если понадобится, сможем предусмотреть новый эндпоинт, который будет сразу популейтить неактуализированные прайс-листы)
+            if ( !isShowAll.value ) {
+              const req = `${ BASE_URL }/tools/price/?action=related-not-actualized&one_s_code=${ codeItem[ 'one_s_code' ] }`
+              const response = await axios.get( req )
+              relatedNotActualizedLists = response.data
+            }
+
+            // Проставляем для изменившейся позиции признак актуализированности всех связанных прайс-листов
+            // (по принципу "если список неактуализированных пуст, значит все актуализированы")
             codeItem.is_all_actualized = !relatedNotActualizedLists.length
             codeItem.related_not_actualized_prices = relatedNotActualizedLists
-
-            console.log( codeItem.is_all_actualized )
-            console.log( codeItem.related_not_actualized_prices )
 
             changedPrice.value.push( codeItem )
           }
