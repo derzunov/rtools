@@ -178,14 +178,29 @@ export default {
         outOfStock.value = []
 
         // Обновляем списки
-        Object.values( response.data ).forEach( ( codeItem ) => {
+        for ( const codeItem of Object.values( response.data ) ) {
 
           if ( codeItem.value[ 0 ] === '?' ) {
             outOfStock.value.push( codeItem )
           } else {
+
+            console.log( codeItem.one_s_code )
+
+            // Получаем список связанных неактуализированных прайс-листов
+            const req = `${ BASE_URL }/tools/price/?action=related-not-actualized&one_s_code=${ codeItem.one_s_code }`
+            const response = await axios.get( req )
+            const relatedNotActualizedLists = response.data
+
+            // Проставляем признак актуализированности всех связанных прайс-листов для изменившейся позиции
+            codeItem.is_all_actualized = !relatedNotActualizedLists.length
+            codeItem.related_not_actualized_prices = relatedNotActualizedLists
+
+            console.log( codeItem.is_all_actualized )
+            console.log( codeItem.related_not_actualized_prices )
+
             changedPrice.value.push( codeItem )
           }
-        } )
+        }
       }
     }
 
