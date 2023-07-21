@@ -291,6 +291,21 @@
                   </tr>
                 </table>
               </div>
+
+              <div class="mb-3">
+                <h5>Связанные коды</h5>
+                <table width="100%">
+                  <tr v-for="changedCode in relatedCodes"
+                      :key="changedCode.one_s_code"
+                      :class="{ '_red': !changedCode.isCorrect }"
+                  >
+
+                    <td>{{ changedCode.one_s_code }}</td>
+                    <td>{{ changedCode.name }}</td>
+
+                  </tr>
+                </table>
+              </div>
               <div class="b-price-form-table_wrapper mb-3">
                 <h5>Комментарий администратора</h5>
                 <textarea
@@ -470,6 +485,18 @@ export default {
     const relatedChangedPrices = ref( [] )
     const relatedOutOfStock = ref( [] )
 
+    // related 1s codes
+    const relatedCodes = ref( [] )
+    /*
+    [
+      {
+        one_s_code,
+        name // Наименование позиции, получаем с сервака
+      },
+      ...
+    ]
+    * */
+
     // Functions: -------------------------------------------------------
 
     const fetchPriceList = async () => {
@@ -639,6 +666,31 @@ export default {
       }
     }
 
+    const parseOneSCodes = ( codesString ) => {
+      const codes = codesString.split( ';' )
+      // Возможны дополнительные манипуляции с парсингом codes
+      return codes
+    }
+
+    const fetchOneSCodes = async ( codes ) => {
+      const relatedCodesObjects = []
+      for ( const code of codes ) {
+        if ( code.length ) {
+          const reqStr = `${ BASE_URL }/tools/price/?action=info&field=name&one_s_code=${ code }`
+          const response = await axios.get( reqStr )
+          const name = response.data
+          const isCorrect = !!name.length
+
+          relatedCodesObjects.push( {
+            one_s_code: code,
+            name: isCorrect ? name : 'Некорректный код',
+            isCorrect,
+          } )
+        }
+      }
+      return relatedCodesObjects
+    }
+
     onBeforeMount( async () => {
       await prepareData()
 
@@ -649,11 +701,12 @@ export default {
     } )
 
     watch( [ one_s_codes ],
-        () => {
+        async () => {
           one_s_codes.value = cleanOneSCodes( one_s_codes.value )
+          relatedCodes.value = await fetchOneSCodes( parseOneSCodes( one_s_codes.value ) )
         },
-        { flush: 'post' } )
-
+        { flush: 'post' }
+    )
 
     return {
       isDev,
@@ -690,6 +743,7 @@ export default {
       route,
 
       handleOneSCodesBlur,
+      relatedCodes,
 
       // Utils
       R,
