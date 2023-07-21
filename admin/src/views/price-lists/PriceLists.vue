@@ -36,7 +36,7 @@
 
               <option v-for="subgroupItem in currentGroup.subgroups"
                       :value="subgroupItem.id"
-                      :key="subgroupItem.id"
+                      :key="subgroupItem.name"
               >
                 {{ subgroupItem.name }}
               </option>
@@ -72,7 +72,7 @@
       <tbody>
       <tr v-for="( priceList, index ) in allPriceLists"
           :data-index="index"
-          :key="priceList.file_name"
+          :key="priceList.header"
           class="b-prices-table__row"
           :class="{ 'b-prices-table__row_need-update': priceList.needRecalculate }"
       >
@@ -236,12 +236,13 @@ export default {
       }
       const foundedGroup = R.find( R.propEq( 'id', groupId ) )( groups.value )
       if ( foundedGroup ) {
-        // Deprecated:
-        // если у группы есть подгруппы, устанавливаем id первой из имеющихся, если нет - `all`
-        // foundedGroup.subgroups?.length ? subgroupId.value = foundedGroup.subgroups[ 0 ].id : subgroupId.value = 'all'
-
-        // По просьбе Дениса сделано по-другому при смене группы устнавливаем значение подгиуппы в all
+        // По просьбе Дениса сделано так, что при смене группы устанавливаем значение подгруппы в all
         subgroupId.value = 'all'
+
+        // Сортировка списка подгрупп
+        foundedGroup.subgroups.sort( ( a, b ) => {
+          return ( a.name < b.name ) ? -1 : 1
+        } )
 
         return currentGroup.value = foundedGroup
       } else {
@@ -309,6 +310,9 @@ export default {
         return ( priceList[ 'group' ] === groupId.value ) ||
             ( groupId.value === 'all' )
       } )
+
+      // Сортируем по хэдеру прайса
+      allPriceLists.value = sortPriceListsByHeader( allPriceLists.value )
     }
 
     const filterPriceListsBySubgroup = () => {
@@ -318,6 +322,15 @@ export default {
       allPriceLists.value = allPriceLists.value.filter( ( priceList ) => {
         return ( priceList[ 'subgroup' ] === subgroupId.value ) ||
             ( subgroupId.value === 'all' )
+      } )
+
+      // Сортируем по хэдеру прайса
+      allPriceLists.value = sortPriceListsByHeader( allPriceLists.value )
+    }
+
+    const sortPriceListsByHeader = ( priceLists ) => {
+      return priceLists.sort( ( a, b ) => {
+        return ( a.header < b.header ) ? -1 : 1
       } )
     }
 
