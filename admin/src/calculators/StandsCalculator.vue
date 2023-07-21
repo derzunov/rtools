@@ -594,7 +594,7 @@ export default {
         `
       }
 
-      let materialsHtml = ''
+      let materialsHtml = '<h6>Материалы:</h6>'
 
       Object.values( materialsRateObject ).forEach( ( materialItem ) => {
         materialsHtml = materialsHtml + createMaterialItemHTML( materialItem )
