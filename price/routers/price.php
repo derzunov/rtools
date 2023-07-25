@@ -92,6 +92,9 @@
                 case 'all':
                     sendJsonResponse( $db->getAllPriceListsIndex() );
                     break;
+                case 'stages':
+                    sendJsonResponse( $db->getStages() );
+                    break;
                 case 'position':
                     if ( isset( $data[ 'id' ] ) ) {
                         $oneSPriceItem = $db->getPriсeByCode( $data[ 'id' ] );

@@ -138,7 +138,6 @@
                         type="text"
                         v-model="toptext"
                         placeholder="Текст перед прайсом"
-
               ></textarea>
             </td>
             <td style="width: 100px;"></td>

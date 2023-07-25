@@ -44,6 +44,7 @@
           </select>
       </div>
     </div>
+
     <!--  -->
     <table class="table b-prices-table">
       <thead>
@@ -66,6 +67,7 @@
         <th scope="col" class="col-md-2">Продукт</th>
         <th scope="col" class="col-md-2">Имя файла</th>
         <th scope="col" class="col-md-2">Комментарий</th>
+        <th scope="col" class="col-md-2">Стадия</th>
         <th scope="col" class="col-md-1 right"></th>
       </tr>
       </thead>
@@ -116,6 +118,8 @@
              {{ priceList[ 'admin_comment' ]?.substring( 0, 30 ).trim() + '...' }}
           </span>
         </td>
+        <td>{{ priceList[ 'stage' ] === -1 ? 'не указано' : ( R?.find( R.propEq( 'id', priceList[ 'stage' ] ) )( stages ))?.name }}</td>
+<!--        <td>Стадия 22222: {{ (R?.find( R.propEq( 'id', priceList[ 'stage' ] ) )( stages ))?.name }}</td>-->
         <td class="right">
           <a href="#"
              title="Редактировать контент прайс-листа"
@@ -216,12 +220,24 @@ export default {
     const allPriceLists = ref( [] )
     const changedPriceCodes = ref( {} ) // Object
 
+    const stages = ref( [] )
+    const stage = ref( -1 )
+
+
     // Functions: -------------------------------------------------------
 
     const fetchGroups = async () => {
       const reqStr = `${ BASE_URL }/tools/price/?action=groups&populate=subgroups`
       const response = await axios.get( reqStr )
       groups.value = response.data
+    }
+    const fetchStages = async () => {
+      const reqStr = `${ BASE_URL }/tools/price/?action=stages`
+      const response = await axios.get( reqStr )
+      stages.value = response.data
+      console.table( stages.value )
+      console.table( 'stage: ' )
+      console.table( stage.value )
     }
 
     const setCurrentGroupById = ( groupId ) => {
@@ -282,6 +298,8 @@ export default {
       const reqStr = `${ BASE_URL }/tools/price/?action=all`
       const response = await axios.get( reqStr )
       allPriceLists.value = response.data
+
+      console.log( allPriceLists.value )
 
       await fetchOneSChangedCodes()
       allPriceLists.value.forEach( ( priceList ) => {
@@ -373,6 +391,7 @@ export default {
 
     onMounted( async () => {
       await fetchGroups()
+      await fetchStages()
       // await fetchSubgroups()
       setCurrentGroupById( groupId.value )
       await fetchAllPriceLists()
@@ -413,6 +432,8 @@ export default {
       // subgroup,
       subgroupId,
       allPriceLists,
+      stages,
+      stage,
 
       pluralize,
       goToPriceList,

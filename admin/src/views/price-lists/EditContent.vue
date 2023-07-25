@@ -44,6 +44,7 @@
                         </option>
                       </select>
                     </td>
+
                     <td>
                       <select v-if="groups[ group ]" class="form-select" name="subgroup" id="subgroup" v-model="subgroup">
                         <option v-for="( subgroupItem, subgroupIndex ) in groups[ group ].subgroups"
@@ -59,13 +60,24 @@
 
               </div>
             </div>
+            <div class="mb-3" style="width: 300px;">
+              <span>Стадия: </span>
+              <select class="form-select" name="stage" id="js_stage" v-model="stage">
+                <option value="-1">Не выбрано</option>
+                <option v-for="stageItem in stages"
+                        :value="stageItem.id"
+                        :key="stageItem.id"
+                >
+                  {{ stageItem.name }}
+                </option>
+              </select>
+            </div>
             <div class="mb-3">
               <h3>{{ header }}</h3>
             </div>
 
             <div class="mb-3">
-              <textarea required
-                        id="toptext"
+              <textarea id="toptext"
                         name="toptext"
                         class="form-control"
                         type="text"
@@ -77,6 +89,12 @@
           <td style="width: 100px;"></td>
         </tr>
       </table>
+
+
+<!--      <div>-->
+<!--        stages: {{ stages }}-->
+<!--        stage: {{ stage }}-->
+<!--      </div>-->
 
       <!-- Шапка таблицы прайса -->
       <div class="b-price-form-table_wrapper b-price-form-table_wrapper_white mb-3" style="background: #fff;">
@@ -448,6 +466,9 @@ export default {
     const is_actualized = ref( true )
     const actualized_date = ref( null )
 
+    const stages = ref( [] )
+    const stage = ref( null )
+
 
     // Table object
     const table = ref({
@@ -519,6 +540,8 @@ export default {
       is_actualized.value = response.data.is_actualized
       actualized_date.value = response.data.actualized_date
 
+      stage.value = response.data.stage || -1
+
       // Table object
       table.value = response.data.table
 
@@ -588,6 +611,7 @@ export default {
         admin_comment: admin_comment.value,
         is_actualized: is_actualized.value,
         actualized_date: actualized_date.value,
+        stage: stage.value,
       }
     }
 
@@ -610,6 +634,7 @@ export default {
 
       // Без Cc так как форм дата все равно приведет к нижнему регистру
       formdata.append( "file_name", priceObject.file_name )
+      formdata.append( "stage", priceObject.stage )
       formdata.append( "pricelist_json", JSON.stringify( priceObject ) )
       formdata.append( "pricelist_html", htmlResultString.value )
 
@@ -639,9 +664,16 @@ export default {
       groups.value = response.data
     }
 
+    const fetchStages = async () => {
+      const reqStr = `${ BASE_URL }/tools/price/?action=stages`
+      const response = await axios.get( reqStr )
+      stages.value = response.data
+    }
+
     const prepareData = async () => {
       try {
         await fetchGroups()
+        await fetchStages()
         await fetchPriceList()
         await fetchRelatedOneSChangedCodes()
         const priceObject = makePriceObject()
@@ -732,6 +764,8 @@ export default {
       relatedOutOfStock,
 
       toastSavedRef,
+      stages,
+      stage,
 
       // Functions
       savePrice,

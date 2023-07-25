@@ -2,6 +2,7 @@
   class Db {
     private static $instance = null;
     private $allDb = [];
+    private $stages = [];
     public $groupsDb = [];
     public $changedPricesDb = [];
 
@@ -19,6 +20,8 @@
 
     private $allPriceListsIndexUrl = __DIR__ . "/price-lists/all.json";
 
+    private $stagesUrl = __DIR__ . "/stages.json";
+
     private function __construct() {
       if ( strpos( $_SERVER[ 'HTTP_HOST' ], 'localhost' ) !== false )
       {
@@ -34,7 +37,19 @@
                   16,
                   0
       );
+    
       $this->allDb = $jsonParsed;
+
+      $stagesJson = file_get_contents( $this->stagesUrl );
+
+      $stagesJsonParsed = json_decode(
+                  $stagesJson,
+                  true,
+                  16,
+                  0
+      );
+
+      $this->stages = $stagesJsonParsed;
 
       // Группы
       $groupsJson = file_get_contents( $this->groupsUrl );
@@ -265,6 +280,8 @@
 
         $FinalPriceListsItem[ 'is_actualized' ] = $priceListObject[ 'is_actualized' ];
         $FinalPriceListsItem[ 'actualized_date' ] = $priceListObject[ 'actualized_date' ];
+        
+        $FinalPriceListsItem[ 'stage' ] = $priceListObject[ 'stage' ];
 
         array_push( $allPriceLists, $FinalPriceListsItem );
       }
@@ -305,6 +322,10 @@
 
       return $priceList;
     }
+    
+    public function getStages() {
+      return $this->stages;
+    }
 
     public function deletePriceByName( $name ) {
 
@@ -342,6 +363,14 @@
     public function saveGroupsDbFromJson( $json ) {
       // Unicode Ru fix & convert to json
       $groupsJson = getCorrectRu( ( $json ) );
+
+      $fd = fopen( $this->groupsUrl, 'w' ) or die( 'Can\'t update db json by groupsUrl' );
+      fwrite( $fd, $groupsJson );
+      fclose( $fd );
+    }
+
+    // get stages
+    public function getSatages() {
 
       $fd = fopen( $this->groupsUrl, 'w' ) or die( 'Can\'t update db json by groupsUrl' );
       fwrite( $fd, $groupsJson );
