@@ -298,7 +298,7 @@
             </div>
 
             <div class="mb-3">
-              <h5>Связанные коды</h5>
+              <h5 v-show="relatedCodes.length">Связанные коды</h5>
               <table width="100%">
                 <tr v-for="changedCode in relatedCodes"
                     :key="changedCode.one_s_code"
@@ -312,8 +312,34 @@
               </table>
             </div>
 
-            <div style="text-align: right;" >
-              <button type="submit" id="liveToastBtn" :disabled="isSaving" class="btn btn-primary">Сохранить</button>
+            <div class="right"
+                 style="display: flex;
+                 justify-content: right;
+                 height: 38px;"
+            >
+              <span
+                style="padding: 7px 5px 0 0"
+              >Стадия: </span>
+              <select
+                  style="width: 230px; margin: 0 5px 0 0"
+                  class="form-select"
+                  name="stage"
+                  id="js_stage"
+                  v-model="stage">
+                <option value="-1">Не выбрано</option>
+                <option v-for="stageItem in stages"
+                        :value="stageItem.id"
+                        :key="stageItem.id"
+                >
+                  {{ stageItem.name }}
+                </option>
+              </select>
+              <button type="submit" id="liveToastBtn"
+                      :disabled="isSaving || stage === -1 || stage === '-1'"
+                      style="margin: 0;"
+                      class="btn btn-primary">
+                Сохранить
+              </button>
             </div>
           </td>
           <td style="width: 100px;"></td>
@@ -417,6 +443,10 @@ export default {
 
     const is_actualized = ref( true )
     const actualized_date = ref( Date.now() )
+
+
+    const stage = ref( -1 )
+    const stages = ref( [] )
 
     // Table object
     const table = ref( {
@@ -524,7 +554,7 @@ export default {
         admin_comment: '',
         is_actualized: true,
         actualized_date: Date.now(),
-        stage: 111,
+        stage: stage.value,
       }
     }
 
@@ -631,8 +661,15 @@ export default {
       return relatedCodesObjects
     }
 
+    const fetchStages = async () => {
+      const reqStr = `${ BASE_URL }/tools/price/?action=stages`
+      const response = await axios.get( reqStr )
+      stages.value = response.data
+    }
+
     onBeforeMount( async () => {
       await fetchGroups()
+      await fetchStages()
       const priceObject = makePriceObject()
       htmlResultString.value = await parsePriceToHtml( priceObject )
     } )
@@ -691,6 +728,9 @@ export default {
 
       is_actualized,
       actualized_date,
+
+      stage,
+      stages,
 
       toastSavedRef,
 

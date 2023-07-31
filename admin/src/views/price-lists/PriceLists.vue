@@ -18,18 +18,8 @@
     <h5>Прайс листы</h5>
 
     <div class="mb-3" style="display: flex; justify-content: flex-start;">
-      <label style="padding: 7px 5px 0 0;">Стадия:</label>
-      <select style="width: 300px; margin: 0 5px 0 0;" class="form-select" name="js_stage" id="js_stage" v-model="stage">
-        <option value="-1">все</option>
-        <option v-for="stageItem in stages"
-                :value="stageItem.id"
-                :key="stageItem.id"
-        >
-          {{ stageItem.name }}
-        </option>
-      </select>
       <label style="padding: 7px 5px 0 0;">Группа:</label>
-      <select class="form-select" style="width: 280px; margin: 0 5px 0 0;" name="group" id="group" v-model="groupId">
+      <select class="form-select" style="width: 250px; margin: 0 5px 0 0;" name="group" id="group" v-model="groupId">
         <option selected="selected" value="all">Все</option>
         <option v-for="groupItem in groups"
                 :value="groupItem.id"
@@ -38,20 +28,29 @@
           {{ groupItem.name }}
         </option>
       </select>
-      <div>
-          <select v-model="subgroupId" v-if="currentGroup.subgroups?.length" class="form-select" name="subgroup" id="subgroup">
-            <option selected="selected" value="all">Все подгруппы</option>
-            <template v-if="groupId !== 'all'">
+      <select style="width: 250px;" v-model="subgroupId" v-if="currentGroup.subgroups?.length" class="form-select" name="subgroup" id="subgroup">
+        <option selected="selected" value="all">Все подгруппы</option>
+        <template v-if="groupId !== 'all'">
 
-              <option v-for="subgroupItem in currentGroup.subgroups"
-                      :value="subgroupItem.id"
-                      :key="subgroupItem.name"
-              >
-                {{ subgroupItem.name }}
-              </option>
-            </template>
-          </select>
-      </div>
+          <option v-for="subgroupItem in currentGroup.subgroups"
+                  :value="subgroupItem.id"
+                  :key="subgroupItem.name"
+          >
+            {{ subgroupItem.name }}
+          </option>
+        </template>
+      </select>
+      <label style="padding: 7px 5px 0 25px;">Стадия:</label>
+      <select style="width: 250px; margin: 0 5px 0 0;" class="form-select" name="js_stage" id="js_stage" v-model="stage">
+        <option value="-1">Все</option>
+        <option v-for="stageItem in stages"
+                :value="stageItem.id"
+                :key="stageItem.id"
+        >
+          {{ stageItem.name }}
+        </option>
+      </select>
+
     </div>
 
     <!--  -->
@@ -325,6 +324,10 @@ export default {
     let allPriceListsCached = [];
 
     const filterPriceListsByGroup = () => {
+
+      // Переводим стадию в состояние "Все"
+      stage.value = -1
+
       allPriceLists.value = allPriceListsCached.filter( ( priceList ) => {
         return ( priceList[ 'group' ] === groupId.value ) ||
             ( groupId.value === 'all' )
@@ -335,6 +338,10 @@ export default {
     }
 
     const filterPriceListsByStage = () => {
+
+      // Сбрасываем группы
+      groupId.value = 'all'
+
       allPriceLists.value = allPriceListsCached.filter( ( priceList ) => {
         return ( priceList[ 'stage' ] === stage.value ) ||
             ( stage.value === -1 ) || ( stage.value === '-1' )
@@ -345,6 +352,10 @@ export default {
     }
 
     const filterPriceListsBySubgroup = () => {
+
+      // Переводим стадию в состояние "Все"
+      stage.value = -1
+
       // Забираем только те подгруппы, которые внутри группы
       filterPriceListsByGroup()
 
@@ -421,7 +432,7 @@ export default {
     watch( [ subgroupId ], () => {
       filterPriceListsBySubgroup()
     } )
-
+    //
     watch( [ isSortAsc ], () => {
       sortByGroup()
     } )
