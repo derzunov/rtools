@@ -312,9 +312,9 @@
               </table>
             </div>
 
-            <!-- Модалка с чтением документации -->
+            <!-- Модалка с правилами для прайс-листов -->
             <ModalUniversal modalId="show_prices_rules"
-                            title="<a target='_blank' href='https://r-color.ru/tools/price/rules.txt'>Правила создания прайсов</a>"
+                            title="<a target='_blank' href='https://r-color.ru/tools/price/rules.txt'>Правила работы с прайсами</a>"
                             actionButtonText="Ок"
                             cancelButtonText="Закрыть"
                             :action="() => { return 0 }"

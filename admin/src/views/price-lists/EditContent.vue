@@ -60,18 +60,6 @@
 
               </div>
             </div>
-            <div class="mb-3" style="width: 300px;">
-              <span>Стадия: </span>
-              <select class="form-select" name="stage" id="js_stage" v-model="stage">
-                <option value="-1">Не выбрано</option>
-                <option v-for="stageItem in stages"
-                        :value="stageItem.id"
-                        :key="stageItem.id"
-                >
-                  {{ stageItem.name }}
-                </option>
-              </select>
-            </div>
             <div class="mb-3">
               <h3>{{ header }}</h3>
             </div>
@@ -90,11 +78,6 @@
         </tr>
       </table>
 
-
-<!--      <div>-->
-<!--        stages: {{ stages }}-->
-<!--        stage: {{ stage }}-->
-<!--      </div>-->
 
       <!-- Шапка таблицы прайса -->
       <div class="b-price-form-table_wrapper b-price-form-table_wrapper_white mb-3" style="background: #fff;">
@@ -123,8 +106,6 @@
               <!-- Ячейка-заглушка. Под ней в строках tbody располагаются контролы добавить/удалить -->
             </td>
           </tr>
-
-<!--          <h5>Содержание таблицы прайса:</h5>-->
           <tr
               class="b-price-form-table__row form-row"
               v-for="( row, rowIndex ) in table.rows" :key="row.id"
@@ -199,7 +180,6 @@
             <div>
 
               <!-- Блок обновившихся связанных кодов 1с -->
-
               <table v-if="!is_actualized" width="100%">
                 <!-- Изменилась цена -->
                 <tr class="mb-3" v-if="relatedChangedPrices?.length" style="vertical-align: top;">
@@ -334,13 +314,62 @@
                     rows="5"></textarea>
               </div>
               <div class="mb-3">
+
+                <!-- Модалка с правилами для прайс-листов -->
+                <ModalUniversal modalId="show_prices_rules"
+                                title="<a target='_blank' href='https://r-color.ru/tools/price/rules.txt'>Правила работы с прайсами</a>"
+                                actionButtonText="Ок"
+                                cancelButtonText="Закрыть"
+                                :action="() => { return 0 }"
+                >
+                  <template #trigger>
+          <span style="cursor: pointer; color: gray; font-size: 14px;">
+            <font-awesome-icon
+                style="cursor: pointer;"
+                :icon="['fas', 'info-circle']"
+            />
+            Правила работы с прайсами
+          </span>
+                  </template>
+
+                  <div style="text-align: left; font-size: 16px; font-weight: normal; white-space: pre-wrap">
+                    <p class="mb-3">
+                      {{ rules }}
+                    </p>
+                  </div>
+                </ModalUniversal>
+
                 <p>is_actualized: {{ is_actualized }}</p>
                 <p>actualized_date: {{ new Date( actualized_date ).toLocaleString( 'ru-Ru' ) }}</p>
               </div>
             </div>
 
-            <div style="text-align: right;" >
-<!--              <button v-if="!is_actualized" @click.prevent="markAsActualized" class="btn btn-warning">Актуализировать</button>-->
+            <div
+                class="right"
+                style="display: flex;
+                justify-content: right;
+                height: 38px;" >
+
+              <span
+                  style="padding: 7px 5px 0 0"
+              >
+                Стадия:
+              </span>
+              <select
+                  style="width: 230px; margin: 0 5px 0 0"
+                  class="form-select"
+                  name="stage"
+                  id="js_stage"
+                  v-model="stage">
+                <option value="-1">Не выбрано</option>
+                <option v-for="stageItem in stages"
+                        :value="stageItem.id"
+                        :key="stageItem.id"
+                >
+                  {{ stageItem.name }}
+                </option>
+              </select>
+
               <!-- Модалка подтверждения актуализации -->
               <ModalUniversal modalId="actualize"
                               title="Подтверждение актуализации"
@@ -353,7 +382,7 @@
                   <button @click.prevent="() => { return }"
                           class="btn btn-warning"
                           title="Актуализировать и сохранить"
-                          style="margin-left: 5px; border: 1px solid #eee;">
+                          style="margin: 0">
                     Актуализировать
                   </button>
 
@@ -363,7 +392,7 @@
                 </div>
               </ModalUniversal>
               <button v-if="is_actualized && ( relatedChangedPrices.length || relatedOutOfStock.length )" @click.prevent="markAsNotActualized" class="btn btn-danger">Деактуализировать</button>
-              <button type="submit" :disabled="isSaving" class="btn btn-primary" title="Сохранить без актуализации">Сохранить</button>
+              <button style="margin: 0 5px 0;" type="submit" :disabled="isSaving || stage === -1 || stage === '-1'" class="btn btn-primary" title="Сохранить без актуализации">Сохранить</button>
               <router-link to="/prices" type="submit" class="btn btn-secondary">Отмена</router-link>
             </div>
           </td>
@@ -468,6 +497,8 @@ export default {
 
     const stages = ref( [] )
     const stage = ref( null )
+
+    const rules = ref( 'Информация загружается' )
 
 
     // Table object
@@ -723,8 +754,15 @@ export default {
       return relatedCodesObjects
     }
 
+    const fetchRules = async () => {
+      const reqStr = `${ BASE_URL }/tools/price/rules.txt`
+      const response = await axios.get( reqStr )
+      rules.value = response.data
+    }
+
     onBeforeMount( async () => {
       await prepareData()
+      await fetchRules()
 
       // Даем возможность вотчеру сбрасывать подгруппу только после того, как данные были подготовлены
       watch( [ group ], () => {
@@ -766,6 +804,8 @@ export default {
       toastSavedRef,
       stages,
       stage,
+
+      rules,
 
       // Functions
       savePrice,
