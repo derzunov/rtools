@@ -17,6 +17,19 @@
     </div>
     <h5>Прайс листы</h5>
 
+<!--    <h6>{{ stages }}</h6>-->
+
+    <h6>Стадия:</h6>
+    <select style="width: 300px;" class="mb-3 form-select" name="js_stage" id="js_stage" v-model="stage">
+      <option value="-1">все</option>
+      <option v-for="stageItem in stages"
+              :value="stageItem.id"
+              :key="stageItem.id"
+      >
+        {{ stageItem.name }}
+      </option>
+    </select>
+
     <div class="mb-3" style="display: flex; justify-content: flex-start;">
       <div>
           <select class="form-select" name="group" id="group" v-model="groupId">
@@ -74,7 +87,7 @@
       <tbody>
       <tr v-for="( priceList, index ) in allPriceLists"
           :data-index="index"
-          :key="priceList.header"
+          :key="index"
           class="b-prices-table__row"
           :class="{ 'b-prices-table__row_need-update': priceList.needRecalculate }"
       >
@@ -162,6 +175,7 @@
     </table>
 
   </div>
+
 </template>
 
 <script>
@@ -235,9 +249,6 @@ export default {
       const reqStr = `${ BASE_URL }/tools/price/?action=stages`
       const response = await axios.get( reqStr )
       stages.value = response.data
-      console.table( stages.value )
-      console.table( 'stage: ' )
-      console.table( stage.value )
     }
 
     const setCurrentGroupById = ( groupId ) => {
@@ -299,8 +310,6 @@ export default {
       const response = await axios.get( reqStr )
       allPriceLists.value = response.data
 
-      console.log( allPriceLists.value )
-
       await fetchOneSChangedCodes()
       allPriceLists.value.forEach( ( priceList ) => {
         setNeedUpdate( priceList )
@@ -327,6 +336,16 @@ export default {
       allPriceLists.value = allPriceListsCached.filter( ( priceList ) => {
         return ( priceList[ 'group' ] === groupId.value ) ||
             ( groupId.value === 'all' )
+      } )
+
+      // Сортируем по хэдеру прайса
+      allPriceLists.value = sortPriceListsByHeader( allPriceLists.value )
+    }
+
+    const filterPriceListsByStage = () => {
+      allPriceLists.value = allPriceListsCached.filter( ( priceList ) => {
+        return ( priceList[ 'stage' ] === stage.value ) ||
+            ( groupId.value === -1 )
       } )
 
       // Сортируем по хэдеру прайса
@@ -396,7 +415,10 @@ export default {
       setCurrentGroupById( groupId.value )
       await fetchAllPriceLists()
       allPriceListsCached = JSON.parse( JSON.stringify( allPriceLists.value ) )
+    } )
 
+    watch( [ stage ], () => {
+      filterPriceListsByStage()
     } )
 
     watch( [ groupId ], () => {
@@ -425,11 +447,9 @@ export default {
       markupFactor,
       one_s_codes,
       groups,
-      // group,
       groupId,
       currentGroup,
       subgroups,
-      // subgroup,
       subgroupId,
       allPriceLists,
       stages,
