@@ -19,7 +19,34 @@
       <div class="col-md-2 center">
       </div>
     </div>
-    <h5>Новый прайс</h5>
+    <h5>
+      Новый прайс
+      <!-- Модалка с чтением документации -->
+      <ModalUniversal modalId="show_prices_rules"
+                      title="Правила создания прайсов"
+                      actionButtonText="Ок"
+                      cancelButtonText="Закрыть"
+                      :action="() => { return 0 }"
+      >
+        <template #trigger>
+          <span style="cursor: pointer;">
+            (Информация <font-awesome-icon
+              style="cursor: pointer;"
+              :icon="['fas', 'info-circle']"
+          />)
+          </span>
+        </template>
+
+        <div style="text-align: left; font-size: 16px; font-weight: normal; white-space: pre-wrap">
+          <p class="mb-3">
+            {{ rules }}
+          </p>
+          <p class="mb-3">
+            * Соблюдение правил обязательно
+          </p>
+        </div>
+      </ModalUniversal>
+    </h5>
 
     <form @submit.prevent="savePrice" id="add-price" class="mb-5 col-md-12" action="#">
       <div class="mb-3" style="display: flex; justify-content: space-between;">
@@ -448,6 +475,8 @@ export default {
     const stage = ref( -1 )
     const stages = ref( [] )
 
+    const rules = ref( 'Информация загружается' )
+
     // Table object
     const table = ref( {
       thead: {
@@ -667,9 +696,16 @@ export default {
       stages.value = response.data
     }
 
+    const fetchRules = async () => {
+      const reqStr = `${ BASE_URL }/tools/price/rules.txt`
+      const response = await axios.get( reqStr )
+      rules.value = response.data
+    }
+
     onBeforeMount( async () => {
       await fetchGroups()
       await fetchStages()
+      await fetchRules()
       const priceObject = makePriceObject()
       htmlResultString.value = await parsePriceToHtml( priceObject )
     } )
@@ -732,6 +768,10 @@ export default {
       stage,
       stages,
 
+      rules,
+
+      relatedCodes,
+
       toastSavedRef,
 
       savePrice,
@@ -744,7 +784,6 @@ export default {
       checkIsPriceExist,
 
       handleOneSCodesBlur,
-      relatedCodes,
     }
   }
 }
