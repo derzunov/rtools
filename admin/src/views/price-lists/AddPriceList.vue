@@ -524,6 +524,7 @@ export default {
         admin_comment: '',
         is_actualized: true,
         actualized_date: Date.now(),
+        stage: 111,
       }
     }
 

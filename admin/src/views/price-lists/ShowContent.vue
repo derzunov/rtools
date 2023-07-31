@@ -110,10 +110,20 @@
       </tr>
     </table>
     <div>
+      <!-- stage -->
+      <h5>Стадия:</h5>
+      <p>
+        {{ R.find( R.propEq( 'id', stage ) )( stages )?.name || 'Не указана' }}
+      </p>
+    </div>
+
+    <hr>
+
+    <div>
       <!-- Комментарий -->
       <h5>Комментарий администратора:</h5>
       <p>
-        {{ admin_comment }}
+        {{ admin_comment || 'Не указан' }}
       </p>
     </div>
     <br>
@@ -171,6 +181,8 @@ export default {
 
     const is_actualized = ref( true )
     const actualized_date = ref( null )
+    const stages = ref( [] )
+    const stage = ref( -1 )
 
     // Table object
     const table = ref({
@@ -221,6 +233,7 @@ export default {
 
       is_actualized.value = response.data.is_actualized
       actualized_date.value = response.data.actualized_date
+      stage.value = response.data.stage || -1
 
       const _getGroup = () => {
         return groups.value.filter( groupItem => groupItem.id === group.value )[ 0 ]
@@ -269,6 +282,13 @@ export default {
 
     const fetchGroups = async () => {
       tracer.debug( 'fetchGroups called' )
+      const reqStr = `${ BASE_URL }/tools/price/?action=stages`
+      const response = await axios.get( reqStr )
+      stages.value = response.data
+    }
+
+    const fetchStages = async () => {
+      tracer.debug( 'fetchStages called' )
       const reqStr = `${ BASE_URL }/tools/price/?action=groups&populate=subgroups`
       const response = await axios.get( reqStr )
       groups.value = response.data
@@ -307,6 +327,8 @@ export default {
     onBeforeMount( async () => {
       await fetchGroups()
       // tracer.debug( 'Groups fetched' )
+      await fetchStages()
+      // tracer.debug( 'Stages fetched' )
       await fetchPriceList()
       // tracer.info( 'Price fetched' )
       await fetchRelatedOneSChangedCodes()
@@ -340,6 +362,9 @@ export default {
       subgroupName,
 
       is_actualized,
+
+      stages,
+      stage,
 
       // Functions
       pluralize,

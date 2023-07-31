@@ -37,7 +37,7 @@
                   16,
                   0
       );
-    
+
       $this->allDb = $jsonParsed;
 
       $stagesJson = file_get_contents( $this->stagesUrl );
@@ -280,7 +280,7 @@
 
         $FinalPriceListsItem[ 'is_actualized' ] = $priceListObject[ 'is_actualized' ];
         $FinalPriceListsItem[ 'actualized_date' ] = $priceListObject[ 'actualized_date' ];
-        
+
         $FinalPriceListsItem[ 'stage' ] = $priceListObject[ 'stage' ];
 
         array_push( $allPriceLists, $FinalPriceListsItem );
@@ -322,7 +322,7 @@
 
       return $priceList;
     }
-    
+
     public function getStages() {
       return $this->stages;
     }

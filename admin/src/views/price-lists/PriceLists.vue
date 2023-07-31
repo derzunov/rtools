@@ -17,31 +17,27 @@
     </div>
     <h5>Прайс листы</h5>
 
-<!--    <h6>{{ stages }}</h6>-->
-
-    <h6>Стадия:</h6>
-    <select style="width: 300px;" class="mb-3 form-select" name="js_stage" id="js_stage" v-model="stage">
-      <option value="-1">все</option>
-      <option v-for="stageItem in stages"
-              :value="stageItem.id"
-              :key="stageItem.id"
-      >
-        {{ stageItem.name }}
-      </option>
-    </select>
-
     <div class="mb-3" style="display: flex; justify-content: flex-start;">
-      <div>
-          <select class="form-select" name="group" id="group" v-model="groupId">
-            <option selected="selected" value="all">Все</option>
-            <option v-for="groupItem in groups"
-                    :value="groupItem.id"
-                    :key="groupItem.id"
-            >
-              {{ groupItem.name }}
-            </option>
-          </select>
-      </div>
+      <label style="padding: 7px 5px 0 0;">Стадия:</label>
+      <select style="width: 300px; margin: 0 5px 0 0;" class="form-select" name="js_stage" id="js_stage" v-model="stage">
+        <option value="-1">все</option>
+        <option v-for="stageItem in stages"
+                :value="stageItem.id"
+                :key="stageItem.id"
+        >
+          {{ stageItem.name }}
+        </option>
+      </select>
+      <label style="padding: 7px 5px 0 0;">Группа:</label>
+      <select class="form-select" style="width: 280px; margin: 0 5px 0 0;" name="group" id="group" v-model="groupId">
+        <option selected="selected" value="all">Все</option>
+        <option v-for="groupItem in groups"
+                :value="groupItem.id"
+                :key="groupItem.id"
+        >
+          {{ groupItem.name }}
+        </option>
+      </select>
       <div>
           <select v-model="subgroupId" v-if="currentGroup.subgroups?.length" class="form-select" name="subgroup" id="subgroup">
             <option selected="selected" value="all">Все подгруппы</option>
@@ -131,8 +127,7 @@
              {{ priceList[ 'admin_comment' ]?.substring( 0, 30 ).trim() + '...' }}
           </span>
         </td>
-        <td>{{ priceList[ 'stage' ] === -1 ? 'не указано' : ( R?.find( R.propEq( 'id', priceList[ 'stage' ] ) )( stages ))?.name }}</td>
-<!--        <td>Стадия 22222: {{ (R?.find( R.propEq( 'id', priceList[ 'stage' ] ) )( stages ))?.name }}</td>-->
+        <td>{{ ( priceList[ 'stage' ] === -1 || priceList[ 'stage' ] === '-1' ) ? 'не указано' : ( R?.find( R.propEq( 'id', priceList[ 'stage' ] ) )( stages ))?.name }}</td>
         <td class="right">
           <a href="#"
              title="Редактировать контент прайс-листа"
@@ -184,7 +179,6 @@ import * as R from "ramda"
 import { onMounted, ref, watch } from 'vue'
 import {
   useRouter,
-  // useRoute
 } from 'vue-router'
 import pluralize from 'pluralizr'
 
@@ -222,12 +216,10 @@ export default {
     const markupFactor = ref( 1.5 ) // Коэфициент наценки, на  него будет умножаться цена из файла-выгрузки из 1C
     const one_s_codes = ref( '00-00002340;00-00000252;00-00000215' ) // Строка связанных кодов 1с. Если какой-то из них элемент прайса выгрузки 1с изменится, по каждому прайсу будет оповещён владелец
 
-    //const group = ref( 'all' ) // all или Enum
     const groupId = ref( 'all' ) // Real Id in db or `all`
     const groups = ref( [ 'Загружается' ] ) // Real groups array with populated subgroups (will be fetched)
     const currentGroup = ref( {} ) // Chosen group object with subroups
 
-    //const subgroup = ref( 'all' ) // all или Enum
     const subgroupId = ref( 'all' ) // Real Id in db or `all`
     const subgroups = ref( [ 'Загружается' ] )
 
@@ -345,7 +337,7 @@ export default {
     const filterPriceListsByStage = () => {
       allPriceLists.value = allPriceListsCached.filter( ( priceList ) => {
         return ( priceList[ 'stage' ] === stage.value ) ||
-            ( groupId.value === -1 )
+            ( stage.value === -1 ) || ( stage.value === '-1' )
       } )
 
       // Сортируем по хэдеру прайса
