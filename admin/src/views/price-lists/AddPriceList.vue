@@ -19,34 +19,7 @@
       <div class="col-md-2 center">
       </div>
     </div>
-    <h5>
-      Новый прайс
-      <!-- Модалка с чтением документации -->
-      <ModalUniversal modalId="show_prices_rules"
-                      title="Правила создания прайсов"
-                      actionButtonText="Ок"
-                      cancelButtonText="Закрыть"
-                      :action="() => { return 0 }"
-      >
-        <template #trigger>
-          <span style="cursor: pointer;">
-            (Информация <font-awesome-icon
-              style="cursor: pointer;"
-              :icon="['fas', 'info-circle']"
-          />)
-          </span>
-        </template>
-
-        <div style="text-align: left; font-size: 16px; font-weight: normal; white-space: pre-wrap">
-          <p class="mb-3">
-            {{ rules }}
-          </p>
-          <p class="mb-3">
-            * Соблюдение правил обязательно
-          </p>
-        </div>
-      </ModalUniversal>
-    </h5>
+    <h5>Новый прайс</h5>
 
     <form @submit.prevent="savePrice" id="add-price" class="mb-5 col-md-12" action="#">
       <div class="mb-3" style="display: flex; justify-content: space-between;">
@@ -338,6 +311,30 @@
                 </tr>
               </table>
             </div>
+
+            <!-- Модалка с чтением документации -->
+            <ModalUniversal modalId="show_prices_rules"
+                            title="<a target='_blank' href='https://r-color.ru/tools/price/rules.txt'>Правила создания прайсов</a>"
+                            actionButtonText="Ок"
+                            cancelButtonText="Закрыть"
+                            :action="() => { return 0 }"
+            >
+              <template #trigger>
+          <span style="cursor: pointer; color: gray; font-size: 14px;">
+            <font-awesome-icon
+              style="cursor: pointer;"
+              :icon="['fas', 'info-circle']"
+            />
+            Правила работы с прайсами
+          </span>
+              </template>
+
+              <div style="text-align: left; font-size: 16px; font-weight: normal; white-space: pre-wrap">
+                <p class="mb-3">
+                  {{ rules }}
+                </p>
+              </div>
+            </ModalUniversal>
 
             <div class="right"
                  style="display: flex;

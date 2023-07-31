@@ -10,7 +10,7 @@
 <!--      <div class="modal-content" @keyup.enter="action">-->
 
         <div class="modal-header">
-          <h5 class="modal-title" :id="`js_modal_universal_label_${ modalId }`">{{ title }}</h5>
+          <h5 class="modal-title" :id="`js_modal_universal_label_${ modalId }`" v-html="title"></h5>
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
 
