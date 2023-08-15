@@ -1,6 +1,6 @@
 import axios from 'axios'
 import * as EDINICY_IZM  from '../constants/ed-izm'
-import { roundUpNumber } from '../data/utils'
+import { roundUpNumber } from '../services/utils'
 
 const IS_DEV = window.location.host.includes( 'localhost' ) || window.location.host.includes( '8080' )
 const ROOT_HOST = IS_DEV ?
@@ -59,11 +59,11 @@ export const getFormattedOneSObject = ( oneSCode ) => {
 // Private utils -----------------------------------------------------
 const _formatMaterialPrice = ( oneSObject ) => {
     oneSObject = { ...oneSObject }
-    
+
     // Какие единицы измерения указаны в 1с
     // Исходя из этого делаем преобразования
     switch ( oneSObject.one_s_units ) {
-        
+
         // Листы нужно привести в кв. метры
         case EDINICY_IZM.LIST:
             oneSObject.edIzm = EDINICY_IZM.M2

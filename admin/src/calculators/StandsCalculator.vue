@@ -190,7 +190,7 @@ import {
   materialNames,
   makeMaterialsList,
   roundUpNumber,
-} from './data/'
+} from './services/'
 
 import sizes from './constants/sizes'
 import backgroundImage from '@/assets/wall.jpg'
