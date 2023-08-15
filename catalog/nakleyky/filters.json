@@ -2,268 +2,327 @@
   {
     "id": "111111",
     "name": "Назначение",
+    "furl": "naznachenie",
     "filters": [
       {
         "id": "111112",
-        "name": "Декоративныые"
+        "name": "Декоративныые",
+        "furl": "dekorativnye"
       },
       {
         "id": "111113",
-        "name": "Информационная"
+        "name": "Информационная",
+        "furl": "informacionnaya"
       },
       {
         "id": "111114",
-        "name": "Рекламная"
+        "name": "Рекламная",
+        "furl": "reklamnaya"
       },
       {
         "id": "111115",
-        "name": "Пломба"
+        "name": "Пломба",
+        "furl": "plomba"
       }
     ]
   },
   {
     "id": "111116",
     "name": "Форма",
+    "furl": "forma",
     "filters": [
       {
         "id": "111117",
-        "name": "Круглая"
+        "name": "Круглая",
+        "furl": "kruglaya"
       },
       {
         "id": "111118",
-        "name": "Квадратная"
+        "name": "Квадратная",
+        "furl": "kvadratnaya"
       },
       {
         "id": "111119",
-        "name": "Треугольная"
+        "name": "Треугольная",
+        "furl": "trugolnaya"
       },
       {
         "id": "111120",
-        "name": "Прямоугольная"
+        "name": "Прямоугольная",
+        "furl": "pryamougolnaya"
       }
     ]
   },
   {
     "id": "111121",
     "name": "Свойства материала",
+    "furl": "svoistva-materiala",
     "filters": [
       {
         "id": "111122",
-        "name": "Ламинация"
+        "name": "Ламинация",
+        "furl": "laminaciya"
       },
       {
         "id": "111123",
-        "name": "Прозрачный"
+        "name": "Прозрачный",
+        "furl": "prozrachnyi"
       },
       {
         "id": "111124",
-        "name": "Виниловый"
+        "name": "Виниловый",
+        "furl": "vinilovyi"
       },
       {
         "id": "111125",
-        "name": "Водостойкий"
+        "name": "Водостойкий",
+        "furl": "vodostoikii"
       },
       {
         "id": "111126",
-        "name": "Перфорированный"
+        "name": "Перфорированный",
+        "furl": "perforirovannyi"
       },
       {
         "id": "111127",
-        "name": "Термонаклейка"
+        "name": "Термонаклейка",
+        "furl": "termokleyka"
       },
       {
         "id": "111128",
-        "name": "Светоотражающий"
+        "name": "Светоотражающий",
+        "furl": "svetootrazhayushii"
       },
       {
         "id": "111129",
-        "name": "УФ"
+        "name": "УФ",
+        "furl": "uf"
       }
     ]
   },
   {
     "id": "111130",
     "name": "Размер",
+    "furl": "razmer",
     "filters": [
       {
         "id": "111131",
-        "name": "Большой"
+        "name": "Большой",
+        "furl": "bolshoi"
       },
       {
         "id": "111132",
-        "name": "Маленький"
+        "name": "Маленький",
+        "furl": "malenkii"
       }
     ]
   },
   {
     "id": "111133",
     "name": "Куда",
+    "furl": "kuda",
     "filters": [
       {
         "id": "111134",
-        "name": "Банка"
+        "name": "Банка",
+        "furl": "banka"
       },
       {
         "id": "111135",
-        "name": "Бутылка"
+        "name": "Бутылка",
+        "furl": "butylka"
       },
       {
         "id": "111136",
-        "name": "Ванная"
+        "name": "Ванная",
+        "furl": "vannaia"
       },
       {
         "id": "111137",
-        "name": "Витрина"
+        "name": "Витрина",
+        "furl": "vitrina"
       },
       {
         "id": "111138",
-        "name": "Дверь"
+        "name": "Дверь",
+        "furl": "dver"
       },
       {
         "id": "111139",
-        "name": "Зеркало"
+        "name": "Зеркало",
+        "furl": "zerkalo"
       },
       {
         "id": "111140",
-        "name": "Коробок"
+        "name": "Коробок",
+        "furl": "korobok"
       },
       {
         "id": "111141",
-        "name": "Кухня"
+        "name": "Кухня",
+        "furl": "kuhnya"
       },
       {
         "id": "111142",
-        "name": "Лодка"
+        "name": "Лодка",
+        "furl": "lodka"
       },
       {
         "id": "111143",
-        "name": "Магазин"
+        "name": "Магазин",
+        "furl": "magazin"
       },
       {
         "id": "111144",
-        "name": "Мебель"
+        "name": "Мебель",
+        "furl": "mebel"
       },
       {
         "id": "111145",
-        "name": "Ноутбук"
+        "name": "Ноутбук",
+        "furl": "noutbuk"
       },
       {
         "id": "111146",
-        "name": "Одежда"
+        "name": "Одежда",
+        "furl": "odejda"
       },
       {
         "id": "111147",
-        "name": "Окно"
+        "name": "Окно",
+        "furl": "okno"
       },
       {
         "id": "111148",
-        "name": "Офис"
+        "name": "Офис",
+        "furl": "ofis"
       },
       {
         "id": "111149",
-        "name": "Пакет"
+        "name": "Пакет",
+        "furl": "paket"
       },
       {
         "id": "111150",
-        "name": "Плитка"
+        "name": "Плитка",
+        "furl": "plitka"
       },
       {
         "id": "111151",
-        "name": "Пол"
+        "name": "Пол",
+        "furl": "pol"
       },
       {
         "id": "111152",
-        "name": "Потолок"
+        "name": "Потолок",
+        "furl": "potolok"
       },
       {
         "id": "111153",
-        "name": "Специя"
+        "name": "Специя",
+        "furl": "specia"
       },
       {
         "id": "111154",
-        "name": "Стекло"
+        "name": "Стекло",
+        "furl": "steklo"
       },
       {
         "id": "111155",
-        "name": "Стен"
+        "name": "Стена",
+        "furl": "stena"
       },
       {
         "id": "111156",
-        "name": "Такси"
+        "name": "Такси",
+        "furl": "taksi"
       },
       {
         "id": "111157",
-        "name": "Упаковка"
+        "name": "Упаковка",
+        "furl": "upakovka"
       },
       {
         "id": "111158",
-        "name": "Холодильник"
+        "name": "Холодильник",
+        "furl": "holodilnik"
       },
       {
         "id": "111159",
-        "name": "Шкаф"
+        "name": "Шкаф",
+        "furl": "shkaf"
       },
       {
         "id": "111160",
-        "name": "Школа"
+        "name": "Школа",
+        "furl": "shkola"
       },
       {
         "id": "111161",
-        "name": "Авто"
+        "name": "Авто",
+        "furl": "avto"
       },
       {
         "id": "111162",
-        "name": "Велосипед"
+        "name": "Велосипед",
+        "furl": "velosiped"
       },
       {
         "id": "111163",
-        "name": "Мото"
-      },
-      {
-        "id": "111164",
-        "name": ""
+        "name": "Мото",
+        "furl": "moto"
       }
     ]
   },
   {
     "id": "111165",
     "name": "Контент",
+    "furl": "kontent",
     "filters": [
       {
         "id": "111166",
-        "name": "Ведется видеонаблюдение"
+        "name": "Ведется видеонаблюдение",
+        "furl": "vedetsya-videonablyudenie"
       },
       {
         "id": "111167",
-        "name": "Логотип"
+        "name": "Логотип",
+        "furl": "logotip"
       },
       {
         "id": "111168",
-        "name": "День Рождения"
+        "name": "День Рождения",
+        "furl": "den-rozhdeniya"
       },
       {
         "id": "111169",
-        "name": "Режим Работы"
+        "name": "Режим Работы",
+        "furl": "rezhim-raboty"
       },
       {
         "id": "111170",
-        "name": "Новогодний"
+        "name": "Новогодний",
+        "furl": "novogodnii"
       },
       {
         "id": "111171",
-        "name": "Свадебный"
+        "name": "Свадебный",
+        "furl": "svadebnyi"
       },
       {
         "id": "111172",
-        "name": "Витражный"
+        "name": "Витражный",
+        "furl": "vitrazhnyi"
       },
       {
         "id": "111173",
-        "name": "Медицинский"
+        "name": "Медицинский",
+        "furl": "medicinskii"
       },
       {
         "id": "111174",
-        "name": "Безопасность"
+        "name": "Безопасность",
+        "furl": "bezopasnost"
       }
     ]
   }

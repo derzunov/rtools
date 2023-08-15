@@ -1,15 +1,15 @@
 <html>
 <head>
-<title>Info</title>
+<title>Наклейки</title>
 </head>
 <body>
 
 <ul>
-    {foreach $fillters as $fillter}
-        <li>{$fillter.name|escape} ({$fillter.id})</li>
+    {foreach $fillters as $fillterName}
+        <li>{$fillterName.name|escape} ({$fillterName.furl})</li>
         <ul>
-          {foreach $fillter.filters as $fillter}
-            <li>{$fillter.name|escape} ({$fillter.id})</li>
+          {foreach $fillterName.filters as $filter}
+            <li><a href="?{$fillterName.furl}={$filter.furl}">{$filter.name|escape} ({$filter.furl})</a></li>
           {/foreach}
         </ul>
     {foreachelse}
