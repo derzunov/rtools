@@ -13,6 +13,19 @@ $fillters = json_decode(
   0
 );
 
+// НЕ УДАЛЯТЬ! Цикл создания рыбных файлов семантики для фильтров(разделов)
+// foreach ( $fillters as $filter ) {
+//   foreach( $filter[ 'filters' ] as $subfilter ) {
+//     echo $subfilter[ 'furl' ];
+
+//     $filename = $filter[ 'furl' ] . '-' . $subfilter[ 'furl' ];
+
+//     $fd = fopen( "semantic/" . "$filename.html", 'w' ) or die( "Can\'t create/update $fileName db json" );
+//     fwrite( $fd, $subfilter[ 'name' ] . "-" . $subfilter[ 'furl' ] );
+//     fclose( $fd );
+//   }
+// }
+
 $smarty->assign( 'json', $json );
 $smarty->assign( 'fillters', $fillters );
 
