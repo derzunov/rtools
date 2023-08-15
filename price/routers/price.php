@@ -92,6 +92,9 @@
                 case 'all':
                     sendJsonResponse( $db->getAllPriceListsIndex() );
                     break;
+                case 'all-not-actualized':
+                    sendJsonResponse( $db->getAllNotActualizedPriceLists() );
+                    break;
                 case 'stages':
                     sendJsonResponse( $db->getStages() );
                     break;
@@ -177,19 +180,21 @@
 
                     // ------------------------------------------------------------------------------------
                     // Прикопаем изменения (изменилась цена, добавились новые позиции)
+                    // Делаем это ОБЯЗАТЕЛЬНО ДО обновления базы цен (функция $db->updateDb( $oneSPriceObject );)
 
                     $oldPricesObject = $db->getWholeDb();
                     $newPricesObject = $oneSPriceObject;
 
+                    // Обязательно делать обновление БД изменений (updateChangedPrices) ДО обновления БД цен (функция $db->updateDb( $oneSPriceObject );)
                     updateChangedPrices( $oldPricesObject, $newPricesObject );
 
                     // ------------------------------------------------------------------------------------
 
 
+                    // Обновляем БД цен
+                    // Вызывать только ПОСЛЕ обновления БД изменений updateChangedPrices
                     $db->updateDb( $oneSPriceObject );
                 }
-
-                // TODO: вернуть:
                 header( 'Location: /tools/admin/' );
                 die();
             } else {
@@ -251,7 +256,12 @@
     function updateChangedPrices( $oldPricesObject, $newPricesObject ) {
         $db = Db::getInstance();
         $updatedChangedPrices = $db->getChangedPricesDb(); // Сюда только добавляем изменившиеся в цене (или наличии) позиции.
-        // Перезаписываем значения полей ТОЛЬКО при обнаружении изменений
+
+        // Очищаем БД изменений
+        $db->clearChangedPricesDb();
+        // Ниже собираем её заново
+
+        // Записываем значения полей ТОЛЬКО при обнаружении изменений
 
         // ------------------------------------------------------------------------------------
         // Найти позиции с изменившейся ценой
@@ -277,7 +287,7 @@
 
 
                 if ( !isset( $oldPricesObject[ $oneSCode ] ) ) {
-                    // Товар новый. Добавился в этой номенклатуре. Помечаем.
+                    // Товар новый. Добавился в этой номенклатуре. Помечаем как-то это для себя
                     $newPriceItemString = 'NEW: ' . $newPriceItemString;
                     // Что-то потом делаем, а может и не делаем :)
                 } else {
@@ -302,46 +312,61 @@
 
                         if ( !isset( $updatedChangedPrices[ $oneSCode ] ) ) {
                             // В нашей БД изменений нет записи о прошлых изменениях цены этой позиции
+                            // И не должно быть по новой логике и договорённостям с Денисом и ВЧ
                             $updatedChangedPrices[ $oneSCode ] = [];
-                            // Значит и старой даты у нас нет и нужно ее получить
-                            // из даты последнего обновления нашей !!!базы цен!!!
+                            // Значит и старой даты у нас нет и 
+                            // нужно ее получить из даты последнего обновления нашей !!!базы цен!!!
                             $oldDate = $db->getLastUpdateTimestamp() * 1000;
                         } else {
 
-                            // * Следующий шаг, хранить историю изменений, а не только было/стало (но скорее всего не нужно)
+                            // ЛОГИКА ИЗМЕНИЛАСЬ это больше не нужно
+
+                            // -------
+
+
+
 
                             // В нашей БД изменений уже есть запись о прошлом изменении цены этой позиции
                             // Поэтому старой ценой будет не запись из текущей номенклатуры ( бд цен )
                             // А будет та самая старая цена из уже имеющейся записи в бд изменений
-                            if ( isset( $updatedChangedPrices[ $oneSCode ][ 'old_price' ] ) ) {
-                                $oldPrice = $updatedChangedPrices[ $oneSCode ][ 'old_price' ];
-                            } else {
-                                $oldPrice = 0;
-                            }
+
+                            // if ( isset( $updatedChangedPrices[ $oneSCode ][ 'old_price' ] ) ) {
+                            //     $oldPrice = $updatedChangedPrices[ $oneSCode ][ 'old_price' ];
+                            // } else {
+                            //     $oldPrice = 0;
+                            // }
+
+                            
 
                             // То же самое и со старой датой
-                            if ( isset( $updatedChangedPrices[ $oneSCode ][ 'old_date' ] ) ) {
-                                $oldDate = $updatedChangedPrices[ $oneSCode ][ 'old_date' ];
-                            } else {
-                                $oldDate = 0;
-                            }
+                            // if ( isset( $updatedChangedPrices[ $oneSCode ][ 'old_date' ] ) ) {
+                            //     $oldDate = $updatedChangedPrices[ $oneSCode ][ 'old_date' ];
+                            // } else {
+                            //     $oldDate = 0;
+                            // }
 
-
+                            // -------
                         }
+
+
 
                         $percents = intval( ( floatval( $newPrice ) * 100 / floatval( $oldPrice ) ) - 100, 10 );
 
-                        $updatedChangedPrices[ $oneSCode ] [ 'one_s_code' ] = $oneSCode;
-                        $updatedChangedPrices[ $oneSCode ] [ 'value' ] = $newPriceItemString;
-                        $updatedChangedPrices[ $oneSCode ] [ 'old_price' ] = $oldPrice;
-                        $updatedChangedPrices[ $oneSCode ] [ 'current_price' ] = $newPrice;
-                        $updatedChangedPrices[ $oneSCode ] [ 'percents' ] = $percents;
-                        $updatedChangedPrices[ $oneSCode ] [ 'increased' ] = $percents > 0 ? true : false;
-                        $updatedChangedPrices[ $oneSCode ] [ 'date' ] = time() * 1000;
-                        $updatedChangedPrices[ $oneSCode ] [ 'old_date' ] = $oldDate;
+                        // Нам не нужны записи с ничтожным процентом изменения в цене
+                        // Поэтому забираем, начиная только с 1%
+                        if ( $percents > 0 ) {
+                            $updatedChangedPrices[ $oneSCode ] [ 'one_s_code' ] = $oneSCode;
+                            $updatedChangedPrices[ $oneSCode ] [ 'value' ] = $newPriceItemString;
+                            $updatedChangedPrices[ $oneSCode ] [ 'old_price' ] = $oldPrice;
+                            $updatedChangedPrices[ $oneSCode ] [ 'current_price' ] = $newPrice;
+                            $updatedChangedPrices[ $oneSCode ] [ 'percents' ] = $percents;
+                            $updatedChangedPrices[ $oneSCode ] [ 'increased' ] = $percents > 0 ? true : false;
+                            $updatedChangedPrices[ $oneSCode ] [ 'date' ] = time() * 1000;
+                            $updatedChangedPrices[ $oneSCode ] [ 'old_date' ] = $oldDate;
 
-                        // TODO: Обнуляем все is_actualized для всех прайс-листов связанных с изменившимся 1с-кодом
-                        $db->resetActualizedPricesByCode( $oneSCode );
+                            // Обнуляем все is_actualized для всех прайс-листов связанных с изменившимся в цене 1с-кодом
+                            $db->resetActualizedPricesByCode( $oneSCode );
+                        }
                     }
                 }
             }

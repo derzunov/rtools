@@ -118,6 +118,16 @@
       return $relatedChangedPrices;
     }
 
+    public function getAllNotActualizedPriceLists() {
+      $result = [];
+      foreach ( $this->getAllPriceListsIndex() as $price) {
+        if ( $price[ 'is_actualized' ] != true ) {
+            $result[] = $price;
+        }
+    }
+      return $result;
+    }
+
     // Получение связанных с 1с-кодом неактуализированных прайс-листов
     public function getRelatedNotActualizedPriceListsByOneSCode( $oneSCode ) {
 
@@ -370,11 +380,14 @@
     }
 
     // get stages
+    public function clearChangedPricesDb() {
+      return 0;
+    // TODO: дописать очистку БД изменившихся позиций
+    }
+    
     public function getSatages() {
-
-      $fd = fopen( $this->groupsUrl, 'w' ) or die( 'Can\'t update db json by groupsUrl' );
-      fwrite( $fd, $groupsJson );
-      fclose( $fd );
+      return 0;
+    // TODO: дописать работу со стадиями через наши
     }
   }
 ?>
