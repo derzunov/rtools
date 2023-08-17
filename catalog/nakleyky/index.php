@@ -18,7 +18,8 @@ $fillters = json_decode(
 //   foreach( $filter[ 'filters' ] as $subfilter ) {
 //     echo $subfilter[ 'furl' ];
 
-//     $filename = $filter[ 'furl' ] . '-' . $subfilter[ 'furl' ];
+//     //$filename = $filter[ 'furl' ] . '-' . $subfilter[ 'furl' ];
+//     $filename = $subfilter[ 'furl' ];
 
 //     $fd = fopen( "semantic/" . "$filename.html", 'w' ) or die( "Can\'t create/update $fileName db json" );
 //     fwrite( $fd, $subfilter[ 'name' ] . "-" . $subfilter[ 'furl' ] );
@@ -28,6 +29,10 @@ $fillters = json_decode(
 
 $smarty->assign( 'json', $json );
 $smarty->assign( 'fillters', $fillters );
+
+$getParametersLength = count( $_GET );
+
+$smarty->assign( 'getParametersLength', $getParametersLength );
 
 
 // display it
