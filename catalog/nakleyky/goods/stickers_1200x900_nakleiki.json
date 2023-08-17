@@ -1,0 +1,31 @@
+{
+  "standWidth": 1200,
+  "standHeight": 900,
+  "pocketsCountInRow": 3,
+  "pocketsRowsCount": 2,
+  "pocketSize": "A3",
+  "backgroundImage": "/tools/admin/img/wall.572bbb3e.jpg",
+  "standColor": "#ffffff",
+  "standImage": "",
+  "isHead": false,
+  "headText": "Информация",
+  "isItalic": false,
+  "isBold": false,
+  "fontSize": 80,
+  "fontFamily": "sans-serif",
+  "orientation": "v",
+  "svg": "<svg version=\"1.1\" xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" width=\"546\" height=\"546\"><defs/><g><rect fill=\"#ffffff\" stroke=\"none\" x=\"50\" y=\"105.75\" width=\"446\" height=\"334.5\"/><path fill=\"none\" stroke=\"#0000ff\" paint-order=\"fill stroke markers\" d=\" M 50 105.75 L 496 105.75 L 496 440.25 L 50 440.25 L 50 105.75 Z\" stroke-miterlimit=\"10\" stroke-dasharray=\"\"/></g></svg>",
+  "pockets": [],
+  "productName": "Наклейки",
+  "probka": {
+    "x": 100,
+    "y": 100,
+    "width": 297,
+    "height": 420
+  },
+  "materialOsnovy": "FANERA_BERYOZA_3MM_CHYORNYJ",
+  "materialKarmanov": "ORGSTEKLO_1_5MM_PROZRACHNYJ",
+  "html": "stickers_1200x900_nakleiki.html",
+  "jpg": "stickers_1200x900_nakleiki.jpg",
+  "filters": [ "dekorativnye", "kvadratnaya" ]
+}

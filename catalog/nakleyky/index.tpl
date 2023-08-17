@@ -42,6 +42,24 @@
   </div>
   <div style="width: 65%">
 
+    <div style="display: flex; justify-content: space-between;">
+      {foreach $goods as $good}
+        <div>
+          <img width="250px" src="goods/{$good.jpg}" >
+          <p>{$good.productName}</p>
+        </div>
+      {/foreach}
+    </div>
+    <br>
+    <div style="display: flex; justify-content: space-between;">
+      {foreach $filteredGoods as $good}
+        <div>
+          <img width="250px" src="goods/{$good.jpg}" >
+          <p>{$good.productName}</p>
+        </div>
+      {/foreach}
+    </div>
+
     {if file_exists("semantic/{$smarty.get.filters}.html")}
       {include file="semantic/{$smarty.get.filters}.html"}
     {/if}
