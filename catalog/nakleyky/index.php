@@ -6,7 +6,7 @@ $smarty = new Smarty;
 
 $json = file_get_contents( './filters.json' );
 
-$fillters = json_decode(
+$filters = json_decode(
   $json,
   true,
   16,
@@ -14,7 +14,7 @@ $fillters = json_decode(
 );
 
 // НЕ УДАЛЯТЬ! Цикл создания рыбных файлов семантики для фильтров(разделов)
-// foreach ( $fillters as $filter ) {
+// foreach ( $filters as $filter ) {
 //   foreach( $filter[ 'filters' ] as $subfilter ) {
 //     echo $subfilter[ 'furl' ];
 
@@ -28,7 +28,7 @@ $fillters = json_decode(
 // }
 
 $smarty->assign( 'json', $json );
-$smarty->assign( 'fillters', $fillters );
+$smarty->assign( 'filters', $filters );
 
 $getParametersLength = count( $_GET );
 
@@ -41,14 +41,18 @@ $filteredGoods = [];
 // Собираем все файлы с расширением json из папки
 foreach ( glob( "goods/*.json" ) as $file ) {
   $object = json_decode( file_get_contents( $file ) );
-  $good = [ 
-    'jpg' => $object->jpg, 
+  $good = [
+    'jpg' => $object->jpg,
     'productName' => $object->productName
   ];
   array_push( $goods, $good );
 
+
+  echo 'before';
+  echo $_GET[ 'f' ];
   // Фильтруем по заданным фильтрам
-  foreach( explode( '|', $_GET[ 'filters' ] ) as $getFilter ) {
+  foreach( explode( '|', $_GET[ 'f' ] ) as $getFilter ) {
+    echo $getFilter;
     if ( in_array( $getFilter, $object->filters ) ) {
       array_push( $filteredGoods, $good );
       break;

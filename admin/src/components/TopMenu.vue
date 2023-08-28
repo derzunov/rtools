@@ -73,6 +73,10 @@ navbar-dark bg-dark
             <router-link class="nav-link py-2 px-0 px-lg-2" to="/calculators">Калькуляторы</router-link>
           </li>
 
+          <li class="nav-item">
+            <router-link class="nav-link py-2 px-0 px-lg-2" to="/semantic/add">Семантика</router-link>
+          </li>
+
           <!-- Настройки и разное -->
           <li class="nav-item dropdown">
             <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">

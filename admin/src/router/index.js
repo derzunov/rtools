@@ -98,6 +98,11 @@ const routes = [
     name: 'Calculators page',
     component: () => import( /* webpackChunkName: "calculators" */ '../views/CalculatorsView.vue' )
   },
+  {
+    path: '/semantic/add',
+    name: 'Add semantic page',
+    component: () => import( /* webpackChunkName: "semantic" */ '../views/AddSemanticView.vue' )
+  },
 ]
 
 const router = createRouter( {

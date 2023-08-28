@@ -20,6 +20,9 @@
     <router-link class="" to="/ipm">Список</router-link>
     <span> | </span>
     <router-link class="" to="/variants/edit">Варианты отображения</router-link>
+
+    <h3>Семантика фильтров товаров</h3>
+    <router-link class="" to="/semantic/add">Добавить</router-link>
   </div>
 </template>
 

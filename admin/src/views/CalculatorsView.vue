@@ -12,6 +12,12 @@
   </div>
 
   <div class="calculators">
+    <StickersCalculator
+        :standWidth="60"
+        :standHeight="50"
+        productName="Наклейки"
+        productDescription="Описание продукта"
+    />
     <StandsCalculator
         :standWidth="1200"
         :standHeight="900"
@@ -24,10 +30,12 @@
 
 <script>
 import StandsCalculator from '@/calculators/StandsCalculator.vue'
+import StickersCalculator from '@/calculators/StickersCalculator.vue'
 export default {
   name: "CalculatorsView",
   components: {
-    StandsCalculator
+    StandsCalculator,
+    StickersCalculator,
   },
 }
 </script>

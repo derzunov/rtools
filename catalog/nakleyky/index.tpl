@@ -2,8 +2,8 @@
 <head>
 
 
-{if file_exists("meta/{$smarty.get.filters}.html")}
-  {include file="meta/{$smarty.get.filters}.html"}
+{if file_exists("meta/{$smarty.get.f}.html")}
+  {include file="meta/{$smarty.get.f}.html"}
 {else}
   <title>Наклейки</title>
 {/if}
@@ -19,14 +19,15 @@
     display: inline-block;
   }
 </style>
+<h1>Наклейки</h1>
 <div style="display: flex;">
-  <div style="width: 35%">  
+  <div style="width: 35%">
     <ul>
-        {foreach $fillters as $fillterName}
-            <li>{$fillterName.name|escape} ({$fillterName.furl})</li>
+        {foreach $filters as $filterName}
+            <li>{$filterName.name|escape} ({$filterName.furl})</li>
             <ul>
-              {foreach $fillterName.filters as $filter}
-                
+              {foreach $filterName.filters as $filter}
+
                 <li class="filter">
                   <label><input type="checkbox" value="{$filter.furl}">{$filter.name|escape}</label>
                   <div class="filter__tooltip">
@@ -36,7 +37,7 @@
               {/foreach}
             </ul>
         {foreachelse}
-            <li>No filters found</li>        
+            <li>No filters found</li>
         {/foreach}
     </ul>
   </div>
@@ -60,10 +61,10 @@
       {/foreach}
     </div>
 
-    {if file_exists("semantic/{$smarty.get.filters}.html")}
-      {include file="semantic/{$smarty.get.filters}.html"}
+    {if file_exists("semantic/{$smarty.get.f}.html")}
+      {include file="semantic/{$smarty.get.f}.html"}
     {/if}
-    
+
   </div>
 
 </div>
@@ -77,7 +78,7 @@
       event.preventDefault()
 
       const $filtersChecked = document.querySelectorAll( '.filter input:checked' )
-      getParameters = '?filters='
+      getParameters = '?f='
 
       $filtersChecked.forEach( ( $filter ) => {
         getParameters += $filter.value + '|'
@@ -89,7 +90,7 @@
 
     } )
   } )
-  
+
 </script>
 
 </body>

@@ -1,5 +1,9 @@
 const saveObjectToJSONFile = ( object, name = 'object' ) => {
-    const json = JSON.stringify( object )
+    const json = JSON.stringify( {
+        ...object,
+        html: `${ name }.html`,
+        jpg: `${ name }.jpg`,
+    } )
     const blob = new Blob( [ json ], { type: 'application/json' } )
     const link = document.createElement( 'a' )
     link.href = URL.createObjectURL( blob )
