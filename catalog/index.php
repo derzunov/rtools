@@ -37,7 +37,7 @@ if( isset( $_POST[ 'html' ] ) ) {
 
 // Meta
 $fd = fopen( "$catalog/meta/" . "$filter.html", 'w' ) or die( "Can\'t create/update $catalog/meta/$filter.html" );
-fwrite( $fd, "<title>$title</title> . <meta name=\"description\" content=\">$description\">" );
+fwrite( $fd, "<title>$title</title> <meta name=\"description\" content=\"$description\">" );
 fclose( $fd );
 
 // Semantic HTML

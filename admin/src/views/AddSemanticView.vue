@@ -17,25 +17,36 @@
     <h5>...</h5>
 
     <form @submit.prevent="create" id="ipm-add-new" class="mb-5 col-md-8" action="#">
-      <div class="mb-3">
-        <label for="catalog" class="form-label _gray">
-          Продукт
-        </label>
-        <input required
-               id="catalog"
-               name="catalog"
-               class="form-control"
-               type="text"
-               v-model="catalog"
-        >
+<!--      <div class="mb-3">-->
+<!--        <label for="catalog" class="form-label _gray">-->
+<!--          Продукт-->
+<!--        </label>-->
+<!--        <input required-->
+<!--               id="catalog"-->
+<!--               name="catalog"-->
+<!--               class="form-control"-->
+<!--               type="text"-->
+<!--               v-model="catalog"-->
+<!--        >-->
 
-      </div>
+<!--      </div>-->
       <div class="mb-3">
         <label for="filter" class="form-label _gray">
           Запрос класстера<br>
         </label>
         <div class="input-group mb-3">
-          <span class="input-group-text" id="basic-addon3">{{ baseUrl }}/tools/catalog/{{ catalog }}/?f=</span>
+          <span class="input-group-text" id="basic-addon3">{{ baseUrl }}/tools/catalog/</span>
+          <input required
+                 id="catalog"
+                 name="catalog"
+                 class="form-control"
+                 type="text"
+                 v-model="catalog"
+                 placeholder="Продукт"
+          >
+
+          <span class="input-group-text" id="basic-addon4">/?f=</span>
+
           <input required
                  id="filter"
                  name="filter"
