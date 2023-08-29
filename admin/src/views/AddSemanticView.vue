@@ -12,11 +12,14 @@
       <div class="col-md-2 center">
       </div>
     </div>
-    <h5>Добавить семантику для фильтра</h5>
+
+    <!-- Придумать заголовок -->
+    <h5>...</h5>
+
     <form @submit.prevent="create" id="ipm-add-new" class="mb-5 col-md-8" action="#">
       <div class="mb-3">
         <label for="catalog" class="form-label _gray">
-          Подкаталог внутри /catalog/
+          Продукт
         </label>
         <input required
                id="catalog"
@@ -29,7 +32,7 @@
       </div>
       <div class="mb-3">
         <label for="filter" class="form-label _gray">
-          Фильтр<br>
+          Запрос класстера<br>
         </label>
         <div class="input-group mb-3">
           <span class="input-group-text" id="basic-addon3">{{ baseUrl }}/tools/catalog/{{ catalog }}/?f=</span>
@@ -43,34 +46,9 @@
           >
         </div>
       </div>
-      <div class="mb-3">
-        <label for="h1" class="form-label">
-          Заголовок H1
-        </label>
-        <input required
-               id="h1"
-               name="h1"
-               class="form-control"
-               type="text"
-               v-model="h1"
-        >
-      </div>
 
       <div class="mb-3">
-        <label for="html" class="form-label">
-          HTML
-        </label>
-        <input required
-               id="html"
-               name="html"
-               class="form-control"
-               type="text"
-               v-model="html"
-        >
-      </div>
-
-      <div class="mb-3">
-        <label for="title" class="form-label">
+        <label for="title" class="form-label _gray">
           Title
         </label>
         <input required
@@ -83,16 +61,36 @@
       </div>
 
       <div class="mb-3">
-        <label for="description" class="form-label">
+        <label for="description" class="form-label _gray">
           Description
         </label>
-        <input required
+        <textarea required
                id="description"
                name="description"
                class="form-control"
-               type="text"
                v-model="description"
         >
+        </textarea>
+      </div>
+
+      <div class="mb-3">
+        <label for="h1" class="form-label _gray">
+          H1
+        </label>
+        <input required
+               id="h1"
+               name="h1"
+               class="form-control"
+               type="text"
+               v-model="h1"
+        >
+      </div>
+
+      <div class="mb-3">
+        <label for="html" class="form-label _gray">
+          HTML
+        </label>
+        <textarea v-model="html" id="html" required class="form-control" placeholder="HTML"></textarea>
       </div>
 
       <button type="submit" :disabled="isSaving" class="btn btn-primary">Сохранить</button>
@@ -190,7 +188,8 @@ export default {
       // ---------------------------------------------------------------------------
       await sleep( 500 )
       isSaving.value = false
-      await router.push( '/' )
+      // await router.push( '/' )
+      console.log( router )
     }
 
     const onUrlChange = () => {
