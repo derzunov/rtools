@@ -11,7 +11,7 @@ $html = 'undefined';
 
 
 // Fill vars from $_POST
-if( isset( $_POST[ 'catalog' ] ) ) { 
+if( isset( $_POST[ 'catalog' ] ) ) {
     $catalog = $_POST[ 'catalog' ];
 }
 
@@ -36,12 +36,12 @@ if( isset( $_POST[ 'html' ] ) ) {
 }
 
 // Meta
-$fd = fopen( "$catalog/meta/" . "$filter.html", 'w' ) or die( "Can\'t create/update $catalog/meta/$filter.html" );
+$fd = fopen( "$catalog/filters/meta/" . "$filter.html", 'w' ) or die( "Can\'t create/update $catalog/filters/meta/$filter.html" );
 fwrite( $fd, "<title>$title</title> <meta name=\"description\" content=\"$description\">" );
 fclose( $fd );
 
 // Semantic HTML
-$fd = fopen( "$catalog/semantic/" . "$filter.html", 'w' ) or die( "Can\'t create/update $catalog/semantic/$filter.html" );
+$fd = fopen( "$catalog/filters/semantic/" . "$filter.html", 'w' ) or die( "Can\'t create/update $catalog/filters/semantic/$filter.html" );
 fwrite( $fd, "<h1>$h1</h1> <div>$html</div>" );
 fclose( $fd );
 

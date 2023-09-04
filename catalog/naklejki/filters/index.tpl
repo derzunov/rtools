@@ -21,59 +21,61 @@
     display: inline-block;
   }
 </style>
-<h1>Наклейки</h1>
-<div style="display: flex;">
-  <div style="width: 35%">
-    <ul>
-        {foreach $filters as $filterName}
-            <li>{$filterName.name|escape} ({$filterName.furl})</li>
-            <ul>
-              {foreach $filterName.filters as $filter}
+<div class="tw-container">
+  <h3>Наклейки</h3>
+  <div style="display: flex;">
+    <div style="width: 35%">
+      <ul>
+          {foreach $filters as $filterName}
+              <li>{$filterName.name|escape} ({$filterName.furl})</li>
+              <ul>
+                {foreach $filterName.filters as $filter}
 
-                <li class="filter">
-                  <label><input type="checkbox" value="{$filter.furl}">{$filter.name|escape}</label>
-                  <div class="filter__tooltip">
-                    <a class="js_go_to_filters" href="#" >Показать</a>
-                  </div>
-                </li>
-              {/foreach}
-            </ul>
-        {foreachelse}
-            <li>No filters found</li>
+                  <li class="filter">
+                    <label><input type="checkbox" value="{$filter.furl}">{$filter.name|escape}</label>
+                    <div class="filter__tooltip">
+                      <a class="js_go_to_filters" href="#" >Показать</a>
+                    </div>
+                  </li>
+                {/foreach}
+              </ul>
+          {foreachelse}
+              <li>No filters found</li>
+          {/foreach}
+      </ul>
+    </div>
+    <div style="width: 65%">
+
+      <div style="display: flex; justify-content: space-between;">
+        {foreach $goods as $good}
+          <div>
+            <a href="./filters/goods/{$good.html}">
+              <img width="250px" src="./filters/goods/{$good.jpg}" >
+              <p>{$good.productName}</p>
+            </a>
+          </div>
         {/foreach}
-    </ul>
-  </div>
-  <div style="width: 65%">
+      </div>
+      <br>
+      <h5>Отфильтрованные:</h5>
+      <div style="display: flex; justify-content: space-between;">
+        {foreach $filteredGoods as $good}
+          <div>
+            <a href="./filters/goods/{$good.html}">
+              <img width="250px" src="./filters/goods/{$good.jpg}" >
+              <p>{$good.productName}</p>
+            </a>
+          </div>
+        {/foreach}
+      </div>
 
-    <div style="display: flex; justify-content: space-between;">
-      {foreach $goods as $good}
-        <div>
-          <a href="./filters/goods/{$good.html}">
-            <img width="250px" src="./filters/goods/{$good.jpg}" >
-            <p>{$good.productName}</p>
-          </a>
-        </div>
-      {/foreach}
-    </div>
-    <br>
-    <h5>Отфильтрованные:</h5>
-    <div style="display: flex; justify-content: space-between;">
-      {foreach $filteredGoods as $good}
-        <div>
-          <a href="./filters/goods/{$good.html}">
-            <img width="250px" src="./filters/goods/{$good.jpg}" >
-            <p>{$good.productName}</p>
-          </a>
-        </div>
-      {/foreach}
+      {if file_exists("filters/semantic/{$smarty.get.f}.html")}
+        {include file="filters/semantic/{$smarty.get.f}.html"}
+      {/if}
+
     </div>
 
-    {if file_exists("filters/semantic/{$smarty.get.f}.html")}
-      {include file="filters/semantic/{$smarty.get.f}.html"}
-    {/if}
-
   </div>
-
 </div>
 
 <script>
@@ -86,13 +88,14 @@
 
       const $filtersChecked = document.querySelectorAll( '.filter input:checked' )
       getParameters = '?f='
+      const filters = []
 
       $filtersChecked.forEach( ( $filter ) => {
-        getParameters += $filter.value + '|'
+        filters.push( $filter.value )
       } )
-      // Удаляем | на самом конце строки
-      getParameters = getParameters.slice( 0, -1 )
-      console.log( getParameters )
+
+      getParameters = '?f=' + filters.join( '__' )
+
       window.location.href = getParameters
 
     } )

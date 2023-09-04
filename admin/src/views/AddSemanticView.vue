@@ -24,19 +24,19 @@
         <div class="input-group mb-3">
           <span class="input-group-text" id="basic-addon3">{{ baseHost }}/tools/catalogProduct/</span>
 
-          <select v-model="catalogProduct" style="border-color: rgb(206, 212, 218); width: 18px;">
+          <select v-model="catalogProduct" style="border-color: rgb(206, 212, 218);">
             <option selected></option>
             <option v-for="product in products" :key="product" :value="product">{{ product }}</option>
           </select>
 
-          <input required
-                 id="catalogProduct"
-                 name="catalogProduct"
-                 class="form-control"
-                 type="text"
-                 v-model="catalogProduct"
-                 placeholder="Продукт"
-          >
+<!--          <input required-->
+<!--                 id="catalogProduct"-->
+<!--                 name="catalogProduct"-->
+<!--                 class="form-control"-->
+<!--                 type="text"-->
+<!--                 v-model="catalogProduct"-->
+<!--                 placeholder="Продукт"-->
+<!--          >-->
 
           <div class="field_tooltip">
             <p v-for="product in products" :key="product" class="field_tooltip__item">
@@ -46,22 +46,29 @@
 
           <span class="input-group-text" id="basic-addon4">/?f=</span>
 
-          <select v-model="filter" style="border-color: rgb(206, 212, 218); width: 18px;">
+          <select class="form-control" v-model="filter" style="border-color: rgb(206, 212, 218); width: 250px;">
             <option selected></option>
             <option v-for="filter in filters" :key="filter.id" :value="filter.furl">{{ filter.furl }}</option>
           </select>
 
-          <input required
-                 style="width: 250px;"
-                 id="filter"
-                 name="filter"
-                 class="form-control"
-                 type="text"
-                 v-model = "filter"
-                 placeholder="фильтр"
-          >
-          <button type="button" class="btn btn-primary">+</button>
+          <button @click.prevent="addFilter" type="button" class="btn btn-success">+</button>
+
+<!--          <input required-->
+<!--                 style="width: 250px;"-->
+<!--                 id="filter"-->
+<!--                 name="filter"-->
+<!--                 class="form-control"-->
+<!--                 type="text"-->
+<!--                 v-model = "filter"-->
+<!--                 placeholder="фильтр"-->
+<!--          >-->
         </div>
+        <div class="input-group mb-3" >
+          <select v-for="select in selectedFilters" :key="select.id" class="form-control" v-model="select.value" style="border-color: rgb(206, 212, 218); width: 250px;">
+            <option v-for="filter in filters" :key="filter.id" :value="filter.furl">{{ filter.furl }}</option>
+          </select>
+        </div>
+        {{ selectedFilters }}
       </div>
 
       <div class="mb-3">
@@ -159,6 +166,7 @@ export default {
     const isSaving = ref( false )
     // Form values:
     const filter = ref( '' )
+    const selectedFilters = ref( [] )
     const catalogProduct = ref( '' )
     const description = ref( '' )
     const h1 = ref( '' )
@@ -181,7 +189,7 @@ export default {
     }
 
     if ( isDev.value ) {
-      catalogProduct.value = `nakleyky`
+      catalogProduct.value = `naklejky`
       description.value = `Дескрипшн для фильтра ${ random( 255 ) }`
       h1.value = 'H1 для фильтра'
       html.value = 'Семантичный <b>HTML</b>'
@@ -190,10 +198,16 @@ export default {
 
     const campaignPeriodInDays = ref( 0 )
 
-    const create = async ( event ) => {
+    const create = async () => {
 
       const formdata = new FormData()
-      formdata.append( "filter", filter.value )
+
+      const selectedFiltersValues = []
+      selectedFilters.value.forEach( ( selectedFilter ) => {
+        selectedFiltersValues.push( selectedFilter.value )
+      } )
+
+      formdata.append( "filter", selectedFiltersValues.sort().join( '__ ) )
       formdata.append( "catalog", catalogProduct.value )
       formdata.append( "title", title.value )
       formdata.append( "description", description.value )
@@ -202,22 +216,6 @@ export default {
 
       isSaving.value = true
       await axios.post( `${ BASE_URL }/tools/catalog/`, formdata )
-
-      // Get the fresh index of our filter (we need it for router.push) --------------
-      // fetch fresh urls list ( with just created too, if it was created )
-      const urls = await fetchUrls()
-
-      if ( urls && urls.length ) {
-        // find our filter in list, get its index and save it to currentUrlId
-        urls.forEach( ( urlItem, urlIndex ) => {
-          if ( urlItem === filter.value ) {
-            currentUrlId.value = urlIndex
-          }
-        } )
-      } else {
-        // Smth wrong, but we still can reset the form
-        event.target.reset()
-      }
       // ---------------------------------------------------------------------------
       await sleep( 500 )
       isSaving.value = false
@@ -262,7 +260,7 @@ export default {
 
     const fetchFilters = async ( product ) => {
       try {
-        const reqStr = `${ BASE_URL }/tools/catalog/${ product.value }/filters.json`
+        const reqStr = `${ BASE_URL }/tools/catalog/${ product.value }/filters/filters.json`
         const response = await axios.get( reqStr )
 
         const filters = []
@@ -278,7 +276,14 @@ export default {
         console.error( error )
         return []
       }
+    }
 
+    const onFilterChange = ( event ) => {
+      console.log( event.target.value )
+    }
+
+    const addFilter = () => {
+      selectedFilters.value.push( { id: Date.now(), value: '' } )
     }
 
     onMounted(async () => {
@@ -300,6 +305,7 @@ export default {
       baseHost,
       isSaving,
       filter,
+      selectedFilters,
       catalogProduct,
       description,
       h1,
@@ -317,6 +323,9 @@ export default {
 
       create,
       pluralize,
+
+      onFilterChange,
+      addFilter,
     }
   }
 }
