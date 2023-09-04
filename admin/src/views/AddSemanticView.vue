@@ -17,44 +17,50 @@
     <h5>...</h5>
 
     <form @submit.prevent="create" id="ipm-add-new" class="mb-5 col-md-8" action="#">
-<!--      <div class="mb-3">-->
-<!--        <label for="catalog" class="form-label _gray">-->
-<!--          Продукт-->
-<!--        </label>-->
-<!--        <input required-->
-<!--               id="catalog"-->
-<!--               name="catalog"-->
-<!--               class="form-control"-->
-<!--               type="text"-->
-<!--               v-model="catalog"-->
-<!--        >-->
-
-<!--      </div>-->
       <div class="mb-3">
         <label for="filter" class="form-label _gray">
-          Запрос класстера<br>
+          Запрос кластера<br>
         </label>
         <div class="input-group mb-3">
-          <span class="input-group-text" id="basic-addon3">{{ baseUrl }}/tools/catalog/</span>
+          <span class="input-group-text" id="basic-addon3">{{ baseHost }}/tools/catalogProduct/</span>
+
+          <select v-model="catalogProduct" style="border-color: rgb(206, 212, 218); width: 18px;">
+            <option selected></option>
+            <option v-for="product in products" :key="product" :value="product">{{ product }}</option>
+          </select>
+
           <input required
-                 id="catalog"
-                 name="catalog"
+                 id="catalogProduct"
+                 name="catalogProduct"
                  class="form-control"
                  type="text"
-                 v-model="catalog"
+                 v-model="catalogProduct"
                  placeholder="Продукт"
           >
 
+          <div class="field_tooltip">
+            <p v-for="product in products" :key="product" class="field_tooltip__item">
+              {{ product }}
+            </p>
+          </div>
+
           <span class="input-group-text" id="basic-addon4">/?f=</span>
 
+          <select v-model="filter" style="border-color: rgb(206, 212, 218); width: 18px;">
+            <option selected></option>
+            <option v-for="filter in filters" :key="filter.id" :value="filter.furl">{{ filter.furl }}</option>
+          </select>
+
           <input required
+                 style="width: 250px;"
                  id="filter"
                  name="filter"
                  class="form-control"
                  type="text"
                  v-model = "filter"
-                 @change="onUrlChange"
+                 placeholder="фильтр"
           >
+          <button type="button" class="btn btn-primary">+</button>
         </div>
       </div>
 
@@ -109,6 +115,18 @@
   </div>
 </template>
 
+<style>
+  .field_tooltip {
+    position: absolute;
+    /* пока не используем, возможно пригодится */
+    display: none;
+
+  }
+  .field_tooltip__item {
+    margin: 0;
+  }
+</style>
+
 <script>
 import axios from "axios"
 import { onMounted, ref, watch } from 'vue'
@@ -137,10 +155,11 @@ export default {
     const route = useRoute()
     const isDev = ref( IS_DEV )
     const baseUrl = ref(`${ window.location.protocol }//${ window.location.host }`)
+    const baseHost = ref(`${ window.location.host }`)
     const isSaving = ref( false )
     // Form values:
     const filter = ref( '' )
-    const catalog = ref( '' )
+    const catalogProduct = ref( '' )
     const description = ref( '' )
     const h1 = ref( '' )
     const html = ref( '' )
@@ -154,12 +173,15 @@ export default {
 
     const currentUrlId = ref( 0 )
 
+    const products = ref( [] )
+    const filters = ref( [] )
+
     if ( route.params.currentUrl ) {
       filter.value = route.params.currentUrl
     }
 
     if ( isDev.value ) {
-      catalog.value = `nakleyky`
+      catalogProduct.value = `nakleyky`
       description.value = `Дескрипшн для фильтра ${ random( 255 ) }`
       h1.value = 'H1 для фильтра'
       html.value = 'Семантичный <b>HTML</b>'
@@ -172,7 +194,7 @@ export default {
 
       const formdata = new FormData()
       formdata.append( "filter", filter.value )
-      formdata.append( "catalog", catalog.value )
+      formdata.append( "catalog", catalogProduct.value )
       formdata.append( "title", title.value )
       formdata.append( "description", description.value )
       formdata.append( "h1", h1.value )
@@ -201,10 +223,6 @@ export default {
       isSaving.value = false
       // await router.push( '/' )
       console.log( router )
-    }
-
-    const onUrlChange = () => {
-      //filter.value = filterDumbProtect( url.value )
     }
 
     const fetchUrls = async () => {
@@ -236,21 +254,53 @@ export default {
       variants.value = response.data
     }
 
+    const fetchProducts = async () => {
+      const reqStr = `${ BASE_URL }/tools/catalog/products.json`
+      const response = await axios.get( reqStr )
+      return response.data
+    }
+
+    const fetchFilters = async ( product ) => {
+      try {
+        const reqStr = `${ BASE_URL }/tools/catalog/${ product.value }/filters.json`
+        const response = await axios.get( reqStr )
+
+        const filters = []
+
+        response.data.forEach( ( category ) => {
+          category.filters.forEach( ( filter ) => {
+            filters.push( filter )
+          } )
+        } )
+
+        return filters
+      } catch( error ) {
+        console.error( error )
+        return []
+      }
+
+    }
+
     onMounted(async () => {
+      // deprecated ----------
       updateCampaignPeriod()
       await fetchVariants()
-    })
+      // ---------------------
 
-    watch( [ dateStart, dateEnd ], () => {
-      updateCampaignPeriod()
+      products.value = await fetchProducts()
+    } )
+
+    watch( [ catalogProduct ], async () => {
+      filters.value = await fetchFilters( catalogProduct )
     } )
 
     return {
       isDev,
       baseUrl,
+      baseHost,
       isSaving,
       filter,
-      catalog,
+      catalogProduct,
       description,
       h1,
       html,
@@ -262,8 +312,10 @@ export default {
       currentVariant,
       variants,
 
+      products,
+      filters,
+
       create,
-      onUrlChange,
       pluralize,
     }
   }

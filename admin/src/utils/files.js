@@ -1,6 +1,7 @@
 const saveObjectToJSONFile = ( object, name = 'object' ) => {
     const json = JSON.stringify( {
         ...object,
+        php: `${ name }.php`,
         html: `${ name }.html`,
         jpg: `${ name }.jpg`,
     } )
