@@ -94,7 +94,7 @@
         filters.push( $filter.value )
       } )
 
-      getParameters = '?f=' + filters.join( '__' )
+      getParameters = '?f=' + filters.sort().join( '__' )
 
       window.location.href = getParameters
 
