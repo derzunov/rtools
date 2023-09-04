@@ -207,7 +207,7 @@ export default {
         selectedFiltersValues.push( selectedFilter.value )
       } )
 
-      formdata.append( "filter", selectedFiltersValues.sort().join( '__ ) )
+      formdata.append( "filter", selectedFiltersValues.sort().join( '__' ) )
       formdata.append( "catalog", catalogProduct.value )
       formdata.append( "title", title.value )
       formdata.append( "description", description.value )
