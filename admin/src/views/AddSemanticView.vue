@@ -179,8 +179,6 @@ export default {
     // Variants Array: index - value of select option, string val -> option text
     const variants = ref( [ 'Загружается' ] )
 
-    const currentUrlId = ref( 0 )
-
     const products = ref( [] )
     const filters = ref( [] )
 
@@ -221,12 +219,6 @@ export default {
       isSaving.value = false
       // await router.push( '/' )
       console.log( router )
-    }
-
-    const fetchUrls = async () => {
-      const reqStr = `${ BASE_URL }/tools/ipm/?type=urls&action=all`
-      const response = await axios.get( reqStr )
-      return response.data
     }
 
     // fires in onMounted and watch (actualize period ref for view)
