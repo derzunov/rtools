@@ -22,21 +22,12 @@
           Запрос кластера<br>
         </label>
         <div class="input-group mb-3">
-          <span class="input-group-text" id="basic-addon3">{{ baseHost }}/tools/catalogProduct/</span>
+          <span class="input-group-text" id="basic-addon3">{{ baseHost }}/tools/{{ catalogProduct }}/</span>
 
           <select v-model="catalogProduct" style="border-color: rgb(206, 212, 218);">
             <option selected></option>
             <option v-for="product in products" :key="product" :value="product">{{ product }}</option>
           </select>
-
-<!--          <input required-->
-<!--                 id="catalogProduct"-->
-<!--                 name="catalogProduct"-->
-<!--                 class="form-control"-->
-<!--                 type="text"-->
-<!--                 v-model="catalogProduct"-->
-<!--                 placeholder="Продукт"-->
-<!--          >-->
 
           <div class="field_tooltip">
             <p v-for="product in products" :key="product" class="field_tooltip__item">
@@ -46,11 +37,16 @@
 
           <span class="input-group-text" id="basic-addon4">/?f=</span>
 
-          <select class="form-control" v-model="filter" style="border-color: rgb(206, 212, 218); width: 250px;">
-            <option selected></option>
-            <option v-for="filter in filters" :key="filter.id" :value="filter.furl">{{ filter.furl }}</option>
-          </select>
+<!--          <select class="form-control" v-model="selectedFilters" style="border-color: rgb(206, 212, 218); width: 250px;">-->
+<!--            <option selected></option>-->
+<!--            <option v-for="filter in filters" :key="filter.id" :value="filter.furl">{{ filter.furl }}</option>-->
+<!--          </select>-->
 
+<!--          <div class="input-group mb-3" >-->
+            <select v-for="select in selectedFilters" :key="select.id" class="form-control" v-model="select.value" style="border-color: rgb(206, 212, 218); width: 250px;">
+              <option v-for="filter in filters" :key="filter.id" :value="filter.furl">{{ filter.furl }}</option>
+            </select>
+<!--          </div>-->
           <button @click.prevent="addFilter" type="button" class="btn btn-success">+</button>
 
 <!--          <input required-->
@@ -63,11 +59,7 @@
 <!--                 placeholder="фильтр"-->
 <!--          >-->
         </div>
-        <div class="input-group mb-3" >
-          <select v-for="select in selectedFilters" :key="select.id" class="form-control" v-model="select.value" style="border-color: rgb(206, 212, 218); width: 250px;">
-            <option v-for="filter in filters" :key="filter.id" :value="filter.furl">{{ filter.furl }}</option>
-          </select>
-        </div>
+
         {{ selectedFilters }}
       </div>
 
@@ -189,7 +181,7 @@ export default {
     if ( isDev.value ) {
       catalogProduct.value = `naklejky`
       description.value = `Дескрипшн для фильтра ${ random( 255 ) }`
-      h1.value = 'H1 для фильтра'
+      h1.value = 'H1 для фильтра'.
       html.value = 'Семантичный <b>HTML</b>'
       title.value = 'Title для фильтра'
     }
@@ -213,7 +205,7 @@ export default {
       formdata.append( "html", html.value )
 
       isSaving.value = true
-      await axios.post( `${ BASE_URL }/tools/catalog/`, formdata )
+      await axios.post( `${ BASE_URL }/tools/catalog-admin/`, formdata )
       // ---------------------------------------------------------------------------
       await sleep( 500 )
       isSaving.value = false
@@ -245,14 +237,14 @@ export default {
     }
 
     const fetchProducts = async () => {
-      const reqStr = `${ BASE_URL }/tools/catalog/products.json`
+      const reqStr = `${ BASE_URL }/tools/catalog-admin/products.json`
       const response = await axios.get( reqStr )
       return response.data
     }
 
     const fetchFilters = async ( product ) => {
       try {
-        const reqStr = `${ BASE_URL }/tools/catalog/${ product.value }/filters/filters.json`
+        const reqStr = `${ BASE_URL }/tools/catalog-admin/${ product.value }/filters/filters.json`
         const response = await axios.get( reqStr )
 
         const filters = []

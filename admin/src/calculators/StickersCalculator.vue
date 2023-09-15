@@ -167,11 +167,10 @@ export default {
   },
   setup( props ) {
 
-    const IS_DEV = window.location.host.includes( 'localhost' )
-    const ROOT_HOST = IS_DEV ?
-        'http://localhost' :
-        'https://r-color.ru'
-    console.log( ROOT_HOST )
+    // const IS_DEV = window.location.host.includes( 'localhost' )
+    // const ROOT_HOST = IS_DEV ?
+    //     'http://localhost' :
+    //     'https://r-color.ru'
     // const PRICES_PATH = ROOT_HOST + '/tools/price/'
     const canvas = ref( null )
     const calculatorContainer = ref( null )

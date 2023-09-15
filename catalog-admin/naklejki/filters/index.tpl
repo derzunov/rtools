@@ -40,7 +40,7 @@
                 {/foreach}
               </ul>
           {foreachelse}
-              <li>No filters found</li>
+              <li>No filters found !</li>
           {/foreach}
       </ul>
     </div>
@@ -49,8 +49,8 @@
       <div style="display: flex; justify-content: space-between;">
         {foreach $goods as $good}
           <div>
-            <a href="./filters/goods/{$good.html}">
-              <img width="250px" src="./filters/goods/{$good.jpg}" >
+            <a href="/tools/catalog-admin/naklejki/filters/tovary/?p={$good.name}">
+              <img width="250px" src="/tools/catalog-admin/naklejki/filters/tovary/{$good.jpg}" >
               <p>{$good.productName}</p>
             </a>
           </div>
@@ -61,20 +61,19 @@
       <div style="display: flex; justify-content: space-between;">
         {foreach $filteredGoods as $good}
           <div>
-            <a href="./filters/goods/{$good.html}">
-              <img width="250px" src="./filters/goods/{$good.jpg}" >
+            <a href="/tools/catalog-admin/naklejki/filters/tovary/?p={$good.name}">
+              <img width="250px" src="/tools/catalog-admin/naklejki/filters/tovary/{$good.jpg}">
               <p>{$good.productName}</p>
             </a>
           </div>
         {/foreach}
       </div>
 
-      {if file_exists("filters/semantic/{$smarty.get.f}.html")}
+      {if file_exists("/tools/catalog-admin/naklejki/filters/semantic/{$smarty.get.f}.html")}
         {include file="filters/semantic/{$smarty.get.f}.html"}
       {/if}
 
     </div>
-
   </div>
 </div>
 
@@ -97,10 +96,8 @@
       getParameters = '?f=' + filters.sort().join( '__' )
 
       window.location.href = getParameters
-
     } )
   } )
-
 </script>
 
 </body>
