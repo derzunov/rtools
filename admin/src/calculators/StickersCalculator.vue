@@ -1,12 +1,13 @@
 <!-- При использовании этого калькулятора в другом проекте на vue не забыть забрать ещё и папку utils/ -->
 <template>
-  <h4>
-    Конструктор наклеек
-  </h4>
+
 
   <div ref="calculatorContainer">
 
-    <h4>{{ productName }}</h4>
+    <h2>{{ productName }}</h2>
+    <h4>
+      Онлайн калькулятор расчета стоимости печати заказа
+    </h4>
     <p>{{ productDescription }}</p>
     <div class="row stands-constructor">
       <div class="col-md-6 stands-constructor__controls">
@@ -189,6 +190,7 @@ export default {
       probka: { x: 100, y: 100, width: 297, height: 420 }, //  или null, если пробковая вставка не нужна
       materialOsnovy: props.materialOsnovy || materialNames.FANERA_BERYOZA_3MM_CHYORNYJ,
       materialKarmanov: props.materialKarmanov || materialNames.ORGSTEKLO_1_5MM_PROZRACHNYJ,
+      filters: [],
     } )
 
     const clientPrice = ref( 0 )
@@ -288,38 +290,6 @@ export default {
         context.fillText( params.headText, headTextX, headTextY, params.standWidth * scale )
       }
 
-      const drawPockets = ( params, context ) => {
-        params.pockets.forEach( ( pocket ) => {
-
-          const standX = ( canvasWidth - params.standWidth * scale ) / 2 // px
-          const standY = ( canvasHeight - params.standHeight * scale ) / 2 // px
-
-          const pocketStartX = standX + pocket.x * scale
-          const pocketStartY = ( standY + params.standHeight * scale ) - pocket.y * scale
-
-          // Тень
-          context.shadowColor = 'rgba( 0, 0, 0, 0.2 )'
-          context.shadowBlur = 5
-
-          //  Сам карман
-          context.fillStyle = 'rgba( 220, 220, 220, 0.7 )'
-          context.fillRect( pocketStartX, pocketStartY, sizes[ pocket.size ].width * scale, sizes[ pocket.size ].height * scale )
-
-          // Сбрасываем тень для текста
-          context.shadowColor = 'none'
-          context.shadowBlur = 0
-
-          // Текст размера кармана
-          const fontSize = 20
-          context.font = `${ fontSize }px sans-serif`
-          context.fillStyle = 'rgba( 0, 0, 0, 0.5 )'
-          const pocketSizeTextWidth = context.measureText( pocket.size ).width // px
-          const pocketSizeTextX = pocketStartX + sizes[ pocket.size ].width * scale / 2 - pocketSizeTextWidth / 2
-          const pocketSizeTextY = pocketStartY + sizes[ pocket.size ].height * scale / 2
-          context.fillText( pocket.size, pocketSizeTextX, pocketSizeTextY )
-        } )
-      }
-
       const drawSize = ( params, context ) => {
         // Shadow
         context.shadowColor = '#888'
@@ -360,14 +330,12 @@ export default {
       await drawBackground( params, context )
       await drawStand( params, context )
       drawHead( params, context )
-      drawPockets( params, context )
       drawSize( params, context )
       drawUps( params, context )
 
       // SVG (see fork https://github.com/derzunov/canvas2svg)
       await drawStand( params, svgContext )
       drawHead( params, svgContext )
-      drawPockets( params, svgContext )
       state.svg = svgContext.getSerializedSvg()
     }
 

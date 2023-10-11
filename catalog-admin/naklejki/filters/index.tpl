@@ -22,8 +22,8 @@
   }
 </style>
 <div class="tw-container">
-  <h3>Наклейки</h3>
   <div style="display: flex;">
+    <!-- Список фильтров -->
     <div style="width: 35%">
       <ul>
           {foreach $filters as $filterName}
@@ -46,33 +46,45 @@
     </div>
     <div style="width: 65%">
 
+      {if file_exists("{$DOCUMENT_ROOT}/tools/catalog-admin/naklejki/filters/semantic/{$smarty.get.f}.html")}
+        {include file="{$DOCUMENT_ROOT}/tools/catalog-admin/naklejki/filters/semantic/{$smarty.get.f}.html"}
+      {/if}
+
+      <br>
+      
+
+      {if $filteredGoods|@count}
+
+      <h5>Результат:</h5>
+      <div style="display: flex; justify-content: space-between;">
+        {foreach $filteredGoods as $good}
+          <div>
+            <a href="/catalog/naklejki/?p={$good.name}">
+              <img width="250px" src="/tools/catalog-admin/naklejki/tovary/{$good.jpg}">
+              <p>{$good.productName}</p>
+            </a>
+          </div>
+        {/foreach}
+      </div>
+
+      {else}
+        <h5>Нет результатов по выбранным фильтрам</h5>
+      {/if}
+      
+
+      <h5>Вас также может заинтересовать:</h5>
+
       <div style="display: flex; justify-content: space-between;">
         {foreach $goods as $good}
           <div>
-            <a href="/tools/catalog-admin/naklejki/filters/tovary/?p={$good.name}">
-              <img width="250px" src="/tools/catalog-admin/naklejki/filters/tovary/{$good.jpg}" >
+            <a href="/catalog/naklejki/?p={$good.name}">
+              <img width="250px" src="/tools/catalog-admin/naklejki/tovary/{$good.jpg}" >
               <p>{$good.productName}</p>
             </a>
           </div>
         {/foreach}
       </div>
       <br>
-      <h5>Отфильтрованные:</h5>
-      <div style="display: flex; justify-content: space-between;">
-        {foreach $filteredGoods as $good}
-          <div>
-            <a href="/tools/catalog-admin/naklejki/filters/tovary/?p={$good.name}">
-              <img width="250px" src="/tools/catalog-admin/naklejki/filters/tovary/{$good.jpg}">
-              <p>{$good.productName}</p>
-            </a>
-          </div>
-        {/foreach}
-      </div>
-
-      {if file_exists("/tools/catalog-admin/naklejki/filters/semantic/{$smarty.get.f}.html")}
-        {include file="filters/semantic/{$smarty.get.f}.html"}
-      {/if}
-
     </div>
   </div>
 </div>

@@ -49,18 +49,7 @@
 <!--          </div>-->
           <button @click.prevent="addFilter" type="button" class="btn btn-success">+</button>
 
-<!--          <input required-->
-<!--                 style="width: 250px;"-->
-<!--                 id="filter"-->
-<!--                 name="filter"-->
-<!--                 class="form-control"-->
-<!--                 type="text"-->
-<!--                 v-model = "filter"-->
-<!--                 placeholder="фильтр"-->
-<!--          >-->
         </div>
-
-        {{ selectedFilters }}
       </div>
 
       <div class="mb-3">
@@ -99,6 +88,21 @@
                class="form-control"
                type="text"
                v-model="h1"
+               placeholder="H1 для фильтра"
+        >
+      </div>
+
+      <div class="mb-3">
+        <label for="h2" class="form-label _gray">
+          H2
+        </label>
+        <input required
+               id="h2"
+               name="h2"
+               class="form-control"
+               type="text"
+               v-model="h2"
+               placeholder="H2 для калькулятора"
         >
       </div>
 
@@ -131,7 +135,6 @@ import axios from "axios"
 import { onMounted, ref, watch } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import {
-  calculateCampaignPeriodInDays,
   random,
   sleep,
 } from '@/utils'
@@ -162,6 +165,7 @@ export default {
     const catalogProduct = ref( '' )
     const description = ref( '' )
     const h1 = ref( '' )
+    const h2 = ref( '' )
     const html = ref( '' )
     const title = ref( '' )
     const link = ref( '' )
@@ -181,12 +185,11 @@ export default {
     if ( isDev.value ) {
       catalogProduct.value = `naklejky`
       description.value = `Дескрипшн для фильтра ${ random( 255 ) }`
-      h1.value = 'H1 для фильтра'.
+      h1.value = 'H1 для фильтра/фильтров'
+      h2.value = 'H2 для фильтра/фильтров'
       html.value = 'Семантичный <b>HTML</b>'
       title.value = 'Title для фильтра'
     }
-
-    const campaignPeriodInDays = ref( 0 )
 
     const create = async () => {
 
@@ -202,6 +205,7 @@ export default {
       formdata.append( "title", title.value )
       formdata.append( "description", description.value )
       formdata.append( "h1", h1.value )
+      formdata.append( "h2", h2.value )
       formdata.append( "html", html.value )
 
       isSaving.value = true
@@ -211,29 +215,6 @@ export default {
       isSaving.value = false
       // await router.push( '/' )
       console.log( router )
-    }
-
-    // fires in onMounted and watch (actualize period ref for view)
-    const updateCampaignPeriod = () => {
-      if ( !dateStart.value ) {
-        campaignPeriodInDays.value = 0
-        return
-      }
-      if ( !dateEnd.value ) {
-        campaignPeriodInDays.value = 0
-        return
-      }
-
-      campaignPeriodInDays.value = calculateCampaignPeriodInDays(
-          new Date( dateStart.value ),
-          new Date( dateEnd.value )
-      )
-    }
-
-    const fetchVariants = async () => {
-      const reqStr = `${ BASE_URL }/tools/ipm/?type=variants&action=all`
-      const response = await axios.get( reqStr )
-      variants.value = response.data
     }
 
     const fetchProducts = async () => {
@@ -271,11 +252,6 @@ export default {
     }
 
     onMounted(async () => {
-      // deprecated ----------
-      updateCampaignPeriod()
-      await fetchVariants()
-      // ---------------------
-
       products.value = await fetchProducts()
     } )
 
@@ -293,12 +269,12 @@ export default {
       catalogProduct,
       description,
       h1,
+      h2,
       html,
       title,
       link,
       dateStart,
       dateEnd,
-      campaignPeriodInDays,
       currentVariant,
       variants,
 

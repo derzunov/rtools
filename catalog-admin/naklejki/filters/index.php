@@ -41,9 +41,8 @@ $goods = [];
 $filteredGoods = [];
 
 
-
 // Собираем все файлы с расширением json из папки
-foreach ( glob( $_SERVER["DOCUMENT_ROOT"] . '/tools/catalog-admin/naklejki/filters/tovary/*.json' ) as $file ) {
+foreach ( glob( $_SERVER["DOCUMENT_ROOT"] . '/tools/catalog-admin/naklejki/tovary/*.json' ) as $file ) {
   $object = json_decode( file_get_contents( $file ) );
   $good = [
     'jpg' => $object->jpg,
@@ -64,6 +63,7 @@ foreach ( glob( $_SERVER["DOCUMENT_ROOT"] . '/tools/catalog-admin/naklejki/filte
 
 $smarty->assign( 'goods', $goods );
 $smarty->assign( 'filteredGoods', $filteredGoods );
+$smarty->assign( 'DOCUMENT_ROOT', $_SERVER["DOCUMENT_ROOT"] );
 
 // display it
 $smarty->display( $_SERVER["DOCUMENT_ROOT"] . '/tools/catalog-admin/naklejki/filters/index.tpl' );
