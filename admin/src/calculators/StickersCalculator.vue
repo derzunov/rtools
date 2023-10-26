@@ -339,30 +339,6 @@ export default {
       state.svg = svgContext.getSerializedSvg()
     }
 
-    const setOrientation = () => {
-      // TODO: Отрефачить эту парашу
-      // Выбрали вертикальную
-     if ( state.orientation === 'v' ) {
-        for ( let size in sizes ) {
-          const width = sizes[ size ].width
-          const height = sizes[ size ].height
-          if ( width > height ) { // Нужно поменять местами длину и ширину
-            sizes[ size ].width = height
-            sizes[ size ].height = width
-          }
-        }
-     } else { // Выбрали горизонтальную
-       for ( let size in sizes ) {
-         const width = sizes[ size ].width
-         const height = sizes[ size ].height
-         if ( width < height ) { // Нужно поменять
-           sizes[ size ].width = height
-           sizes[ size ].height = width
-         }
-       }
-     }
-    }
-
     const onBackgroundImageChange = async ( event ) => {
       const input = event.target
       state.backgroundImage = await readFileAsDataFromInput( input )
@@ -380,11 +356,6 @@ export default {
       for ( const stateKey in loadedStateJson ) {
         state[ stateKey ] = loadedStateJson [ stateKey ]
       }
-    }
-
-    const addPocket = ( x = 10, y = 500 ) => {
-      const defaultPocketObject = { size: 'A4', orientation: 'v', x, y }
-      state.pockets.push( { ...defaultPocketObject } )
     }
 
     // --------------------------------------------------------------------
@@ -516,12 +487,10 @@ export default {
     // / Калькуляция ------------------------------------------------------
 
     onMounted( () => {
-      setOrientation()
       draw( canvas.value, state )
     } )
 
     watch( [ state ], () => {
-      setOrientation() // deprecated
       draw( canvas.value, state )
     },{
       flush: 'post'
@@ -544,7 +513,6 @@ export default {
       onStandImageChange,
       saveCanvasToJpeg,
       onLoadState,
-      addPocket,
 
       calculate,
 

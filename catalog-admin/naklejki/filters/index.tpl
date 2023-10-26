@@ -45,16 +45,9 @@
       </ul>
     </div>
     <div style="width: 65%">
-
-      {if file_exists("{$DOCUMENT_ROOT}/tools/catalog-admin/naklejki/filters/semantic/{$smarty.get.f}.html")}
-        {include file="{$DOCUMENT_ROOT}/tools/catalog-admin/naklejki/filters/semantic/{$smarty.get.f}.html"}
-      {/if}
-
       <br>
-      
 
       {if $filteredGoods|@count}
-
       <h5>Результат:</h5>
       <div style="display: flex; justify-content: space-between;">
         {foreach $filteredGoods as $good}
@@ -70,7 +63,6 @@
       {else}
         <h5>Нет результатов по выбранным фильтрам</h5>
       {/if}
-      
 
       <h5>Вас также может заинтересовать:</h5>
 
@@ -87,6 +79,11 @@
       <br>
     </div>
   </div>
+
+  {if file_exists("{$DOCUMENT_ROOT}/tools/catalog-admin/naklejki/filters/semantic/{$smarty.get.f}.html")}
+    {include file="{$DOCUMENT_ROOT}/tools/catalog-admin/naklejki/filters/semantic/{$smarty.get.f}.html"}
+  {/if}
+
 </div>
 
 <script>

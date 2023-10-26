@@ -93,6 +93,20 @@
       </div>
 
       <div class="mb-3">
+        <label for="subheader" class="form-label _gray">
+          subheader
+        </label>
+        <input required
+               id="subheader"
+               name="subheader"
+               class="form-control"
+               type="text"
+               v-model="subheader"
+               placeholder="Subheader для фильтра"
+        >
+      </div>
+
+      <div class="mb-3">
         <label for="h2" class="form-label _gray">
           H2
         </label>
@@ -111,6 +125,17 @@
           HTML
         </label>
         <textarea v-model="html" id="html" required class="form-control" placeholder="HTML"></textarea>
+      </div>
+
+      <div class="mb-3">
+        <label for="isindex" class="form-label _gray" style="margin-right: 10px;">
+          Индексировать
+        </label>
+        <input id="isindex"
+               name="isindex"
+               type="checkbox"
+               v-model="isindex"
+        >
       </div>
 
       <button type="submit" :disabled="isSaving" class="btn btn-primary">Сохранить</button>
@@ -165,6 +190,8 @@ export default {
     const catalogProduct = ref( '' )
     const description = ref( '' )
     const h1 = ref( '' )
+    const subheader = ref( '' )
+    const isindex = ref( false )
     const h2 = ref( '' )
     const html = ref( '' )
     const title = ref( '' )
@@ -186,6 +213,8 @@ export default {
       catalogProduct.value = `naklejky`
       description.value = `Дескрипшн для фильтра ${ random( 255 ) }`
       h1.value = 'H1 для фильтра/фильтров'
+      subheader.value = 'Subheader для фильтра/фильтров'
+      isindex.value = false
       h2.value = 'H2 для фильтра/фильтров'
       html.value = 'Семантичный <b>HTML</b>'
       title.value = 'Title для фильтра'
@@ -205,8 +234,10 @@ export default {
       formdata.append( "title", title.value )
       formdata.append( "description", description.value )
       formdata.append( "h1", h1.value )
+      formdata.append( "subheader", subheader.value )
       formdata.append( "h2", h2.value )
       formdata.append( "html", html.value )
+      formdata.append( "isindex", isindex.value )
 
       isSaving.value = true
       await axios.post( `${ BASE_URL }/tools/catalog-admin/`, formdata )
@@ -269,8 +300,10 @@ export default {
       catalogProduct,
       description,
       h1,
+      subheader,
       h2,
       html,
+      isindex,
       title,
       link,
       dateStart,
