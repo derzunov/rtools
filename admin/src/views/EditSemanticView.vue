@@ -7,7 +7,6 @@
             <font-awesome-icon :icon="['fas', 'house']" />
           </router-link>
         </h5>
-        <h6><router-link class="" to="/semantic/table">Наклейки</router-link></h6>
       </div>
       <div class="col-md-7"></div>
       <div class="col-md-2 center">

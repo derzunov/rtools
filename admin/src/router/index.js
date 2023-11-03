@@ -103,6 +103,16 @@ const routes = [
     name: 'Add semantic page',
     component: () => import( /* webpackChunkName: "semantic" */ '../views/AddSemanticView.vue' )
   },
+  {
+    path: '/semantic/edit',
+    name: 'Edit semantic page',
+    component: () => import( /* webpackChunkName: "semantic" */ '../views/EditSemanticView.vue' )
+  },
+  {
+    path: '/semantic/table',
+    name: 'Edit semantic page',
+    component: () => import( /* webpackChunkName: "semantic" */ '../views/TableSemanticView.vue' )
+  },
 ]
 
 const router = createRouter( {

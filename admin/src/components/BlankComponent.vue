@@ -23,6 +23,8 @@
 
     <h3>Семантика фильтров товаров</h3>
     <router-link class="" to="/semantic/add">Добавить</router-link>
+    <br>
+    <router-link class="" to="/semantic/table">Фильтры наклеек</router-link>
   </div>
 </template>
 
