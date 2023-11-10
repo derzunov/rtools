@@ -13,8 +13,7 @@
       </div>
     </div>
 
-    <!-- Придумать заголовок -->
-    <h5>...</h5>
+    <h5>Редактирование</h5>
 
     <form @submit.prevent="create" id="ipm-add-new" class="mb-5 col-md-8" action="#">
       <div class="mb-3">
@@ -187,7 +186,7 @@ export default {
     // Form values:
     const filter = ref( '' )
     const selectedFilters = ref( [] )
-    const catalogProduct = ref( '' )
+    const catalogProduct = ref( 'naklejki' )
     const description = ref( '' )
     const h1 = ref( '' )
     const subheader = ref( '' )
@@ -205,9 +204,7 @@ export default {
     const products = ref( [] )
     const filters = ref( [] )
 
-    if ( route.params.currentUrl ) {
-      filter.value = route.params.currentUrl
-    }
+    const currentFilter = ref( route.query.f )
 
     if ( isDev.value ) {
       catalogProduct.value = `naklejky`
@@ -284,6 +281,13 @@ export default {
 
     onMounted(async () => {
       products.value = await fetchProducts()
+
+      catalogProduct.value = 'naklejki'
+
+      currentFilter.value.split( '__' ).forEach( ( filter ) => {
+        selectedFilters.value.push( { id: Date.now(), value: filter } )
+      } )
+
     } )
 
     watch( [ catalogProduct ], async () => {

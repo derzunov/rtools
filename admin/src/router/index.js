@@ -110,7 +110,7 @@ const routes = [
   },
   {
     path: '/semantic/table',
-    name: 'Edit semantic page',
+    name: 'Semantic page',
     component: () => import( /* webpackChunkName: "semantic" */ '../views/TableSemanticView.vue' )
   },
 ]
