@@ -227,10 +227,12 @@ export default {
 
       const selectedFiltersValues = []
       selectedFilters.value.forEach( ( selectedFilter ) => {
-        selectedFiltersValues.push( selectedFilter.value )
+        if ( selectedFilter.value.length ) {
+          selectedFiltersValues.push( selectedFilter.value )
+        }
       } )
 
-      formdata.append( "filter", selectedFiltersValues.sort().join( '__' ) )
+      formdata.append( "filter", selectedFiltersValues.sort().join( '__' ).trim() )
       formdata.append( "catalog", catalogProduct.value )
       formdata.append( "title", title.value )
       formdata.append( "description", description.value )
@@ -245,8 +247,7 @@ export default {
       // ---------------------------------------------------------------------------
       await sleep( 500 )
       isSaving.value = false
-      // await router.push( '/' )
-      console.log( router )
+      await router.push( `/semantic/table?f=${ selectedFiltersValues.sort().join( '__' ) }` )
     }
 
     const fetchProducts = async () => {

@@ -19,8 +19,9 @@ $jsonsFiltersNames = getJsonsFiltersNames();
 $jsonsArray = array();
 
 foreach ( $jsonsFiltersNames as $key => $filename ) {
-    array_push( $jsonsArray, json_decode( file_get_contents( $jsonFiltersDir . $filename ) ) );
+    unlink( $jsonFiltersDir . $filename );
 }
+
 header( 'Content-Type: application/json' );
-print_r( json_encode( $jsonsArray ) );
+print_r( json_encode( [] ) );
 ?>

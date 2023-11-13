@@ -7,6 +7,7 @@
             <font-awesome-icon :icon="['fas', 'house']" />
           </router-link>
         </h5>
+        <h6><router-link class="" :to="`/semantic/table?f=${ currentFilter }`">Наклейки</router-link></h6>
       </div>
       <div class="col-md-7"></div>
       <div class="col-md-2 center">
@@ -23,7 +24,7 @@
         <div class="input-group mb-3">
           <span class="input-group-text" id="basic-addon3">{{ baseHost }}/tools/{{ catalogProduct }}/</span>
 
-          <select v-model="catalogProduct" style="border-color: rgb(206, 212, 218);">
+          <select disabled v-model="catalogProduct" style="border-color: rgb(206, 212, 218); width: 100px;">
             <option selected></option>
             <option v-for="product in products" :key="product" :value="product">{{ product }}</option>
           </select>
@@ -42,11 +43,10 @@
 <!--          </select>-->
 
 <!--          <div class="input-group mb-3" >-->
-            <select v-for="select in selectedFilters" :key="select.id" class="form-control" v-model="select.value" style="border-color: rgb(206, 212, 218); width: 250px;">
+            <select disabled v-for="select in selectedFilters" :key="select.id" class="form-control" v-model="select.value" style="border-color: rgb(206, 212, 218); width: 100px;">
               <option v-for="filter in filters" :key="filter.id" :value="filter.furl">{{ filter.furl }}</option>
             </select>
 <!--          </div>-->
-          <button @click.prevent="addFilter" type="button" class="btn btn-success">+</button>
 
         </div>
       </div>
@@ -241,7 +241,7 @@ export default {
       // ---------------------------------------------------------------------------
       await sleep( 500 )
       isSaving.value = false
-      // await router.push( '/' )
+      await router.push( `/semantic/table?f=${ selectedFiltersValues.sort().join( '__' ) }` )
       console.log( router )
     }
 
@@ -279,14 +279,31 @@ export default {
       selectedFilters.value.push( { id: Date.now(), value: '' } )
     }
 
+    const fetchCurrentFilterFields = async ( catalogProduct, currentFilter ) => {
+      const reqStr = `${ BASE_URL }/tools/catalog-admin/${  catalogProduct }/filters/json/${ currentFilter }.json`
+      const response = await axios.get( reqStr )
+      const data = response.data
+
+      description.value = data.description
+      h1.value = data.h1
+      subheader.value = data.subheader
+      isindex.value = data.isindex
+      h2.value = data.h2
+      html.value = data.html
+      title.value = data.title
+    }
+
     onMounted(async () => {
       products.value = await fetchProducts()
 
       catalogProduct.value = 'naklejki'
+      filters.value = await fetchFilters( catalogProduct )
 
       currentFilter.value.split( '__' ).forEach( ( filter ) => {
         selectedFilters.value.push( { id: Date.now(), value: filter } )
       } )
+
+      await fetchCurrentFilterFields( catalogProduct.value, currentFilter.value )
 
     } )
 
@@ -314,6 +331,7 @@ export default {
       dateEnd,
       currentVariant,
       variants,
+      currentFilter,
 
       products,
       filters,

@@ -9,6 +9,7 @@
     </div>
     <div class="col-md-7"></div>
     <div class="col-md-2 right">
+      <a class="btn btn-outline-danger" v-on:click="reset">Reset</a>
       <router-link class="btn btn-outline-success" to="/semantic/add">Добавить</router-link>
     </div>
   </div>
@@ -22,6 +23,7 @@
         <th scope="col" class="col-md-2 center">Description</th>
         <th scope="col" class="col-md-2 center">H1</th>
         <th scope="col" class="col-md-2 center">Html</th>
+        <th scope="col" class="col-md-2 center"></th>
         <th scope="col" class="col-md-4">Статистика</th>
         <th scope="col" class="col-md-4">Комментарий</th>
       </tr>
@@ -29,11 +31,20 @@
     <tbody>
     <tr v-for="( filter, index ) in filters"
         :data-index="index"
-        :key="index">
+        :key="index"
+        :ref="( element ) => {
+          if ( element ) {
+            rows[ filter.filter ] = element
+          }
+        }"
+    >
       <td class="_gray" style="width: 50px;">-</td>
       <th>
-        <router-link :to="`/semantic/edit?f=${ filter.filter }`">
+        <router-link v-if="filter.filter.length" :to="`/semantic/edit?f=${ filter.filter }`">
           {{ filter.filter }}
+        </router-link>
+        <router-link v-else :to="`/semantic/edit?f=${ filter.filter }`">
+          #
         </router-link>
       </th>
       <td>
@@ -48,6 +59,9 @@
       <td class="center">
         <span v-html="filter.html" ></span>
       </td>
+      <td><a target="_blank" :href="`https://r-color.ru/catalog/naklejki/?f=${ filter.filter }`">Бой</a></td>
+      <td class="center">0</td>
+      <td></td>
     </tr>
     </tbody>
   </table>
@@ -55,9 +69,9 @@
 
 <script>
 import axios from "axios"
-import { useRouter } from 'vue-router'
-import { ref, onMounted } from 'vue'
-import { filterActiveItems, filterItemsByType } from '@/utils'
+import { useRouter, useRoute } from 'vue-router'
+import { ref, onMounted, onBeforeUpdate } from 'vue'
+import { filterActiveItems, filterItemsByType, sleep } from '@/utils'
 
 // TODO: Расчет этой константы и будущих других вынести в отдельный сервис
 const BASE_URL = window.location.host.includes( 'localhost' ) ?
@@ -67,54 +81,18 @@ const BASE_URL = window.location.host.includes( 'localhost' ) ?
 export default {
   setup() {
     const router = useRouter()
+    const route = useRoute()
 
     const urlsPopulated = ref( {} )
     const urls = ref( [] )
     const urlsTitles = ref( {} )
     const filters = ref( [] )
+    const rows = ref( {} ) // для якорных ссылок, заполняются в шаблоне
 
-    const fetchUrlsPopulated = async () => {
-      const reqString = `${ BASE_URL }/tools/ipm/?type=urls&action=all&populate=true`
-      const response = await axios.get( reqString )
-      urlsPopulated.value = response.data
-    }
     const fetchFilters = async () => {
       const reqString = `${ BASE_URL }/tools/catalog-admin/naklejki/read-files.php`
       const response = await axios.get( reqString )
       filters.value = response.data
-    }
-
-    const fetchUrls = async () => {
-      const reqString = `${ BASE_URL }/tools/ipm/?type=urls&action=all`
-      const response = await axios.get( reqString )
-      urls.value = response.data
-    }
-
-    // Работает только на бою
-    // Для работы с localhost нужно настраивать CORS
-    const getUrlTitle = async ( url ) => {
-      if ( url === '*' ) {
-        return 'All pages'
-      }
-
-      try {
-        const response = await axios.get( `${ BASE_URL }\\${ url }` )
-        const matches = response.data.match( /<title>(.*?)<\/title>/ )
-        if ( matches && matches.length ) {
-          return matches[ 1 ]
-        }
-      } catch( error ) {
-        console.error( error )
-      }
-
-      return "Нет тайтла"
-    }
-
-    const fillUrlsTitles = () => {
-      urls.value.forEach( async ( url ) => {
-        const title = await getUrlTitle( url )
-        urlsTitles.value[ url ] = title.replace( ' || РЕСПУБЛИКА ЦВЕТА', '' )
-      } )
     }
 
     const getItemsInteractCount = ( items = [] ) => {
@@ -129,11 +107,36 @@ export default {
       router.push( `news/${ urlId }` )
     }
 
+
+    const anchor = ( element ) => {
+
+      console.table( rows.value  )
+
+      if( element ) {
+        element.style.backgroundColor = '#90EE90'
+        window.scrollTo( 0, element.offsetTop )
+      }
+    }
+
+    const reset = async () => {
+      const reqString = `${ BASE_URL }/tools/catalog-admin/naklejki/delete-files.php`
+      const response = await axios.get( reqString )
+      sleep( 500 )
+      filters.value = response.data
+    }
+
+    onBeforeUpdate(() => {
+      rows.value = []
+    } )
+
     onMounted( async () => {
       await fetchFilters()
-      await fetchUrlsPopulated()
-      await fetchUrls()
-      await fillUrlsTitles()
+      // await fetchUrls()
+      // await fillUrlsTitles()
+
+      console.table( rows.value )
+
+      anchor( rows.value[ route.query.f ]  )
     } )
 
     return {
@@ -142,12 +145,14 @@ export default {
       urls,
       urlsTitles,
       filters,
+      rows,
 
       // methods
       goToNews,
       filterActiveItems,
       filterItemsByType,
       getItemsInteractCount,
+      reset,
     }
   }
 }
