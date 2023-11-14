@@ -23,9 +23,9 @@
         <th scope="col" class="col-md-2 center">Description</th>
         <th scope="col" class="col-md-2 center">H1</th>
         <th scope="col" class="col-md-2 center">Html</th>
-        <th scope="col" class="col-md-2 center"></th>
         <th scope="col" class="col-md-4">Статистика</th>
         <th scope="col" class="col-md-4">Комментарий</th>
+        <th scope="col" class="col-md-1"></th>
       </tr>
     </thead>
     <tbody>
@@ -48,7 +48,8 @@
         </router-link>
       </th>
       <td>
-        {{ filter.title }}
+        <a target="_blank" :href="`https://r-color.ru/catalog/naklejki/?f=${ filter.filter }`">{{ filter.title }}</a>
+
       </td>
       <td class="center">
         {{ filter.description }}
@@ -59,9 +60,41 @@
       <td class="center">
         <span v-html="filter.html" ></span>
       </td>
-      <td><a target="_blank" :href="`https://r-color.ru/catalog/naklejki/?f=${ filter.filter }`">Бой</a></td>
       <td class="center">0</td>
       <td></td>
+      <td>
+<!--        <span v-on:click="deleteFilter( filter.filter )"-->
+<!--              class="center"-->
+<!--              style="color: red; cursor: pointer; font-weight: bold"-->
+<!--        >-->
+<!--          x-->
+<!--        </span>-->
+
+        <ModalUniversal modalId="delete_filter"
+                        title="Подтверждение удаления фильтра"
+                        actionButtonText="Удалить"
+                        cancelButtonText="Отменить"
+                        :action="() => { deleteFilter( filter.filter ) }"
+                        ref="deleteFilterModalRef"
+        >
+          <div style="text-align: left;">
+            Уверены, что хотите удалить фильтр?
+          </div>
+
+          <template #trigger>
+
+            <button @click.prevent="() => { return }"
+                    class="btn btn-danger"
+                    title="удалить"
+                    style="margin: 0">
+              удалить
+            </button>
+
+          </template>
+
+        </ModalUniversal>
+
+      </td>
     </tr>
     </tbody>
   </table>
@@ -72,6 +105,8 @@ import axios from "axios"
 import { useRouter, useRoute } from 'vue-router'
 import { ref, onMounted, onBeforeUpdate } from 'vue'
 import { filterActiveItems, filterItemsByType, sleep } from '@/utils'
+import ModalUniversal from '@/components/ModalUniversal'
+
 
 // TODO: Расчет этой константы и будущих других вынести в отдельный сервис
 const BASE_URL = window.location.host.includes( 'localhost' ) ?
@@ -79,6 +114,9 @@ const BASE_URL = window.location.host.includes( 'localhost' ) ?
     'https://r-color.ru'
 
 export default {
+  components: {
+    ModalUniversal,
+  },
   setup() {
     const router = useRouter()
     const route = useRoute()
@@ -88,6 +126,8 @@ export default {
     const urlsTitles = ref( {} )
     const filters = ref( [] )
     const rows = ref( {} ) // для якорных ссылок, заполняются в шаблоне
+
+    const deleteFilterModalRef = ref( null )
 
     const fetchFilters = async () => {
       const reqString = `${ BASE_URL }/tools/catalog-admin/naklejki/read-files.php`
@@ -113,7 +153,7 @@ export default {
       console.table( rows.value  )
 
       if( element ) {
-        element.style.backgroundColor = '#90EE90'
+        element.style.backgroundColor = 'lightgray'
         window.scrollTo( 0, element.offsetTop )
       }
     }
@@ -125,14 +165,20 @@ export default {
       filters.value = response.data
     }
 
+    const deleteFilter = async ( filter ) => {
+      const reqString = `${ BASE_URL }/tools/catalog-admin/naklejki/delete-filter.php?f=${ filter }`
+      const response = await axios.get( reqString )
+      sleep( 500 )
+      fetchFilters()
+      console.log( response )
+    }
+
     onBeforeUpdate(() => {
       rows.value = []
     } )
 
     onMounted( async () => {
       await fetchFilters()
-      // await fetchUrls()
-      // await fillUrlsTitles()
 
       console.table( rows.value )
 
@@ -146,6 +192,7 @@ export default {
       urlsTitles,
       filters,
       rows,
+      deleteFilterModalRef,
 
       // methods
       goToNews,
@@ -153,6 +200,7 @@ export default {
       filterItemsByType,
       getItemsInteractCount,
       reset,
+      deleteFilter,
     }
   }
 }
