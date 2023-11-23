@@ -9,7 +9,6 @@
     </div>
     <div class="col-md-7"></div>
     <div class="col-md-2 right">
-
       <ModalUniversal modalId="backup_filters"
                       title="Создать архив"
                       actionButtonText="Архивировать"
@@ -73,14 +72,30 @@
             Восстановить
           </button>
 
-          <button
-              @click.prevent="()=>{}"
-              type="button"
-              class="btn btn-danger"
-              style="margin-right: 0;"
+          <!--    -------------------------      -->
+          <ModalUniversal modalId="delete_backup"
+                          title="Удалить архив"
+                          actionButtonText="Удалить"
+                          cancelButtonText="Отменить"
+                          :action="() => { deleteBackup( backup.date ) }"
           >
-            Удалить
-          </button>
+            <div style="text-align: left;">
+              Действительно хотите удалить архив?
+            </div>
+
+            <template #trigger>
+
+              <button @click.prevent="() => { return }"
+                      class="btn btn-danger"
+                      title="Удалить"
+                      style="margin: 0">
+                Удалить
+              </button>
+
+            </template>
+
+          </ModalUniversal>
+          <!--    -------------------------      -->
         </td>
       </tr>
     </tbody>
@@ -113,12 +128,18 @@ export default {
     const read = async () => {
       const reqString = `${ BASE_URL }/tools/catalog-admin/naklejki/backups.php`
       const result = await axios.get( reqString )
-      backups.value = result.data
+      backups.value = result.data.reverse()
       console.log( backups.value )
     }
 
     const create = async ( backupComment ) => {
       const reqString = `${ BASE_URL }/tools/catalog-admin/naklejki/create-backups.php?comment=${ backupComment }`
+      await axios.get( reqString )
+      await read()
+    }
+
+    const deleteBackup = async ( backupId ) => {
+      const reqString = `${ BASE_URL }/tools/catalog-admin/naklejki/delete-backup.php?b=${ backupId }`
       await axios.get( reqString )
       await read()
     }
@@ -135,6 +156,7 @@ export default {
 
       // funcs
       create,
+      deleteBackup,
     }
   }
 }
