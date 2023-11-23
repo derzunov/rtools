@@ -113,6 +113,11 @@ const routes = [
     name: 'Semantic page',
     component: () => import( /* webpackChunkName: "semantic" */ '../views/TableSemanticView.vue' )
   },
+  {
+    path: '/semantic/backups',
+    name: 'Semantic backups page',
+    component: () => import( /* webpackChunkName: "semantic" */ '../views/SemanticBackupsTableView.vue' )
+  },
 ]
 
 const router = createRouter( {

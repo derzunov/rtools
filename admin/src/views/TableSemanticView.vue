@@ -7,10 +7,35 @@
         </router-link>
       </h5>
     </div>
-    <div class="col-md-7"></div>
-    <div class="col-md-2 right">
-      <a class="btn btn-outline-danger" v-on:click="reset">Reset</a>
+    <div class="col-md-6"></div>
+    <div class="col-md-3 right">
+
+      <ModalUniversal modalId="delete_filters"
+                      title="Подтверждение удаления всех фильтров"
+                      actionButtonText="Удалить"
+                      cancelButtonText="Отменить"
+                      :action="() => { reset() }"
+      >
+        <div style="text-align: left;">
+          Уверены, что хотите удалить все фильтры?
+        </div>
+
+        <template #trigger>
+
+          <button @click.prevent="() => { return }"
+                  class="btn btn-outline-danger"
+                  title="reset"
+                  style="margin: 0">
+            Reset
+          </button>
+
+        </template>
+
+      </ModalUniversal>
+
+<!--      <a class="btn btn-outline-danger" v-on:click="reset">Reset</a>-->
       <router-link class="btn btn-outline-success" to="/semantic/add">Добавить</router-link>
+      <router-link class="btn btn-outline-warning" to="/semantic/backups">Бэкапы</router-link>
     </div>
   </div>
   <h5>Наклейки</h5>

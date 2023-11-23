@@ -281,6 +281,8 @@ export default {
     }
 
     const addFilter = () => {
+      console.table( selectedFilters.value )
+      if ( selectedFilters.value.length && selectedFilters.value[ selectedFilters.value.length - 1 ].value === '' ) return
       selectedFilters.value.push( { id: Date.now(), value: '' } )
     }
 
