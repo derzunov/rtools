@@ -44,8 +44,8 @@
     <thead>
       <tr>
         <th scope="col">Дата</th>
-        <th scope="col">Файл</th>
         <th scope="col" class="col-md-4">Примечание</th>
+        <th scope="col">Файл</th>
         <th scope="col"></th>
       </tr>
     </thead>
@@ -53,15 +53,20 @@
       <tr v-for="( backup, index ) in backups"
           :key="index"
       >
-        <td class="left">{{ new Date( backup.date ).toLocaleDateString( "ru-RU" ) }}</td>
+        <td class="left"
+            :title="new Date( backup.date ).toString()"
+        >
+          {{ new Date( backup.date ).toLocaleDateString( "zh-Hans-CN" ) }}
+        </td>
+        <td>
+          {{ backup.comment }}
+        </td>
         <td>
           <a target="_blank" :href="`${ BASE_URL }/tools/catalog-admin/naklejki/backups/${ backup.date }.json`">
             {{ backup.date }}
           </a>
         </td>
-        <td>
-          {{ backup.comment }}
-        </td>
+
         <td class="right">
           <button
               @click.prevent="()=>{}"
@@ -89,7 +94,7 @@
                       class="btn btn-danger"
                       title="Удалить"
                       style="margin: 0">
-                Удалить
+                x
               </button>
 
             </template>
@@ -104,7 +109,7 @@
 
 <script>
 import axios from 'axios';
-import { onBeforeMount, ref } from 'vue';
+import { onBeforeMount, onBeforeUpdate, ref } from 'vue';
 import ModalUniversal from '@/components/ModalUniversal'
 
 
@@ -146,6 +151,10 @@ export default {
 
     onBeforeMount( async () => {
       read()
+    } )
+
+    onBeforeUpdate( () => {
+      backupComment.value = ''
     } )
 
     return {
