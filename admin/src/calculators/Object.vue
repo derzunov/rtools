@@ -62,7 +62,7 @@ const panelView = () => {
       </div>
       <div class="data-image">
         <p class="file-extension"><slot>{{ extExport }}</slot></p>
-        <button class="open-options" @click="panelView"><img id="optionsIMG" :class=dataImage.openPanelButton src="../../../../../vue_project/stikers/src/components/icons/Options.svg" style="width: 20px;"></button>
+        <button class="open-options" @click="panelView"><img id="optionsIMG" :class=dataImage.openPanelButton src="../assets/Options.svg" style="width: 20px;"></button>
       </div>
     </div>
     <div id="options-panel">
@@ -71,25 +71,25 @@ const panelView = () => {
         <div class="option">
           <span id="option">Длина (мм): </span>
           <div id="var-buttons">
-            <button @click="minusFunc('widthImage', 10)" class="var-button var-minus"><img id="optionsIMG" :class=dataImage.openPanelButton src="../../../../../vue_project/stikers/src/components/icons/Minus.svg" style="width: 15px;"></button>
+            <button @click="minusFunc('widthImage', 10)" class="var-button var-minus"><img id="optionsIMG" :class=dataImage.openPanelButton src="../assets/Minus.svg" style="width: 15px;"></button>
             <input v-model="dataImage.widthImage" id="var-text">
-            <button @click="plusFunc('widthImage', 10)" class="var-button var-plus"><img id="optionsIMG" :class=dataImage.openPanelButton src="../../../../../vue_project/stikers/src/components/icons/Plus.svg" style="width: 15px;"></button>
+            <button @click="plusFunc('widthImage', 10)" class="var-button var-plus"><img id="optionsIMG" :class=dataImage.openPanelButton src="../assets/Plus.svg" style="width: 15px;"></button>
           </div>
         </div>
         <div class="option">
           <span id="option">Ширина (мм): </span>
           <div id="var-buttons">
-            <button @click="minusFunc('heightImage', 10)" class="var-button var-minus"><img id="optionsIMG" :class=dataImage.openPanelButton src="../../../../../vue_project/stikers/src/components/icons/Minus.svg" style="width: 15px;"></button>
+            <button @click="minusFunc('heightImage', 10)" class="var-button var-minus"><img id="optionsIMG" :class=dataImage.openPanelButton src="../assets/Minus.svg" style="width: 15px;"></button>
             <input v-model="dataImage.heightImage" id="var-text">
-            <button @click="plusFunc('heightImage', 10)" class="var-button var-plus"><img id="optionsIMG" :class=dataImage.openPanelButton src="../../../../../vue_project/stikers/src/components/icons/Plus.svg" style="width: 15px;"></button>
+            <button @click="plusFunc('heightImage', 10)" class="var-button var-plus"><img id="optionsIMG" :class=dataImage.openPanelButton src="../assets/Plus.svg" style="width: 15px;"></button>
           </div>
         </div>
         <div class="option">
           <span id="option">Количество: </span>
           <div id="var-buttons">
-            <button @click="minusFunc('countImage', 1)" class="var-button var-minus"><img id="optionsIMG" :class=dataImage.openPanelButton src="../../../../../vue_project/stikers/src/components/icons/Minus.svg" style="width: 15px;"></button>
+            <button @click="minusFunc('countImage', 1)" class="var-button var-minus"><img id="optionsIMG" :class=dataImage.openPanelButton src="../assets/Minus.svg" style="width: 15px;"></button>
             <input v-model="dataImage.countImage" id="var-text">
-            <button @click="plusFunc('countImage', 1)" class="var-button var-plus"><img id="optionsIMG" :class=dataImage.openPanelButton src="../../../../../vue_project/stikers/src/components/icons/Plus.svg" style="width: 15px;"></button>
+            <button @click="plusFunc('countImage', 1)" class="var-button var-plus"><img id="optionsIMG" :class=dataImage.openPanelButton src="../assets/Plus.svg" style="width: 15px;"></button>
           </div>
         </div>
       </div>

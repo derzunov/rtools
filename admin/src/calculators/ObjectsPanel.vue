@@ -49,7 +49,7 @@ TODO
 
 import Item from './Object.vue'
 import {ref, reactive, onMounted} from "vue";
-import { get_pos1, quickSortObj } from "../utils/test";
+import { get_pos1 } from "../utils/algorithm";
 import {convertPxToMm as pxInMm} from "../utils/pxInMm";
 import { multiplyImage } from "../utils/multiplyImage";
 import { getSizeX } from "../utils/getSizeX";
@@ -75,16 +75,11 @@ const exportData = ref([])
 const importData = ref([]) // [id.string, positionX:int, positionY:string]
 
 const multiply = ref(0)
-const canvasSize = ref([0, 0])
-const pxToMm = ref(0)
 
 
 
 onMounted(() => {
   multiply.value = multiplyImage(document.getElementById("field").offsetHeight, list.listX);
-  canvasSize.value[0] = document.getElementById("field").offsetWidth;
-  canvasSize.value[1] = document.getElementById("field").offsetHeight;
-  pxToMm.value = 96 / 25.4;
 })
 
 
@@ -158,7 +153,7 @@ const readFileM = ( inputFile ) => {
         image.onload = () => {
           let fileExtension = inputFile.target.files[i]['name'].split('.').at(-1);
           let fileName = inputFile.target.files[i]['name'].slice(0, ((fileExtension.length * -1) - 1));
-          let sizeY = pxInMm(image.height * multiply.value);
+          let sizeY = pxInMm(image.height * multiply.value, list.listX);
           let sizeX = getSizeX(image.width, image.height, sizeY, multiply.value);
           objects.value.push([count.value, sizeX, sizeY, image.src, fileName, fileExtension, 1, '']);
           console.log(objects.value)
