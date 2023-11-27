@@ -1,0 +1,13 @@
+body {
+    font-family: 'Open Sans', sans-serif;
+    font-size: 14px;
+    overflow: hidden;
+}
+
+:root {
+    --red-color: #CC0000;
+    --blue-color: #409eff;
+    --light-gray-color: #f5f7fa;
+    --gray-color: #606266;
+    --bg-color: #F3F4F6;
+}
