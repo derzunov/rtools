@@ -22,9 +22,11 @@
   }
 </style>
 <div class="tw-container">
-  {if file_exists("{$DOCUMENT_ROOT}/tools/catalog-admin/naklejki/filters/semantic/{$smarty.get.f}.html") && !isProductCard}
+{if !$isProductCard}
+  {if file_exists("{$DOCUMENT_ROOT}/tools/catalog-admin/naklejki/filters/semantic/{$smarty.get.f}.html")}
       {include file="{$DOCUMENT_ROOT}/tools/catalog-admin/naklejki/filters/semantic/{$smarty.get.f}.html"}
   {/if}
+{/if}
   <div style="display: flex;">
     <!-- Список фильтров -->
     <div style="width: 35%">
