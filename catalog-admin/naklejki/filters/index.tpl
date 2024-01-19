@@ -22,10 +22,14 @@
   }
 </style>
 <div class="tw-container">
+  {if file_exists("{$DOCUMENT_ROOT}/tools/catalog-admin/naklejki/filters/semantic/{$smarty.get.f}.html") && !isProductCard}
+      {include file="{$DOCUMENT_ROOT}/tools/catalog-admin/naklejki/filters/semantic/{$smarty.get.f}.html"}
+  {/if}
   <div style="display: flex;">
     <!-- Список фильтров -->
     <div style="width: 35%">
       <ul>
+        {if !$isProductCard}
           {foreach $filters as $filterName}
               <li>{$filterName.name|escape} ({$filterName.furl})</li>
               <ul>
@@ -42,6 +46,7 @@
           {foreachelse}
               <li>No filters found !</li>
           {/foreach}
+        {/if}
       </ul>
     </div>
     <div style="width: 65%">
@@ -60,9 +65,9 @@
         {/foreach}
       </div>
 
-      {else if {$isFiltersSet}}
+      {else if $isFiltersSet}
         <h5>Нет результатов по выбранным фильтрам</h5>
-      {else}
+      {else if !$isProductCard}
         <h5>Выберите фильтр</h5>
       {/if}
 
@@ -81,11 +86,6 @@
       <br>
     </div>
   </div>
-
-  {if file_exists("{$DOCUMENT_ROOT}/tools/catalog-admin/naklejki/filters/semantic/{$smarty.get.f}.html")}
-    {include file="{$DOCUMENT_ROOT}/tools/catalog-admin/naklejki/filters/semantic/{$smarty.get.f}.html"}
-  {/if}
-
 </div>
 
 <script>

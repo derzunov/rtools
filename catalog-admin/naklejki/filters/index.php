@@ -67,6 +67,12 @@ if ( !isset( $_GET[ 'f' ] ) ) {
     $smarty->assign( 'isFiltersSet', true );
 }
 
+if ( !isset( $_GET[ 'p' ] ) ) {
+    $smarty->assign( 'isProductCard', false );
+} else {
+    $smarty->assign( 'isProductCard', true );
+}
+
 $smarty->assign( 'goods', $goods );
 $smarty->assign( 'filteredGoods', $filteredGoods );
 $smarty->assign( 'DOCUMENT_ROOT', $_SERVER["DOCUMENT_ROOT"] );
