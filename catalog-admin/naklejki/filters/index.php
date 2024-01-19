@@ -61,6 +61,12 @@ foreach ( glob( $_SERVER["DOCUMENT_ROOT"] . '/tools/catalog-admin/naklejki/tovar
   }
 }
 
+if ( !isset( $_GET[ 'f' ] ) ) {
+    $smarty->assign( 'isFiltersSet', false );
+} else {
+    $smarty->assign( 'isFiltersSet', true );
+}
+
 $smarty->assign( 'goods', $goods );
 $smarty->assign( 'filteredGoods', $filteredGoods );
 $smarty->assign( 'DOCUMENT_ROOT', $_SERVER["DOCUMENT_ROOT"] );
