@@ -10,6 +10,18 @@
     fwrite( $fd, $_POST['json'] );
     fclose( $fd );
 
+    // Отвечаем в формате JSON (Для наглядности в Network->Preview в DevTools)
+    // fileName --------------------------
+    print_r('"fileName":');
+
+    print_r('"');
     print_r($_POST['fileName']);
+    print_r('",');
+
+    // html --------------------------
+    print_r('"html":');
+
+    print_r('"');
     print_r($_POST['html']);
+    print_r('"');
 ?>
