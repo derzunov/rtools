@@ -33,6 +33,10 @@
     <div style="width: 35%">
       <ul>
         {if !$isProductCard}
+        <p>
+            <a href="/catalog/naklejki/?p=new">Создать карточку</a>
+        </p>
+
         <a href="/catalog/naklejki/?clear=true">Сбросить фильтры</a>
           {foreach $filters as $filterName}
               <li>{$filterName.name|escape} ({$filterName.furl})</li>
