@@ -38,7 +38,7 @@
       <router-link class="btn btn-outline-warning" to="/semantic/backups">Бэкапы</router-link>
     </div>
   </div>
-  <h5>Наклейки</h5>
+  <h5>Наклейки - семантика фильтров</h5>
   <table class="table">
     <thead>
       <tr>
