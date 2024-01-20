@@ -31,6 +31,7 @@
   <div style="display: flex;">
     <!-- Список фильтров -->
     <div style="width: 35%">
+    <a href="/catalog/naklejki/?clear=true">Сбросить фильтры</a>
       <ul>
         {if !$isProductCard}
           {foreach $filters as $filterName}
