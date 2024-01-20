@@ -73,8 +73,8 @@
         </router-link>
       </th>
       <td>
-        <a target="_blank" :href="`https://r-color.ru/catalog/naklejki/?f=${ filter.filter }`">{{ filter.title }}</a>
-
+        <a target="_blank" v-if="filter.filter" :href="`https://r-color.ru/catalog/naklejki/?f=${ filter.filter }`">{{ filter.title }}</a>
+        <a target="_blank" vß-if="!filter.filter" :href="`https://r-color.ru/catalog/naklejki/`">{{ filter.title }}</a>
       </td>
       <td class="center">
         {{ filter.description }}
