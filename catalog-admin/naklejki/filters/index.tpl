@@ -34,7 +34,7 @@
       <ul>
         {if !$isProductCard}
         <p>
-            <a href="/catalog/naklejki/?p=new">Создать карточку</a>
+            <a href="/catalog/naklejki/?p=new">Новая карточка</a>
         </p>
 
         <a href="/catalog/naklejki/?clear=true">Сбросить фильтры</a>
