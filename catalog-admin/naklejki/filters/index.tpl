@@ -23,7 +23,7 @@
 </style>
 <div class="tw-container">
 
-{if !$isProductCard}
+{if !$isProductCard && $isFiltersSet}
   {if file_exists("{$DOCUMENT_ROOT}/tools/catalog-admin/naklejki/filters/main/{$smarty.get.f}.html")}
       {include file="{$DOCUMENT_ROOT}/tools/catalog-admin/naklejki/filters/main/{$smarty.get.f}.html"}
   {/if}
