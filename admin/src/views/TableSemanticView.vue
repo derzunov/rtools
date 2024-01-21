@@ -44,11 +44,10 @@
       <tr>
         <th scope="col" class="col-md-2" style="width: 50px;">i</th>
         <th scope="col" class="col-md-4">Filter</th>
-        <th scope="col" class="col-md-2 center">Title</th>
-        <th scope="col" class="col-md-2 center">Description</th>
-        <th scope="col" class="col-md-2 center">H1</th>
-        <th scope="col" class="col-md-2 center">Html</th>
-        <th scope="col" class="col-md-4">Статистика</th>
+        <th scope="col" class="col-md-2 center">Title + Description</th>
+        <th scope="col" class="col-md-2 center">H1 + Subheader</th>
+        <th scope="col" class="col-md-2 center">H2 + HTML</th>
+        <th scope="col" class="col-md-4 center">Статистика</th>
         <th scope="col" class="col-md-4">Комментарий</th>
         <th scope="col" class="col-md-1"></th>
       </tr>
@@ -73,17 +72,21 @@
         </router-link>
       </th>
       <td>
-        <a target="_blank" v-if="filter.filter" :href="`https://r-color.ru/catalog/naklejki/?f=${ filter.filter }`">{{ filter.title }}</a>
-        <a target="_blank" vß-if="!filter.filter" :href="`https://r-color.ru/catalog/naklejki/`">{{ filter.title }}</a>
+        <div>
+          <a target="_blank" v-if="filter.filter" :href="`https://r-color.ru/catalog/naklejki/?f=${ filter.filter }`">{{ filter.title }}</a>
+          <a target="_blank" v-if="!filter.filter" :href="`https://r-color.ru/catalog/naklejki/`">{{ filter.title }}</a>
+        </div>
+        <div>
+          {{ filter.description.slice( 0, TEXT_LENGTH_CUT ) + '...' }}
+        </div>
       </td>
-      <td class="center">
-        {{ filter.description }}
+      <td>
+        <div><b>{{ filter.h1 }}</b></div>
+        <div>{{ filter.subheader.slice( 0, TEXT_LENGTH_CUT ) + '...' }}</div>
       </td>
-      <td class="center">
-        {{ filter.h1 }}
-      </td>
-      <td class="center">
-        <span v-html="filter.html" ></span>
+      <td>
+        <div><b>{{ filter.h2 }}</b></div>
+        <div v-html="filter.html.slice( 0, TEXT_LENGTH_CUT ) + '...'" ></div>
       </td>
       <td class="center">0</td>
       <td></td>
@@ -137,6 +140,8 @@ import ModalUniversal from '@/components/ModalUniversal'
 const BASE_URL = window.location.host.includes( 'localhost' ) ?
     'http://localhost' :
     'https://r-color.ru'
+
+const TEXT_LENGTH_CUT = 100
 
 export default {
   components: {
@@ -226,7 +231,16 @@ export default {
       getItemsInteractCount,
       reset,
       deleteFilter,
+
+      // constants
+      TEXT_LENGTH_CUT,
     }
   }
 }
 </script>
+
+<style scoped>
+.table {
+  font-size: 14px;
+}
+</style>
