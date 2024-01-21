@@ -61,10 +61,19 @@ foreach ( glob( $_SERVER["DOCUMENT_ROOT"] . '/tools/catalog-admin/naklejki/tovar
   }
 }
 
-if ( !isset( $_GET[ 'f' ] ) ) {
-    $smarty->assign( 'isFiltersSet', false );
-} else {
+if ( isset( $_GET[ 'f' ] ) ) {
     $smarty->assign( 'isFiltersSet', true );
+} else {
+    $smarty->assign( 'isFiltersSet', false );
+}
+
+// Сброс фильтров или возврат из карточки товара
+// Т.е. ситуация, когда мы не просто пришли в корень наклеек, а уже вернулись из фильтра или карточки
+// Нужно для определения рисовать ли красную полосу, или просто рендерить над фильтрами H1 и subheader
+if ( isset( $_GET[ 'clear' ] ) && $_GET[ 'clear' ] == 'true' ) {
+    $smarty->assign( 'isClear', true );
+} else {
+    $smarty->assign( 'isClear', false );
 }
 
 if ( !isset( $_GET[ 'p' ] ) ) {

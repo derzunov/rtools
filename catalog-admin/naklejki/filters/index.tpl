@@ -23,11 +23,17 @@
 </style>
 <div class="tw-container">
 
-{if !$isProductCard && $isFiltersSet}
-  {if file_exists("{$DOCUMENT_ROOT}/tools/catalog-admin/naklejki/filters/main/{$smarty.get.f}.html")}
+
+{if $isClear}
+    {if file_exists("{$DOCUMENT_ROOT}/tools/catalog-admin/naklejki/filters/main/{$smarty.get.f}.html")}
       {include file="{$DOCUMENT_ROOT}/tools/catalog-admin/naklejki/filters/main/{$smarty.get.f}.html"}
-  {/if}
+    {/if}
+{elseif $isFiltersSet}
+    {if file_exists("{$DOCUMENT_ROOT}/tools/catalog-admin/naklejki/filters/main/{$smarty.get.f}.html")}
+      {include file="{$DOCUMENT_ROOT}/tools/catalog-admin/naklejki/filters/main/{$smarty.get.f}.html"}
+    {/if}
 {/if}
+
   <div style="display: flex;">
     <!-- Список фильтров -->
     <div style="width: 35%">
