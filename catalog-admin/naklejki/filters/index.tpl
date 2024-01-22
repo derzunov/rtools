@@ -8,30 +8,41 @@
 </head>
 <body>
 <style>
-    ul, li {
-        list-style-type: none;
-        margin-left: 0;
-    }
-
-    .filters {
-    }
-
-    .filters__item {
-      position: relative;
-    }
-    .filters__item-tooltip {
-      display: inline-block;
-      position: absolute;
-      height: 48px;
-      width: 100px;
-      top: -12px;
-      left: 125px;
-      background-image: url("/tools/catalog-admin/naklejki/filters/assets/srv_show.svg");
-      cursor: pointer;
-    }
+  ul, li {
+      list-style-type: none;
+      margin-left: 0;
   }
-  .filter:hover .filter__tooltip {
+
+  .filters {
+      user-select: none;
+  }
+
+  .filters__item {
+    position: relative;
+  }
+  .filters__item-tooltip {
     display: inline-block;
+    position: absolute;
+    height: 48px;
+    width: 100px;
+    top: -12px;
+    left: 125px;
+    background-image: url("/tools/catalog-admin/naklejki/filters/assets/srv_show.svg");
+    cursor: pointer;
+  }
+
+  .filters__category {
+      cursor: pointer;
+  }
+  .filters__category-content {
+      padding-left: 5px;
+  }
+  .category-arrow {
+      display: inline-block;
+      margin-bottom: -7px;
+  }
+  .filters__category_opened .category-arrow {
+      transform:rotate(180deg);
   }
 
   .g-hidden {
@@ -63,13 +74,19 @@
 
         <a href="/catalog/naklejki/?clear=true">Сбросить фильтры</a>
           {foreach $filters as $filterName}
-              <li class="filters__category">{$filterName.name|escape} ({$filterName.furl})</li>
-              <ul class="class="filters__category-content">
+              <li class="filters__category filters__category_opened js_filters_category">
+                <span class="category-arrow">
+                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" />
+                  </svg>
+                </span>
+                <b>{$filterName.name|escape}</b>
+              </li>
+              <ul class="filters__category-content">
                 {foreach $filterName.filters as $filter}
-
                   <li class="filters__item js_filter">
                     <label>
-                      <input type="checkbox" value="{$filter.furl}">
+                      <input style="margin-right: 5px;" type="checkbox" value="{$filter.furl}">
                       {$filter.name|escape}
                       <span class="filters__item-tooltip js_go_to_filters js_tooltip g-hidden"></span>
                     </label>
@@ -152,6 +169,7 @@
 
   const $filtersItems = document.querySelectorAll( '.js_filter' )
   const $tooltips = document.querySelectorAll( '.js_tooltip' )
+  const $categories = document.querySelectorAll( '.js_filters_category' )
 
   $filtersItems.forEach( ( $filter ) => {
       $filter.addEventListener( 'click', ( event ) => {
@@ -165,6 +183,22 @@
           // Тултип инпута, в который мы ткнули
           event.target.nextSibling.nextSibling.classList.remove('g-hidden')
 
+      } )
+  } )
+
+  $categories.forEach( ( $category ) => {
+      $category.addEventListener( 'click', ( event ) => {
+
+          // Фильтры этой категории
+          const $categoryContent = event.currentTarget.nextSibling.nextSibling
+
+          if ( $categoryContent.classList.contains( 'g-hidden' ) ) {
+              $categoryContent.classList.remove( 'g-hidden' )
+              event.currentTarget.classList.add( 'filters__category_opened' )
+          } else {
+              $categoryContent.classList.add( 'g-hidden' )
+              event.currentTarget.classList.remove( 'filters__category_opened' )
+          }
       } )
   } )
 
