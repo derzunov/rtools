@@ -44,7 +44,6 @@
   .category-arrow {
       display: inline-block;
       margin-bottom: -7px;
-      transition: all 0.2s ease-out;
   }
   .filters__category_opened .category-arrow {
       transform:rotate(180deg);
