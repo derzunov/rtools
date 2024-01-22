@@ -54,6 +54,12 @@
       display: none;
   }
 
+  #rc_subheader {
+      font-family: "Open Sans", sans-serif;
+      font-size: 18px;
+      font-weight: bold;
+  }
+
 </style>
 <div class="tw-container">
 

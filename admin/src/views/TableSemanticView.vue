@@ -73,20 +73,25 @@
       </th>
       <td>
         <div>
-          <a target="_blank" v-if="filter.filter" :href="`https://r-color.ru/catalog/naklejki/?f=${ filter.filter }`">{{ filter.title }}</a>
-          <a target="_blank" v-if="!filter.filter" :href="`https://r-color.ru/catalog/naklejki/`">{{ filter.title }}</a>
+          <b>{{ filter.title }}</b>
         </div>
-        <div>
+        <div :title="filter.description">
           {{ filter.description.slice( 0, TEXT_LENGTH_CUT ) + '...' }}
         </div>
       </td>
       <td>
-        <div><b>{{ filter.h1 }}</b></div>
-        <div>{{ filter.subheader.slice( 0, TEXT_LENGTH_CUT ) + '...' }}</div>
+        <div>
+          <a target="_blank" v-if="filter.filter" :href="`https://r-color.ru/catalog/naklejki/?f=${ filter.filter }`">{{ filter.h1 }}</a>
+          <a target="_blank" v-if="!filter.filter" :href="`https://r-color.ru/catalog/naklejki/`">{{ filter.h1 }}</a>
+        </div>
+        <div :title="filter.subheader">{{ filter.subheader.slice( 0, TEXT_LENGTH_CUT ) + '...' }}</div>
       </td>
       <td>
-        <div><b>{{ filter.h2 }}</b></div>
-        <div v-html="filter.html.slice( 0, TEXT_LENGTH_CUT ) + '...'" ></div>
+        <div>
+          <a target="_blank" v-if="filter.filter" :href="`https://r-color.ru/catalog/naklejki/?f=${ filter.filter }#rc_h2`">{{ filter.h2 }}</a>
+          <a target="_blank" v-if="!filter.filter" :href="`https://r-color.ru/catalog/naklejki/#rc_h2`">{{ filter.h2 }}</a>
+        </div>
+        <div :title="filter.html" v-html="filter.html.slice( 0, TEXT_LENGTH_CUT ) + '...'" ></div>
       </td>
       <td class="center">0</td>
       <td></td>
