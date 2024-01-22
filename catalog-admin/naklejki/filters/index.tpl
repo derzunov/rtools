@@ -8,13 +8,36 @@
 </head>
 <body>
 <style>
-  .filter {}
-  .filter__tooltip {
-    display: none;
+    ul, li {
+        list-style-type: none;
+        margin-left: 0;
+    }
+
+    .filters {
+    }
+
+    .filters__item {
+      position: relative;
+    }
+    .filters__item-tooltip {
+      display: inline-block;
+      position: absolute;
+      height: 48px;
+      width: 100px;
+      top: -12px;
+      left: 125px;
+      background-image: url("/tools/catalog-admin/naklejki/filters/assets/srv_show.svg");
+      cursor: pointer;
+    }
   }
   .filter:hover .filter__tooltip {
     display: inline-block;
   }
+
+  .g-hidden {
+      display: none;
+  }
+
 </style>
 <div class="tw-container">
 
@@ -32,7 +55,7 @@
   <div style="display: flex;">
     <!-- Список фильтров -->
     <div style="width: 35%">
-      <ul>
+      <ul class="filters">
         {if !$isProductCard}
         <p>
             <a href="/catalog/naklejki/?p=new">Новая карточка</a>
@@ -40,15 +63,16 @@
 
         <a href="/catalog/naklejki/?clear=true">Сбросить фильтры</a>
           {foreach $filters as $filterName}
-              <li>{$filterName.name|escape} ({$filterName.furl})</li>
-              <ul>
+              <li class="filters__category">{$filterName.name|escape} ({$filterName.furl})</li>
+              <ul class="class="filters__category-content">
                 {foreach $filterName.filters as $filter}
 
-                  <li class="filter">
-                    <label><input type="checkbox" value="{$filter.furl}">{$filter.name|escape}</label>
-                    <div class="filter__tooltip">
-                      <a class="js_go_to_filters" href="#" >Показать</a>
-                    </div>
+                  <li class="filters__item js_filter">
+                    <label>
+                      <input type="checkbox" value="{$filter.furl}">
+                      {$filter.name|escape}
+                      <span class="filters__item-tooltip js_go_to_filters js_tooltip g-hidden"></span>
+                    </label>
                   </li>
                 {/foreach}
               </ul>
@@ -110,8 +134,8 @@
     $btn.addEventListener( 'click', ( event ) => {
       event.preventDefault()
 
-      const $filtersChecked = document.querySelectorAll( '.filter input:checked' )
-      getParameters = '?f='
+      const $filtersChecked = document.querySelectorAll( '.js_filter input:checked' )
+      //getParameters = '?f='
       const filters = []
 
       $filtersChecked.forEach( ( $filter ) => {
@@ -123,6 +147,27 @@
       window.location.href = getParameters
     } )
   } )
+
+  //--------------------------------------------------------------------------------------------------------------------
+
+  const $filtersItems = document.querySelectorAll( '.js_filter' )
+  const $tooltips = document.querySelectorAll( '.js_tooltip' )
+
+  $filtersItems.forEach( ( $filter ) => {
+      $filter.addEventListener( 'click', ( event ) => {
+          console.log( event.target )
+          console.log( event.target.nextSibling.nextSibling )
+
+          $tooltips.forEach( ( $tooltip ) => {
+              $tooltip.classList.add( 'g-hidden' )
+          } )
+          //
+          // Тултип инпута, в который мы ткнули
+          event.target.nextSibling.nextSibling.classList.remove('g-hidden')
+
+      } )
+  } )
+
 </script>
 
 </body>
