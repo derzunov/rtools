@@ -15,6 +15,10 @@
 
   .filters {
       user-select: none;
+      width: 240px;
+      background-color: rgb(243 244 246);
+      padding: 10px;
+      border-radius: 5px;
   }
 
   .filters__item {
@@ -26,7 +30,7 @@
     height: 48px;
     width: 100px;
     top: -12px;
-    left: 125px;
+    left: 190px;
     background-image: url("/tools/catalog-admin/naklejki/filters/assets/srv_show.svg");
     cursor: pointer;
   }
