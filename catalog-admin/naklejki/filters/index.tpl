@@ -40,6 +40,7 @@
   .category-arrow {
       display: inline-block;
       margin-bottom: -7px;
+      transition: all 0.2s ease-out;
   }
   .filters__category_opened .category-arrow {
       transform:rotate(180deg);
@@ -86,7 +87,7 @@
                 {foreach $filterName.filters as $filter}
                   <li class="filters__item js_filter">
                     <label>
-                      <input style="margin-right: 5px;" type="checkbox" value="{$filter.furl}">
+                      <input style="margin-right: 5px; position: relative; bottom: -1px;" type="checkbox" value="{$filter.furl}">
                       {$filter.name|escape}
                       <span class="filters__item-tooltip js_go_to_filters js_tooltip g-hidden"></span>
                     </label>
@@ -159,9 +160,10 @@
         filters.push( $filter.value )
       } )
 
-      getParameters = '?f=' + filters.sort().join( '__' )
-
-      window.location.href = getParameters
+      if ( filters.length ) {
+          getParameters = '?f=' + filters.sort().join( '__' )
+          window.location.href = getParameters
+      }
     } )
   } )
 
