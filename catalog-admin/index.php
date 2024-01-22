@@ -51,12 +51,12 @@ fclose( $fd );
 
 // H1 + Subheader HTML
 $fd = fopen( "$catalog/filters/main/" . "$filter.html", 'w' ) or die( "Can\'t create/update $catalog/filters/main/$filter.html" );
-fwrite( $fd, "<h1>$h1</h1> <h2>$subheader</h2>" );
+fwrite( $fd, "<h1 id=\"rc_h1\">$h1</h1> <p id=\"rc_subheader\">$subheader</p>" );
 fclose( $fd );
 
 // Semantic HTML
 $fd = fopen( "$catalog/filters/semantic/" . "$filter.html", 'w' ) or die( "Can\'t create/update $catalog/filters/semantic/$filter.html" );
-fwrite( $fd, "<h2>$h2</h2> <div>$html</div>" );
+fwrite( $fd, "<h2 id=\"rc_h2\">$h2</h2> <div id=\"rc_html\">$html</div>" );
 fclose( $fd );
 
 // JSON
