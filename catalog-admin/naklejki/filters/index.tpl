@@ -3,12 +3,7 @@
 
 <meta name="robots" content="noindex,nofollow" />
 
-
-{if file_exists("filters/meta/{$smarty.get.f}.html")}
-  {include file="filters/meta/{$smarty.get.f}.html"}
-{else}
-  <title>Наклейки</title>
-{/if}
+{* Meta подгружается в /catalog/naklejki/index.php - см под комментарием DE *}
 
 </head>
 <body>

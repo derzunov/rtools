@@ -30,9 +30,14 @@
 
 
     // DE -----------------------------------------------------------------------------------------------------
-    // TODO: Подгружать верную инфу из json исходя из GET-параметра ?f=blabla
 
-    $json = file_get_contents( $_SERVER["DOCUMENT_ROOT"] . '/tools/catalog-admin/naklejki/filters/json/.json' );
+    // Подгружаем верную инфу из json исходя из GET-параметра ?f=blabla
+    if( isset( $_GET['f'] ) && file_exists( $_SERVER["DOCUMENT_ROOT"] . '/tools/catalog-admin/naklejki/filters/json/' . $_GET['f'] . '.json' ) ) {
+        $json = file_get_contents( $_SERVER["DOCUMENT_ROOT"] . '/tools/catalog-admin/naklejki/filters/json/' . $_GET['f'] . '.json' );
+    } else {
+        $json = file_get_contents( $_SERVER["DOCUMENT_ROOT"] . '/tools/catalog-admin/naklejki/filters/json/.json' );
+    }
+
 
     $rootInfo = json_decode(
         $json,
@@ -44,7 +49,6 @@
     $PageH1  = $rootInfo[ 'h1' ];
     $PageDescription = $rootInfo[ 'subheader' ];
     $PageTitle = $rootInfo[ 'title' ];
-
 
     // Прописывать пустоту в переменные $PageH1 и $PageDescription, если ?f или ?p не пусты или ?clear == true, значит мы находимся не в корне каталога,
     // или вернулись в корень после сброса филтров или из карточки товаров,
