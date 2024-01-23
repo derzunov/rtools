@@ -16,14 +16,17 @@
   .filters {
       user-select: none;
       width: 240px;
-      background-color: rgb(243 244 246);
       padding: 10px;
-      border-radius: 5px;
   }
 
   .filters__item {
     position: relative;
     cursor: pointer;
+    padding-left: 5px;
+  }
+
+  .filters__item:hover {
+      background-color: rgb(243 244 246);
   }
   .filters__category-content label {
     cursor: pointer;
@@ -41,16 +44,23 @@
 
   .filters__category {
       cursor: pointer;
+      margin-bottom: 5px;
   }
   .filters__category-content {
-      padding-left: 5px;
+
   }
+
   .category-arrow {
       display: inline-block;
       margin-bottom: -7px;
+      margin-left: 2px;
+      margin-right: 2px;
   }
   .filters__category_opened .category-arrow {
       transform:rotate(180deg);
+  }
+  .category-arrow svg {
+      width: 19px;
   }
 
   .g-hidden {
@@ -82,10 +92,15 @@
     <div style="width: 35%">
       <ul class="filters">
         {if !$isProductCard}
-        <a href="/catalog/naklejki/?clear=true">
-          <div style="display: inline-block; width: 200px; height: 24px; background-image: url('/tools/catalog-admin/naklejki/filters/assets/srv_remove-filter.svg');" ></div>
-        </a>
-        <a style="display: inline-block; position: relative; top: -6px;" target="_blank" href="https://r-color.ru/tools/admin/#/semantic/table">#</a>
+        <p><img style="height: 24px;" src="/tools/catalog-admin/naklejki/filters/assets/srv_filters.svg" alt="">
+
+          <a style="display: inline-block; position: relative; top: 5px;" target="_blank" href="https://r-color.ru/tools/admin/#/semantic/table">
+            <svg style="height: 20px;" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M21.75 6.75a4.5 4.5 0 0 1-4.884 4.484c-1.076-.091-2.264.071-2.95.904l-7.152 8.684a2.548 2.548 0 1 1-3.586-3.586l8.684-7.152c.833-.686.995-1.874.904-2.95a4.5 4.5 0 0 1 6.336-4.486l-3.276 3.276a3.004 3.004 0 0 0 2.25 2.25l3.276-3.276c.256.565.398 1.192.398 1.852Z" />
+              <path stroke-linecap="round" stroke-linejoin="round" d="M4.867 19.125h.008v.008h-.008v-.008Z" />
+            </svg>
+          </a>
+        </p>
           {foreach $filters as $filterName}
               <li class="filters__category filters__category_opened js_filters_category">
                 <span class="category-arrow">
@@ -110,6 +125,9 @@
               <li>No filters found !</li>
           {/foreach}
         {/if}
+        <a href="/catalog/naklejki/?clear=true">
+          <img style="height: 48px;" src="/tools/catalog-admin/naklejki/filters/assets/srv_remove-filter.svg" alt="">
+        </a>
       </ul>
     </div>
     <div style="width: 65%">
@@ -121,9 +139,11 @@
       <br>
 
       {if $filteredGoods|@count}
-      <div style="display: inline-block; width: 251px; height: 30px; background-image: url('/tools/catalog-admin/naklejki/filters/assets/srv_result.svg');"></div>
+      <span>
+        <img style="height: 16px;" src="/tools/catalog-admin/naklejki/filters/assets/srv_result.svg" alt="">
+      </span>
       <a href="/catalog/naklejki/?p=new">
-        <span style="display: inline-block; width: 100px; height: 53px; background-image: url('/tools/catalog-admin/naklejki/filters/assets/srv_card-new.svg');" ></span>
+        <img style="height: 48px;" src="/tools/catalog-admin/naklejki/filters/assets/srv_card-new.svg" alt="">
       </a>
       <div style="display: flex; justify-content: space-between;">
         {foreach $filteredGoods as $good}
@@ -137,17 +157,23 @@
       </div>
 
       {else if $isFiltersSet}
-        <div style="display: inline-block; width: 251px; height: 30px; background-image: url('/tools/catalog-admin/naklejki/filters/assets/srv_no-result.svg');" ></div>
+        <span>
+          <img style="height: 16px;" src="/tools/catalog-admin/naklejki/filters/assets/srv_no-result.svg" alt="">
+        </span>
         <a href="/catalog/naklejki/?p=new">
-          <span style="display: inline-block; width: 100px; height: 53px; background-image: url('/tools/catalog-admin/naklejki/filters/assets/srv_card-new.svg');" ></span>
+          <img style="height: 48px;" src="/tools/catalog-admin/naklejki/filters/assets/srv_card-new.svg" alt="">
         </a>
       {else if !$isProductCard}
-        <p style="display: inline-block; width:216px; height: 60px; background-size: 100% 100%; background-image: url('/tools/catalog-admin/naklejki/filters/assets/srv_blank.svg')"></p>
+        <span>
+          <img style="height: 16px;" src="/tools/catalog-admin/naklejki/filters/assets/srv_blank.svg" alt="">
+        </span>
         <a href="/catalog/naklejki/?p=new">
-          <span style="display: inline-block; width: 100px; height: 53px; background-image: url('/tools/catalog-admin/naklejki/filters/assets/srv_card-new.svg');" ></span>
+          <img style="height: 48px;" src="/tools/catalog-admin/naklejki/filters/assets/srv_card-new.svg" alt="">
         </a>
       {/if}
-      <div style="width: 251px; height: 30px; background-image: url('/tools/catalog-admin/naklejki/filters/assets/srv_related.svg');" ></div>
+      <div>
+        <img style="height: 16px;" src="/tools/catalog-admin/naklejki/filters/assets/srv_related.svg" alt="">
+      </div>
 
       <div style="display: flex; justify-content: space-between;">
         {foreach $goods as $good}
@@ -159,8 +185,12 @@
           </div>
         {/foreach}
       </div>
-      <div style="display: inline-block; width: 181px; height: 30px; background-image: url('/tools/catalog-admin/naklejki/filters/assets/srv_not-found.svg');" ></div>
-      <a href="/catalog/naklejki/?p=new" style="display: inline-block; width: 100px; height: 53px; background-image: url('/tools/catalog-admin/naklejki/filters/assets/srv_card-new.svg');" ></a>
+      <span>
+        <img style="height: 16px;" src="/tools/catalog-admin/naklejki/filters/assets/srv_not-found.svg" alt="">
+      </span>
+      <a href="/catalog/naklejki/?p=new">
+        <img style="height: 48px;" src="/tools/catalog-admin/naklejki/filters/assets/srv_card-new.svg" alt="">
+      </a>
       <br>
       {if !$isProductCard}
         {if file_exists("{$DOCUMENT_ROOT}/tools/catalog-admin/naklejki/filters/semantic/{$smarty.get.f}.html")}
