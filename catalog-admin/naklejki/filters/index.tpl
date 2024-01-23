@@ -23,6 +23,10 @@
 
   .filters__item {
     position: relative;
+    cursor: pointer;
+  }
+  .filters__category-content label {
+    cursor: pointer;
   }
   .filters__item-tooltip {
     display: inline-block;
@@ -78,11 +82,10 @@
     <div style="width: 35%">
       <ul class="filters">
         {if !$isProductCard}
-        <p>
-            <a href="/catalog/naklejki/?p=new">Новая карточка</a>
-        </p>
-
-        <a href="/catalog/naklejki/?clear=true">Сбросить фильтры</a>
+        <a href="/catalog/naklejki/?clear=true">
+          <div style="display: inline-block; width: 200px; height: 24px; background-image: url('/tools/catalog-admin/naklejki/filters/assets/srv_remove-filter.svg');" ></div>
+        </a>
+        <a style="display: inline-block; position: relative; top: -6px;" target="_blank" href="https://r-color.ru/tools/admin/#/semantic/table">#</a>
           {foreach $filters as $filterName}
               <li class="filters__category filters__category_opened js_filters_category">
                 <span class="category-arrow">
@@ -110,10 +113,18 @@
       </ul>
     </div>
     <div style="width: 65%">
+<!--      <p style="text-align: right;">-->
+<!--        <a href="/catalog/naklejki/?p=new">-->
+<!--          <span style="display: inline-block; width: 100px; height: 53px; background-image: url('/tools/catalog-admin/naklejki/filters/assets/srv_card-new.svg');" ></span>-->
+<!--        </a>-->
+<!--      </p>-->
       <br>
 
       {if $filteredGoods|@count}
-      <h5>Результат:</h5>
+      <div style="display: inline-block; width: 251px; height: 30px; background-image: url('/tools/catalog-admin/naklejki/filters/assets/srv_result.svg');"></div>
+      <a href="/catalog/naklejki/?p=new">
+        <span style="display: inline-block; width: 100px; height: 53px; background-image: url('/tools/catalog-admin/naklejki/filters/assets/srv_card-new.svg');" ></span>
+      </a>
       <div style="display: flex; justify-content: space-between;">
         {foreach $filteredGoods as $good}
           <div>
@@ -126,12 +137,17 @@
       </div>
 
       {else if $isFiltersSet}
-        <h5>Нет результатов по выбранным фильтрам</h5>
+        <div style="display: inline-block; width: 251px; height: 30px; background-image: url('/tools/catalog-admin/naklejki/filters/assets/srv_no-result.svg');" ></div>
+        <a href="/catalog/naklejki/?p=new">
+          <span style="display: inline-block; width: 100px; height: 53px; background-image: url('/tools/catalog-admin/naklejki/filters/assets/srv_card-new.svg');" ></span>
+        </a>
       {else if !$isProductCard}
-        <h5>Выберите фильтр</h5>
+        <p style="display: inline-block; width:216px; height: 60px; background-size: 100% 100%; background-image: url('/tools/catalog-admin/naklejki/filters/assets/srv_blank.svg')"></p>
+        <a href="/catalog/naklejki/?p=new">
+          <span style="display: inline-block; width: 100px; height: 53px; background-image: url('/tools/catalog-admin/naklejki/filters/assets/srv_card-new.svg');" ></span>
+        </a>
       {/if}
-
-      <h5>Вас также может заинтересовать:</h5>
+      <div style="width: 251px; height: 30px; background-image: url('/tools/catalog-admin/naklejki/filters/assets/srv_related.svg');" ></div>
 
       <div style="display: flex; justify-content: space-between;">
         {foreach $goods as $good}
@@ -143,6 +159,8 @@
           </div>
         {/foreach}
       </div>
+      <div style="display: inline-block; width: 181px; height: 30px; background-image: url('/tools/catalog-admin/naklejki/filters/assets/srv_not-found.svg');" ></div>
+      <a href="/catalog/naklejki/?p=new" style="display: inline-block; width: 100px; height: 53px; background-image: url('/tools/catalog-admin/naklejki/filters/assets/srv_card-new.svg');" ></a>
       <br>
       {if !$isProductCard}
         {if file_exists("{$DOCUMENT_ROOT}/tools/catalog-admin/naklejki/filters/semantic/{$smarty.get.f}.html")}
