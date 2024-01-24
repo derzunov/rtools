@@ -164,6 +164,7 @@
           <img style="height: 48px;" src="/tools/catalog-admin/naklejki/filters/assets/srv_card-new.svg" alt="">
         </a>
       {else if !$isProductCard}
+        {if !$isClear}
         <noindex>
           <p>
             Вводный текст, который не индексируется.
@@ -172,6 +173,7 @@
             Вводный текст, который не индексируется.
           </p>
         </noindex>
+        {/if}
         <p>
           <a href="/catalog/naklejki/?p=new">
             <img style="height: 48px;" src="/tools/catalog-admin/naklejki/filters/assets/srv_card-new.svg" alt="">
