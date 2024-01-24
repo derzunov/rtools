@@ -290,13 +290,16 @@
   // Динамическая загрузка служебных и информационных html, текстов и пр. ----------------------------------------------
   const $root_1 = document.getElementById( 'js_dynamic_root_1' )
 
-  fetch( 'https://r-color.ru/tools/catalog-admin/naklejki/filters/partials/root_1.html' )
-      .then( ( response) => {
-        return response.text()
-      })
-      .then( ( html ) => {
-          $root_1.innerHTML = html
-      } )
+  if ( $root_1 ) {
+      fetch( 'https://r-color.ru/tools/catalog-admin/naklejki/filters/partials/root_1.html' )
+          .then( ( response) => {
+              return response.text()
+          })
+          .then( ( html ) => {
+              $root_1.innerHTML = html
+          } )
+  }
+
 </script>
 
 </body>
