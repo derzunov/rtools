@@ -123,7 +123,7 @@
                 {foreach $filterName.filters as $filter}
                   <li class="filters__item js_filter">
                     <label>
-                      <input style="margin-right: 5px; position: relative; bottom: -1px;" type="checkbox" value="{$filter.furl}">
+                      <input style="margin-right: 5px; position: relative; bottom: -1px;" type="checkbox" value="{$filter.furl}" id="{$filter.furl}">
                       {$filter.name|escape}
                       <span class="filters__item-tooltip js_go_to_filters js_tooltip g-hidden"></span>
                     </label>
@@ -281,6 +281,13 @@
               event.currentTarget.classList.remove( 'filters__category_opened' )
           }
       } )
+  } )
+
+  // Проставление активных чекбоксов фильтров, исходя из урл -----------------------------------------------------------
+  const filtersFromUrl = new URL( document.location ).searchParams.get( 'f' ).split( '__' )
+
+  filtersFromUrl.forEach( ( filterToCheck ) => {
+      document.getElementById( `${ filterToCheck }` ).checked = true
   } )
 
 </script>
