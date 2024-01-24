@@ -164,12 +164,19 @@
           <img style="height: 48px;" src="/tools/catalog-admin/naklejki/filters/assets/srv_card-new.svg" alt="">
         </a>
       {else if !$isProductCard}
-        <span>
-          <img style="height: 16px;" src="/tools/catalog-admin/naklejki/filters/assets/srv_blank.svg" alt="">
-        </span>
-        <a href="/catalog/naklejki/?p=new">
-          <img style="height: 48px;" src="/tools/catalog-admin/naklejki/filters/assets/srv_card-new.svg" alt="">
-        </a>
+        <noindex>
+          <p>
+            Вводный текст, который не индексируется.
+            Вводный текст, который не индексируется.
+            Вводный текст, который не индексируется.
+            Вводный текст, который не индексируется.
+          </p>
+        </noindex>
+        <p>
+          <a href="/catalog/naklejki/?p=new">
+            <img style="height: 48px;" src="/tools/catalog-admin/naklejki/filters/assets/srv_card-new.svg" alt="">
+          </a>
+        </p>
       {/if}
 
       {* Блок "Вас также может заинтересовать" -------------------- *}
