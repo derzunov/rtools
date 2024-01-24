@@ -93,14 +93,16 @@
       <ul class="filters">
         {if !$isProductCard}
         <p>
-          <img style="height: 24px;" src="/tools/catalog-admin/naklejki/filters/assets/srv_filters.svg" alt="">
-          <a style="display: inline-block; position: relative; top: 5px;" target="_blank" href="https://r-color.ru/tools/admin/#/semantic/table">
+          <a href="/catalog/naklejki/?clear=true">
+            <img style="height: 24px; margin-top: 15px;" src="/tools/catalog-admin/naklejki/filters/assets/srv_filters.svg" alt="">
+          </a>
+          <a style="display: inline-block; position: relative; top: 12px;" target="_blank" href="https://r-color.ru/tools/admin/#/semantic/table">
             <svg style="height: 20px;" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
               <path stroke-linecap="round" stroke-linejoin="round" d="M21.75 6.75a4.5 4.5 0 0 1-4.884 4.484c-1.076-.091-2.264.071-2.95.904l-7.152 8.684a2.548 2.548 0 1 1-3.586-3.586l8.684-7.152c.833-.686.995-1.874.904-2.95a4.5 4.5 0 0 1 6.336-4.486l-3.276 3.276a3.004 3.004 0 0 0 2.25 2.25l3.276-3.276c.256.565.398 1.192.398 1.852Z" />
               <path stroke-linecap="round" stroke-linejoin="round" d="M4.867 19.125h.008v.008h-.008v-.008Z" />
             </svg>
           </a>
-          <a style="display: inline-block; position: relative; top: 5px;" target="_blank"
+          <a style="display: inline-block; position: relative; top: 12px;" target="_blank"
                  href="/catalog/naklejki/?p=new">
             <svg style="height: 20px;" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" data-v-ea893728="">
               <path fill="currentColor" d="M352 480h320a32 32 0 1 1 0 64H352a32 32 0 0 1 0-64"></path>
@@ -175,12 +177,9 @@
       {else if !$isProductCard}
         {if !$isClear}
         <noindex>
-          <p>
-            Вводный текст, который не индексируется.
-            Вводный текст, который не индексируется.
-            Вводный текст, который не индексируется.
-            Вводный текст, который не индексируется.
-          </p>
+          {if file_exists("{$DOCUMENT_ROOT}/tools/catalog-admin/naklejki/filters/partials/root_1.html")}
+            {include file="{$DOCUMENT_ROOT}/tools/catalog-admin/naklejki/filters/partials/root_1.html"}
+          {/if}
         </noindex>
         {/if}
 <!--        <p>-->
@@ -192,7 +191,7 @@
 
       {* Блок "Вас также может заинтересовать" -------------------- *}
       {if !$isNew}
-      <div style="margin-bottom: 15px;">
+      <div style="margin: 15px 0;">
         <img style="height: 16px;" src="/tools/catalog-admin/naklejki/filters/assets/srv_related.svg" alt="">
       </div>
 
