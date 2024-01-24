@@ -82,6 +82,12 @@ if ( !isset( $_GET[ 'p' ] ) ) {
     $smarty->assign( 'isProductCard', true );
 }
 
+if ( $_GET[ 'p' ] == 'new' ) {
+    $smarty->assign( 'isNew', true );
+} else {
+    $smarty->assign( 'isNew', false );
+}
+
 $smarty->assign( 'goods', $goods );
 $smarty->assign( 'filteredGoods', $filteredGoods );
 $smarty->assign( 'DOCUMENT_ROOT', $_SERVER["DOCUMENT_ROOT"] );

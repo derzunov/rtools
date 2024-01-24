@@ -124,10 +124,10 @@
           {foreachelse}
               <li>No filters found !</li>
           {/foreach}
-        {/if}
         <a href="/catalog/naklejki/?clear=true">
           <img style="height: 48px;" src="/tools/catalog-admin/naklejki/filters/assets/srv_remove-filter.svg" alt="">
         </a>
+        {/if}
       </ul>
     </div>
     <div style="width: 65%">
@@ -139,9 +139,9 @@
       <br>
 
       {if $filteredGoods|@count}
-      <span>
-        <img style="height: 16px;" src="/tools/catalog-admin/naklejki/filters/assets/srv_result.svg" alt="">
-      </span>
+<!--      <span>-->
+<!--        <img style="height: 16px;" src="/tools/catalog-admin/naklejki/filters/assets/srv_result.svg" alt="">-->
+<!--      </span>-->
       <a href="/catalog/naklejki/?p=new">
         <img style="height: 48px;" src="/tools/catalog-admin/naklejki/filters/assets/srv_card-new.svg" alt="">
       </a>
@@ -171,6 +171,9 @@
           <img style="height: 48px;" src="/tools/catalog-admin/naklejki/filters/assets/srv_card-new.svg" alt="">
         </a>
       {/if}
+
+      {* Блок "Вас также может заинтересовать" -------------------- *}
+      {if !$isNew}
       <div>
         <img style="height: 16px;" src="/tools/catalog-admin/naklejki/filters/assets/srv_related.svg" alt="">
       </div>
@@ -191,6 +194,7 @@
       <a href="/catalog/naklejki/?p=new">
         <img style="height: 48px;" src="/tools/catalog-admin/naklejki/filters/assets/srv_card-new.svg" alt="">
       </a>
+      {/if}
       <br>
       {if !$isProductCard}
         {if file_exists("{$DOCUMENT_ROOT}/tools/catalog-admin/naklejki/filters/semantic/{$smarty.get.f}.html")}
