@@ -1,5 +1,5 @@
 <?php
-
+include_once( $_SERVER["DOCUMENT_ROOT"] . '/tools/catalog-admin/naklejki/filters/semantic-templates.php' );
 require './vendor/autoload.php'; // see composer doc
 
 // create Smarty instance
@@ -88,10 +88,13 @@ if ( $_GET[ 'p' ] == 'new' ) {
     $smarty->assign( 'isNew', false );
 }
 
+$generatedMainHtml = getMainTemplate( 'Наклейки', explode( '__', $_GET[ 'f' ] ) );
+
 $smarty->assign( 'goods', $goods );
 $smarty->assign( 'filteredGoods', $filteredGoods );
 $smarty->assign( 'DOCUMENT_ROOT', $_SERVER["DOCUMENT_ROOT"] );
-$smarty->assign( 'ROOT_HOST', $_SERVER["ROOT_HOST"] );
+$smarty->assign( 'generatedMainHtml', $generatedMainHtml );
 
 // display it
 $smarty->display( $_SERVER["DOCUMENT_ROOT"] . '/tools/catalog-admin/naklejki/filters/index.tpl' );
+?>

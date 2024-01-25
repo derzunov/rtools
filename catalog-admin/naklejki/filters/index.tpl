@@ -76,14 +76,18 @@
 </style>
 <div class="tw-container">
 
-
+{*Такой странный if нужен! Это делается для исключения ситуации корневого каталога без ?clear=true*}
 {if $isClear}
     {if file_exists("{$DOCUMENT_ROOT}/tools/catalog-admin/naklejki/filters/main/{$smarty.get.f}.html")}
       {include file="{$DOCUMENT_ROOT}/tools/catalog-admin/naklejki/filters/main/{$smarty.get.f}.html"}
+    {else}
+      {$generatedMainHtml}
     {/if}
 {elseif $isFiltersSet}
     {if file_exists("{$DOCUMENT_ROOT}/tools/catalog-admin/naklejki/filters/main/{$smarty.get.f}.html")}
       {include file="{$DOCUMENT_ROOT}/tools/catalog-admin/naklejki/filters/main/{$smarty.get.f}.html"}
+    {else}
+      {$generatedMainHtml}
     {/if}
 {/if}
 
