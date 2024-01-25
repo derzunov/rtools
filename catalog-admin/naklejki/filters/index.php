@@ -88,7 +88,7 @@ if ( $_GET[ 'p' ] == 'new' ) {
     $smarty->assign( 'isNew', false );
 }
 
-$generatedMainHtml = getMainTemplate( 'Наклейки', explode( '__', $_GET[ 'f' ] ) );
+$generatedMainHtml = $getMainTemplate( 'Наклейки', explode( '__', $_GET[ 'f' ] ) );
 
 $smarty->assign( 'goods', $goods );
 $smarty->assign( 'filteredGoods', $filteredGoods );
