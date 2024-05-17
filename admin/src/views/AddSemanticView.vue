@@ -75,7 +75,7 @@
         <textarea required
                id="description"
                name="description"
-               rows="4"
+               rows="3"
                class="form-control"
                v-model="description"
         >
@@ -104,7 +104,7 @@
                id="subheader"
                name="subheader"
                class="form-control"
-               rows="4"
+               rows="3"
                v-model="subheader"
                placeholder="Subheader для фильтра"
         ></textarea>
@@ -128,7 +128,7 @@
         <label for="html" class="form-label _gray">
           HTML
         </label>
-        <textarea v-model="html" rows="8" id="html" required class="form-control" placeholder="HTML"></textarea>
+        <textarea v-model="html" rows="10" id="html" required class="form-control" placeholder="HTML"></textarea>
       </div>
 
       <div class="mb-3">
