@@ -49,7 +49,9 @@
             </select>
 <!--          </div>-->
           <button @click.prevent="addFilter" type="button" class="btn btn-success">+</button>
-
+          <button type="submit" :disabled="isSaving" class="btn btn-primary">
+            <svg style="width: 24px;" data-v-062160b5="" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6"><path data-v-062160b5="" stroke-linecap="round" stroke-linejoin="round" d="M16.5 3.75V16.5L12 14.25 7.5 16.5V3.75m9 0H18A2.25 2.25 0 0 1 20.25 6v12A2.25 2.25 0 0 1 18 20.25H6A2.25 2.25 0 0 1 3.75 18V6A2.25 2.25 0 0 1 6 3.75h1.5m9 0h-9"></path></svg>
+          </button>
         </div>
       </div>
 
@@ -73,6 +75,7 @@
         <textarea required
                id="description"
                name="description"
+               rows="4"
                class="form-control"
                v-model="description"
         >
@@ -97,14 +100,14 @@
         <label for="subheader" class="form-label _gray">
           subheader
         </label>
-        <input required
+        <textarea required
                id="subheader"
                name="subheader"
                class="form-control"
-               type="text"
+               rows="4"
                v-model="subheader"
                placeholder="Subheader для фильтра"
-        >
+        ></textarea>
       </div>
 
       <div class="mb-3">
@@ -125,7 +128,7 @@
         <label for="html" class="form-label _gray">
           HTML
         </label>
-        <textarea v-model="html" id="html" required class="form-control" placeholder="HTML"></textarea>
+        <textarea v-model="html" rows="8" id="html" required class="form-control" placeholder="HTML"></textarea>
       </div>
 
       <div class="mb-3">
