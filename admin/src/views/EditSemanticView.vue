@@ -281,7 +281,7 @@ export default {
     }
 
     const fetchCurrentFilterFields = async ( catalogProduct, currentFilter ) => {
-      const reqStr = `${ BASE_URL }/tools/catalog-admin/${  catalogProduct }/filters/json/${ currentFilter }.json`
+      const reqStr = `${ BASE_URL }/tools/catalog-admin/${  catalogProduct }/filters/json/${ currentFilter }.json?ts=${Date.now()}`
       const response = await axios.get( reqStr )
       const data = response.data
 
