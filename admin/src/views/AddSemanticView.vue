@@ -128,7 +128,21 @@
         <label for="html" class="form-label _gray">
           HTML
         </label>
-        <textarea v-model="html" rows="10" id="html" required class="form-control" placeholder="HTML"></textarea>
+        <textarea v-on:blur="()=>{
+            if(html.match(/<body>(\w|\W)*<\/body>/gm)) {
+              html = html.match(/<body>(\w|\W)*<\/body>/gm)[ 0 ];
+            }
+
+            html = html.replace('<body>', '');
+            html = html.replace('</body>', '');
+        }" v-model="html" rows="10" id="html" required class="form-control" placeholder="HTML"></textarea>
+      </div>
+
+      <div class="mb-3">
+        <label for="temporary" class="form-label _gray">
+          Temporary
+        </label>
+        <textarea v-model="temporary" rows="3" id="temporary" class="form-control" placeholder="temporary"></textarea>
       </div>
 
       <div class="mb-3">
@@ -198,6 +212,7 @@ export default {
     const isindex = ref( false )
     const h2 = ref( '' )
     const html = ref( '' )
+    const temporary = ref( '' )
     const title = ref( '' )
     const link = ref( '' )
     const dateStart = ref( '' )
@@ -218,6 +233,7 @@ export default {
       description.value = `Дескрипшн для фильтра ${ random( 255 ) }`
       h1.value = 'H1 для фильтра/фильтров'
       subheader.value = 'Subheader для фильтра/фильтров'
+      temporary.value = 'Временная инфа для фильтра/фильтров'
       isindex.value = false
       h2.value = 'H2 для фильтра/фильтров'
       html.value = 'Семантичный <b>HTML</b>'
@@ -243,6 +259,7 @@ export default {
       formdata.append( "subheader", subheader.value )
       formdata.append( "h2", h2.value )
       formdata.append( "html", html.value )
+      formdata.append( "temporary", temporary.value )
       formdata.append( "isindex", isindex.value )
 
       isSaving.value = true
@@ -310,6 +327,7 @@ export default {
       subheader,
       h2,
       html,
+      temporary,
       isindex,
       title,
       link,
@@ -326,6 +344,7 @@ export default {
 
       onFilterChange,
       addFilter,
+      alert,
     }
   }
 }

@@ -124,7 +124,21 @@
         <label for="html" class="form-label _gray">
           HTML
         </label>
-        <textarea rows="10" v-model="html" id="html" required class="form-control" placeholder="HTML"></textarea>
+        <textarea rows="10" v-on:blur="()=>{
+            if(html.match(/<body>(\w|\W)*<\/body>/gm)) {
+              html = html.match(/<body>(\w|\W)*<\/body>/gm)[ 0 ];
+            }
+
+            html = html.replace('<body>', '');
+            html = html.replace('</body>', '');
+        }" v-model="html" id="html" required class="form-control" placeholder="HTML"></textarea>
+      </div>
+
+      <div class="mb-3">
+        <label for="temporary" class="form-label _gray">
+          Temporary
+        </label>
+        <textarea rows="3" v-model="temporary" id="temporary" class="form-control" placeholder="temporary"></textarea>
       </div>
 
       <div class="mb-3">
@@ -194,6 +208,7 @@ export default {
     const isindex = ref( false )
     const h2 = ref( '' )
     const html = ref( '' )
+    const temporary = ref( '' )
     const title = ref( '' )
     const link = ref( '' )
     const dateStart = ref( '' )
@@ -235,6 +250,7 @@ export default {
       formdata.append( "subheader", subheader.value )
       formdata.append( "h2", h2.value )
       formdata.append( "html", html.value )
+      formdata.append( "temporary", temporary.value )
       formdata.append( "isindex", isindex.value )
 
       isSaving.value = true
@@ -247,14 +263,14 @@ export default {
     }
 
     const fetchProducts = async () => {
-      const reqStr = `${ BASE_URL }/tools/catalog-admin/products.json`
+      const reqStr = `${ BASE_URL }/tools/catalog-admin/products.json?ts=${Date.now()}`
       const response = await axios.get( reqStr )
       return response.data
     }
 
     const fetchFilters = async ( product ) => {
       try {
-        const reqStr = `${ BASE_URL }/tools/catalog-admin/${ product.value }/filters/filters.json`
+        const reqStr = `${ BASE_URL }/tools/catalog-admin/${ product.value }/filters/filters.json?ts=${Date.now()}`
         const response = await axios.get( reqStr )
 
         const filters = []
@@ -291,6 +307,7 @@ export default {
       isindex.value = data.isindex
       h2.value = data.h2
       html.value = data.html
+      temporary.value = data.temporary
       title.value = data.title
     }
 
@@ -325,6 +342,7 @@ export default {
       subheader,
       h2,
       html,
+      temporary,
       isindex,
       title,
       link,
