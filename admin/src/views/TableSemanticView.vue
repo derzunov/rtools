@@ -7,8 +7,34 @@
         </router-link>
       </h5>
     </div>
-    <div class="col-md-6"></div>
-    <div class="col-md-3 right">
+    <div class="col-md-3"></div>
+    <div class="col-md-6 right">
+
+      <input
+          style="
+            width: 120px;
+            display: inline-block;
+            height: 36px;
+            vertical-align: middle;
+            border-radius: 7px;
+            border: 1px solid;"
+          placeholder="Поиск"
+          type="text"
+          v-model="filterBy" >
+
+      <!-- Начально будет выбрано второе значение -->
+      <select style="
+            width: 120px;
+            display: inline-block;
+            height: 36px;
+            vertical-align: middle;
+            border-radius: 7px;
+            border: 1px solid;"
+          v-model="selectedAtomicFilter">
+        <option selected value="">Все</option>
+        <option v-for="atomicFilter in atomicFilters" :value="atomicFilter.furl" :key="atomicFilter.furl">{{atomicFilter.furl}}</option>
+      </select>
+
 
       <ModalUniversal modalId="delete_filters"
                       title="Подтверждение удаления всех фильтров"
@@ -53,7 +79,7 @@
       </tr>
     </thead>
     <tbody>
-    <tr v-for="( filter, index ) in filters"
+    <tr v-for="( filter, index ) in filtersFiltered"
         :data-index="index"
         :key="index"
         :ref="( element ) => {
@@ -62,7 +88,7 @@
           }
         }"
     >
-      <td class="_gray" style="width: 50px;">-</td>
+      <td class="_gray" style="width: 50px;">{{index + 1}}</td>
       <th>
         <router-link v-if="filter.filter.length" :to="`/semantic/edit?f=${ filter.filter }`">
           {{ filter.filter }}
@@ -102,30 +128,12 @@
 <!--        >-->
 <!--          x-->
 <!--        </span>-->
-
-        <ModalUniversal modalId="delete_filter"
-                        title="Подтверждение удаления фильтра"
-                        actionButtonText="Удалить"
-                        cancelButtonText="Отменить"
-                        :action="() => { deleteFilter( filter.filter ) }"
-                        ref="deleteFilterModalRef"
-        >
-          <div style="text-align: left;">
-            Уверены, что хотите удалить фильтр?
-          </div>
-
-          <template #trigger>
-
-            <button @click.prevent="() => { return }"
-                    class="btn btn-danger"
-                    title="удалить"
-                    style="margin: 0">
-              удалить
-            </button>
-
-          </template>
-
-        </ModalUniversal>
+        <button @click.prevent="() => { deleteFilter( filter.filter ) }"
+                class="btn btn-danger"
+                title="удалить"
+                style="margin: 0">
+          удалить
+        </button>
 
       </td>
     </tr>
@@ -136,7 +144,7 @@
 <script>
 import axios from "axios"
 import { useRouter, useRoute } from 'vue-router'
-import { ref, onMounted, onBeforeUpdate } from 'vue'
+import { ref, onMounted, onBeforeUpdate, watch } from 'vue'
 import { filterActiveItems, filterItemsByType, sleep } from '@/utils'
 import ModalUniversal from '@/components/ModalUniversal'
 
@@ -160,6 +168,10 @@ export default {
     const urls = ref( [] )
     const urlsTitles = ref( {} )
     const filters = ref( [] )
+    const filterBy = ref( null )
+    const filtersFiltered = ref( [] )
+    const atomicFilters = ref( [] )
+    const selectedAtomicFilter = ref( '' )
     const rows = ref( {} ) // для якорных ссылок, заполняются в шаблоне
 
     const deleteFilterModalRef = ref( null )
@@ -168,6 +180,27 @@ export default {
       const reqString = `${ BASE_URL }/tools/catalog-admin/naklejki/read-files.php`
       const response = await axios.get( reqString )
       filters.value = response.data
+      filtersFiltered.value = { ...response.data }
+    }
+
+    const fetchAtomicFilters = async () => {
+      try {
+        const reqStr = `${ BASE_URL }/tools/catalog-admin/naklejki/filters/filters.json`
+        const response = await axios.get( reqStr )
+
+        const filters = []
+
+        response.data.forEach( ( category ) => {
+          category.filters.forEach( ( filter ) => {
+            filters.push( filter )
+          } )
+        } )
+
+        return filters
+      } catch( error ) {
+        console.error( error )
+        return []
+      }
     }
 
     const getItemsInteractCount = ( items = [] ) => {
@@ -202,11 +235,26 @@ export default {
 
     const deleteFilter = async ( filter ) => {
       const reqString = `${ BASE_URL }/tools/catalog-admin/naklejki/delete-filter.php?f=${ filter }`
+      alert(`Вы удаляете фильтр ${ filter }`);
       const response = await axios.get( reqString )
       sleep( 500 )
       fetchFilters()
       console.log( response )
     }
+
+    watch([filterBy], ()  => {
+      console.log(filterBy.value);
+      filtersFiltered.value = [];
+      filters.value.forEach( ( filter ) => {
+        if ( filter.filter.includes( filterBy.value ) ) {
+          filtersFiltered.value.push(filter);
+        }
+      } )
+    } )
+
+    watch([selectedAtomicFilter], ()  => {
+      filterBy.value = selectedAtomicFilter.value
+    } )
 
     onBeforeUpdate(() => {
       rows.value = []
@@ -214,7 +262,11 @@ export default {
 
     onMounted( async () => {
       await fetchFilters()
+      atomicFilters.value = await fetchAtomicFilters()
 
+      console.log( '====================' )
+      console.table( atomicFilters.value )
+      console.log( '====================' )
       console.table( rows.value )
 
       anchor( rows.value[ route.query.f ]  )
@@ -226,6 +278,10 @@ export default {
       urls,
       urlsTitles,
       filters,
+      filterBy,
+      filtersFiltered,
+      atomicFilters,
+      selectedAtomicFilter,
       rows,
       deleteFilterModalRef,
 

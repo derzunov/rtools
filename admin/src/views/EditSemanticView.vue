@@ -131,6 +131,7 @@
 
             html = html.replace('<body>', '');
             html = html.replace('</body>', '');
+            html =  html.trim();
         }" v-model="html" id="html" required class="form-control" placeholder="HTML"></textarea>
       </div>
 
