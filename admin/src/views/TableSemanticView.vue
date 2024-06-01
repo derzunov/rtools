@@ -7,7 +7,11 @@
         </router-link>
       </h5>
     </div>
-    <div class="col-md-3"></div>
+    <div class="col-md-3">
+      <div class="semantic-tools" v-html="semanticToolsHTML">
+
+      </div>
+    </div>
     <div class="col-md-6 right">
 
       <input
@@ -72,7 +76,7 @@
         <th scope="col" class="col-md-4">Filter</th>
         <th scope="col" class="col-md-2 center">Title + Description</th>
         <th scope="col" class="col-md-2 center">H1 + Subheader</th>
-        <th scope="col" class="col-md-2 center">H2 + HTML</th>
+        <th scope="col" class="col-md-2 center">HTML</th>
         <th scope="col" class="col-md-4 center">Статистика</th>
         <th scope="col" class="col-md-4">Комментарий</th>
         <th scope="col" class="col-md-1"></th>
@@ -107,20 +111,20 @@
       </td>
       <td>
         <div>
-          <a target="_blank" v-if="filter.filter" :href="`https://r-color.ru/catalog/naklejki/?f=${ filter.filter }`">{{ filter.h1 }}</a>
-          <a target="_blank" v-if="!filter.filter" :href="`https://r-color.ru/catalog/naklejki/`">{{ filter.h1 }}</a>
+          <a target="_blank" v-if="filter.filter" :href="`https://r-color.ru/catalog/naklejki/?f=${ filter.filter }`"><b>{{ filter.h1 }}</b></a>
+          <a target="_blank" v-if="!filter.filter" :href="`https://r-color.ru/catalog/naklejki/`"><b>{{ filter.h1 }}</b></a>
         </div>
         <div :title="filter.subheader">{{ filter.subheader.slice( 0, TEXT_LENGTH_CUT ) + '...' }}</div>
       </td>
       <td>
-        <div>
-          <a target="_blank" v-if="filter.filter" :href="`https://r-color.ru/catalog/naklejki/?f=${ filter.filter }#rc_h2`">{{ filter.h2 }}</a>
-          <a target="_blank" v-if="!filter.filter" :href="`https://r-color.ru/catalog/naklejki/#rc_h2`">{{ filter.h2 }}</a>
-        </div>
-        <div :title="filter.html" v-html="filter.html.slice( 0, TEXT_LENGTH_CUT ) + '...'" ></div>
+        <a style="font-size: 12px !important;" target="_blank"
+           :href="`https://r-color.ru/catalog/naklejki/?f=${ filter.filter }#rc_h2`"
+           :title="filter.html"
+           v-html="'<style> h2 { font-size: 14px !important; font-weight: bold; } </style>' + filter.html.slice( 0, TEXT_LENGTH_CUT ) + '...'" ></a>
       </td>
       <td class="center">0</td>
-      <td></td>
+      <td v-if="filter.comment === 'undefined'">{{ '' }}</td>
+      <td v-if="filter.comment !== 'undefined'">{{ filter.comment || '' }}</td>
       <td>
 <!--        <span v-on:click="deleteFilter( filter.filter )"-->
 <!--              class="center"-->
@@ -128,12 +132,19 @@
 <!--        >-->
 <!--          x-->
 <!--        </span>-->
-        <button @click.prevent="() => { deleteFilter( filter.filter ) }"
-                class="btn btn-danger"
-                title="удалить"
-                style="margin: 0">
-          удалить
-        </button>
+<!--        <button @click.prevent="() => { deleteFilter( filter.filter ) }"-->
+<!--                class="btn btn-danger"-->
+<!--                title="удалить"-->
+<!--                style="margin: 0">-->
+<!--          удалить-->
+
+<!--        </button>-->
+        <span
+            title="удалить"
+            @click.prevent="() => { deleteFilter( filter.filter ) }"
+        >
+          <svg class="svg-inline--fa fa-xmark edit-control edit-control_danger" aria-hidden="true" focusable="false" data-prefix="fas" data-icon="xmark" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512" data-v-d40cae0c=""><path class="" fill="currentColor" d="M310.6 150.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0L160 210.7 54.6 105.4c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3L114.7 256 9.4 361.4c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0L160 301.3 265.4 406.6c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L205.3 256 310.6 150.6z"></path></svg>
+        </span>
 
       </td>
     </tr>
@@ -175,7 +186,15 @@ export default {
     const rows = ref( {} ) // для якорных ссылок, заполняются в шаблоне
 
     const deleteFilterModalRef = ref( null )
+    
+    
+    const semanticToolsHTML = ref( '' )
 
+    const fetchSemanticToolsHTML = async () => {
+      const reqString = `${ BASE_URL }/tools/catalog-admin/tools-panels/semantic-tools.html`
+      const response = await axios.get( reqString )
+      semanticToolsHTML.value = response.data
+    }
     const fetchFilters = async () => {
       const reqString = `${ BASE_URL }/tools/catalog-admin/naklejki/read-files.php`
       const response = await axios.get( reqString )
@@ -262,6 +281,7 @@ export default {
 
     onMounted( async () => {
       await fetchFilters()
+      await fetchSemanticToolsHTML()
       atomicFilters.value = await fetchAtomicFilters()
 
       console.log( '====================' )
@@ -293,6 +313,8 @@ export default {
       reset,
       deleteFilter,
 
+      semanticToolsHTML,
+
       // constants
       TEXT_LENGTH_CUT,
     }
@@ -303,5 +325,13 @@ export default {
 <style scoped>
 .table {
   font-size: 14px;
+}
+.h2, h2 {
+  font-size: 20px !important;
+}
+@media (min-width: 1200px) {
+  .h2, h2 {
+    font-size: 20px;
+  }
 }
 </style>

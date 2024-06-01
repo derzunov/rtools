@@ -7,7 +7,7 @@ $title = 'undefined';
 $description = 'undefined';
 $h1 = 'undefined';
 $subheader = 'undefined';
-$h2 = 'undefined';
+$comment = 'undefined';
 $html = 'undefined';
 $temporary = 'undefined';
 
@@ -37,8 +37,8 @@ if( isset( $_POST[ 'subheader' ] ) ) {
     $subheader = $_POST[ 'subheader' ];
 }
 
-if( isset( $_POST[ 'h2' ] ) ) {
-    $h2 = $_POST[ 'h2' ];
+if( isset( $_POST[ 'comment' ] ) ) {
+    $comment = $_POST[ 'comment' ];
 }
 
 if( isset( $_POST[ 'html' ] ) ) {
@@ -61,20 +61,20 @@ fclose( $fd );
 
 // Semantic HTML
 $fd = fopen( "$catalog/filters/semantic/" . "$filter.html", 'w' ) or die( "Can\'t create/update $catalog/filters/semantic/$filter.html" );
-fwrite( $fd, "<h2 id=\"rc_h2\">$h2</h2> <div id=\"rc_html\">$html</div><br><div>$temporary</div>" );
+fwrite( $fd, "<div id=\"rc_html\">$html</div><br><div>$temporary</div>" );
 fclose( $fd );
 
 // JSON
 $all = array(
-'catalog' => $catalog,
-'filter' => $filter,
-'title' => $title,
-'description' => $description,
-'h1' => $h1,
-'subheader' => $subheader,
-'h2' => $h2,
-'html' => $html,
-'temporary' => $temporary
+    'catalog' => $catalog,
+    'filter' => $filter,
+    'title' => $title,
+    'description' => $description,
+    'h1' => $h1,
+    'subheader' => $subheader,
+    'comment' => $comment,
+    'html' => $html,
+    'temporary' => $temporary
 );
 $fd = fopen( "$catalog/filters/json/" . "$filter.json", 'w' ) or die( "Can\'t create/update $catalog/filters/json/$filter.json" );
 fwrite( $fd, json_encode($all) );

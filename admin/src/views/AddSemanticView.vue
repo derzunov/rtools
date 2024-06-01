@@ -111,20 +111,6 @@
       </div>
 
       <div class="mb-3">
-        <label for="h2" class="form-label _gray">
-          H2
-        </label>
-        <input required
-               id="h2"
-               name="h2"
-               class="form-control"
-               type="text"
-               v-model="h2"
-               placeholder="H2 для калькулятора"
-        >
-      </div>
-
-      <div class="mb-3">
         <label for="html" class="form-label _gray">
           HTML
         </label>
@@ -136,14 +122,28 @@
             html = html.replace('<body>', '');
             html = html.replace('</body>', '');
             html =  html.trim();
-        }" v-model="html" rows="10" id="html" required class="form-control" placeholder="HTML"></textarea>
+        }" v-model="html" rows="10" id="html" class="form-control" placeholder="HTML"></textarea>
       </div>
 
       <div class="mb-3">
         <label for="temporary" class="form-label _gray">
           Temporary
         </label>
-        <textarea v-model="temporary" rows="3" id="temporary" class="form-control" placeholder="temporary"></textarea>
+        <textarea v-model="temporary" rows="3" id="temporary" class="form-control" placeholder="Список ключевых фраз для карточек"></textarea>
+      </div>
+
+      <div class="mb-3">
+        <label for="comment" class="form-label _gray">
+          Комментарий
+        </label>
+        <input
+               id="comment"
+               name="comment"
+               class="form-control"
+               type="text"
+               v-model="comment"
+               placeholder="Комментарий для фильтра"
+        >
       </div>
 
       <div class="mb-3">
@@ -211,7 +211,7 @@ export default {
     const h1 = ref( '' )
     const subheader = ref( '' )
     const isindex = ref( false )
-    const h2 = ref( '' )
+    const comment = ref( '' )
     const html = ref( '' )
     const temporary = ref( '' )
     const title = ref( '' )
@@ -236,7 +236,7 @@ export default {
       subheader.value = 'Subheader для фильтра/фильтров'
       temporary.value = 'Временная инфа для фильтра/фильтров'
       isindex.value = false
-      h2.value = 'H2 для фильтра/фильтров'
+      comment.value = 'Комментарий для фильтра/фильтров'
       html.value = 'Семантичный <b>HTML</b>'
       title.value = 'Title для фильтра'
     }
@@ -258,7 +258,7 @@ export default {
       formdata.append( "description", description.value )
       formdata.append( "h1", h1.value )
       formdata.append( "subheader", subheader.value )
-      formdata.append( "h2", h2.value )
+      formdata.append( "comment", comment.value )
       formdata.append( "html", html.value )
       formdata.append( "temporary", temporary.value )
       formdata.append( "isindex", isindex.value )
@@ -326,7 +326,7 @@ export default {
       description,
       h1,
       subheader,
-      h2,
+      comment,
       html,
       temporary,
       isindex,
