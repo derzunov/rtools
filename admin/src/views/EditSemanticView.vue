@@ -138,7 +138,6 @@
                class="form-control"
                type="text"
                v-model="comment"
-               placeholder="Комментарий для фильтра"
         >
       </div>
 
@@ -251,8 +250,31 @@ export default {
       formdata.append( "subheader", subheader.value )
       formdata.append( "comment", comment.value )
       formdata.append( "html", html.value )
-      formdata.append( "temporary", temporary.value )
       formdata.append( "isindex", isindex.value )
+
+      temporary.value = temporary.value.trim()
+
+      let temporaryStringWithoutAnchors = temporary.value.replaceAll( '<a href="/catalog/naklejki/">', '' )
+      temporaryStringWithoutAnchors = temporary.value.replaceAll( '</a>', '\n' )
+
+      temporary.value  = temporaryStringWithoutAnchors
+      const temporaryArray = temporary.value.split( /\r\n|\r|\n/g )
+
+      console.table(temporaryArray)
+
+      const temporaryArrayWithAnchors = []
+      temporaryArray.forEach( ( line ) => {
+        line = line.trim()
+        if (line !== '') {
+          temporaryArrayWithAnchors.push( '<a href="/catalog/naklejki/">' + line + '</a>' )
+        }
+      } )
+
+      const temporaryStringWithAnchors = temporaryArrayWithAnchors.join('\n')
+      console.log(temporaryStringWithAnchors)
+
+      temporary.value = temporaryStringWithAnchors
+      formdata.append( "temporary", temporary.value )
 
       isSaving.value = true
       await axios.post( `${ BASE_URL }/tools/catalog-admin/`, formdata )
@@ -312,6 +334,29 @@ export default {
       html.value = data.html
       temporary.value = data.temporary
       title.value = data.title
+
+      temporary.value = temporary.value.trim()
+
+      let temporaryStringWithoutAnchors = temporary.value.replaceAll( '<a href="/catalog/naklejki/">', '' )
+      temporaryStringWithoutAnchors = temporaryStringWithoutAnchors.replaceAll( '</a>', '_derz_' ) // Моя специальная метка
+
+      temporary.value = temporaryStringWithoutAnchors
+
+      temporary.value = temporary.value.replace(/<[^>]*>/g, '')
+
+      const temporaryArrayWithoutAnchors = temporary.value.split( '_derz_' )
+
+      const temporaryArrayWithoutAnchorsClean = []
+      temporaryArrayWithoutAnchors.forEach( ( line ) => {
+        line = line.trim()
+        line = line.replace(/<[^>]*>/g, '')
+        line = line.replace(/[^A-Za-zА-Яа-я\s0-9]+/g, '')
+        if (line !== '') {
+          temporaryArrayWithoutAnchorsClean.push( line )
+        }
+      } )
+
+      temporary.value = temporaryArrayWithoutAnchorsClean.join('\n')
     }
 
     onMounted(async () => {

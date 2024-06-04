@@ -142,7 +142,6 @@
                class="form-control"
                type="text"
                v-model="comment"
-               placeholder="Комментарий для фильтра"
         >
       </div>
 
@@ -260,8 +259,33 @@ export default {
       formdata.append( "subheader", subheader.value )
       formdata.append( "comment", comment.value )
       formdata.append( "html", html.value )
-      formdata.append( "temporary", temporary.value )
+
       formdata.append( "isindex", isindex.value )
+
+      temporary.value = temporary.value.trim()
+      const temporaryArray = temporary.value.split( /\r\n|\r|\n/g )
+
+      console.table(temporaryArray)
+
+      const temporaryArrayWithAnchors = []
+      temporaryArray.forEach( ( line ) => {
+        line = line.trim()
+        line = line.replace(/<[^>]*>/g, '')
+        line = line.replace(/[^a-zа-я0-9]+/g, '')
+        if (line !== '') {
+          temporaryArrayWithAnchors.push( '<a href="/catalog/naklejki/">' + line + '</a>' )
+        }
+      } )
+
+      const temporaryStringWithAnchors = temporaryArrayWithAnchors.join('\n')
+      console.log(temporaryStringWithAnchors)
+
+      let temporaryStringWithoutAnchors = temporaryStringWithAnchors.replaceAll( '<a href="/catalog/naklejki/">', '' )
+      temporaryStringWithoutAnchors = temporaryStringWithoutAnchors.replaceAll( '</a>', '\n' )
+      console.log( temporaryStringWithoutAnchors )
+
+      temporary.value = temporaryStringWithAnchors
+      formdata.append( "temporary", temporary.value )
 
       isSaving.value = true
       await axios.post( `${ BASE_URL }/tools/catalog-admin/`, formdata )
