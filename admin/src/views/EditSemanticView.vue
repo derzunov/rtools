@@ -266,6 +266,11 @@ export default {
       temporaryArray.forEach( ( line ) => {
         line = line.trim()
         if (line !== '') {
+          line = line.replaceAll( /\t/g, ' ' )
+          line = line.replaceAll( new RegExp(String.fromCharCode(160), "g"), ' ' )
+          line = line.replaceAll( /(\s)+/g, ' ' )
+          line = line.trim()
+          line = line[0].toUpperCase() + line.substring( 1 )
           temporaryArrayWithAnchors.push( '<a href="/catalog/naklejki/">' + line + '</a>' )
         }
       } )
@@ -346,11 +351,17 @@ export default {
 
       const temporaryArrayWithoutAnchors = temporary.value.split( '_derz_' )
 
+
       const temporaryArrayWithoutAnchorsClean = []
       temporaryArrayWithoutAnchors.forEach( ( line ) => {
         line = line.trim()
-        line = line.replace(/<[^>]*>/g, '')
-        line = line.replace(/[^A-Za-zА-Яа-я\s0-9]+/g, '')
+        line = line.replaceAll(/<[^>]*>/g, '')
+
+        // Это делается при сохранении
+        // line = line.replaceAll(/\t/g, ' ')
+        // line = line.replaceAll(/(\s)+/g, ' ')
+
+        line = line.replaceAll(/[^A-Za-zА-Яа-я\s0-9]+/g, '')
         if (line !== '') {
           temporaryArrayWithoutAnchorsClean.push( line )
         }
