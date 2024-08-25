@@ -1,0 +1,7 @@
+﻿аналогично /tools/catalog-admin/naklejki/filters/auto-semantic-list-templates/readme_listing
+
+за исключением того, что раздельно
+01_card_h1.txt
+01_card_description.txt
+
+вместо 01_list_h1_subheader.html в листингах 

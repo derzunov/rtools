@@ -1,0 +1,15 @@
+semantic-templates.php - файл с методами автогенерации
+semantic_through_phpmorphy.php - автогенерация - вставка значений фильтров в шаблоны
+new-card-by-filters.php - для создания новых карточек
+
+filters.json - описание фильтров
+
+        "id": "111301", - уникальный ключ
+        "name": "Бумажные", - для показа на экране
+        "phpmorphy": "Бумажные", - для использования в шаблоне для автогенережки (+-*=   это команды для изменения слова, как в wordstat.yandex )
+        "furl": "bumazhnye" - уникальный индекс фильтра
+
+
+auto-semantic-card-templates - шаблоны карточек
+auto-semantic-list-templates - шаблоны листингов
+

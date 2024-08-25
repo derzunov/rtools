@@ -8,7 +8,7 @@
 </head>
 <body>
 <style>
-  ul, li {
+  ul.filters li {
       list-style-type: none;
       margin-left: 0;
   }
@@ -74,6 +74,8 @@
   }
 
 </style>
+
+{if $REQUEST_URI != '/catalog/cart/'}
 <div class="tw-container">
 
 {*Такой странный if нужен! Это делается для исключения ситуации корневого каталога без ?clear=true*}
@@ -84,12 +86,21 @@
       {$generatedMainHtml}
     {/if}
 {elseif $isFiltersSet}
-    {if file_exists("{$DOCUMENT_ROOT}/tools/catalog-admin/naklejki/filters/main/{$smarty.get.f}.html")}
-      {include file="{$DOCUMENT_ROOT}/tools/catalog-admin/naklejki/filters/main/{$smarty.get.f}.html"}
-    {else}
-      {$generatedMainHtml}
+    {if !$isNew}
+      {if file_exists("{$DOCUMENT_ROOT}/tools/catalog-admin/naklejki/filters/main/{$smarty.get.f}.html")}
+        {include file="{$DOCUMENT_ROOT}/tools/catalog-admin/naklejki/filters/main/{$smarty.get.f}.html"}
+      {else}
+        {$generatedMainHtml}
+      {/if}
     {/if}
 {/if}
+
+
+
+
+  {foreach $selectedFiltersFromGet as $selectedFilterFromGet}
+    <!-- <h3>{$selectedFilterFromGet} 789</h3> -->
+  {/foreach}
 
   <div style="display: flex;">
     <!-- Список фильтров -->
@@ -98,16 +109,18 @@
         {if !$isProductCard}
         <p>
           <a href="/catalog/naklejki/?clear=true">
-            <img style="height: 24px; margin-top: 15px;" src="/tools/catalog-admin/naklejki/filters/assets/srv_filters.svg" alt="">
+            <!-- <img style="height: 24px; margin-top: 15px;" src="/tools/catalog-admin/naklejki/filters/assets/srv_filters.svg" alt=""> -->
+            <span style="font-size: 24px; font-weight: 700;" >Фильтры</span>
           </a>
-          <a style="display: inline-block; position: relative; top: 12px;" target="_blank" href="https://r-color.ru/tools/admin/#/semantic/table">
+          {if $isAdmin}
+          <a style="display: inline-block; position: relative; top: 4px;" target="_blank" href="https://r-color.ru/tools/admin/#/semantic/table">
             <svg style="height: 20px;" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
               <path stroke-linecap="round" stroke-linejoin="round" d="M21.75 6.75a4.5 4.5 0 0 1-4.884 4.484c-1.076-.091-2.264.071-2.95.904l-7.152 8.684a2.548 2.548 0 1 1-3.586-3.586l8.684-7.152c.833-.686.995-1.874.904-2.95a4.5 4.5 0 0 1 6.336-4.486l-3.276 3.276a3.004 3.004 0 0 0 2.25 2.25l3.276-3.276c.256.565.398 1.192.398 1.852Z" />
               <path stroke-linecap="round" stroke-linejoin="round" d="M4.867 19.125h.008v.008h-.008v-.008Z" />
             </svg>
           </a>
-          <a style="display: inline-block; position: relative; top: 12px;" target="_blank"
-                 href="/catalog/naklejki/?p=new">
+          <a style="display: inline-block; position: relative; top: 4px;" target="_blank"
+                 href="/catalog/naklejki/?p=new&f={$selectedFiltersFromGetString}">
             <svg style="height: 20px;" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" data-v-ea893728="">
               <path fill="currentColor" d="M352 480h320a32 32 0 1 1 0 64H352a32 32 0 0 1 0-64"></path>
               <path fill="currentColor" d="M480 672V352a32 32 0 1 1 64 0v320a32 32 0 0 1-64 0"></path>
@@ -115,6 +128,7 @@
                     d="M512 896a384 384 0 1 0 0-768 384 384 0 0 0 0 768m0 64a448 448 0 1 1 0-896 448 448 0 0 1 0 896"></path>
             </svg>
           </a>
+          {/if}
         </p>
           {foreach $filters as $filterName}
               <li class="filters__category filters__category_opened js_filters_category">
@@ -153,6 +167,19 @@
 <!--      </p>-->
       <br>
 
+      {if !$isProductCard}
+      <p>
+        <span><a class="js_popular" href="#">Популярное</a> 
+        <a class="js_news" href="#">Новинки</a> 
+        <a class="js_actions" href="#"> Акции</a> 
+        <a class="js_discfounts" href="#">Скидки</span></a> 
+        <span style="float: right;">
+        <a class="js_cart" href="https://r-color.ru/catalog/cart">Корзина 
+        <a class="js_login" href="#">Вход</a>
+        </span>
+      </p>
+      {/if}
+
       {if $filteredGoods|@count}
 <!--      <span>-->
 <!--        <img style="height: 16px;" src="/tools/catalog-admin/naklejki/filters/assets/srv_result.svg" alt="">-->
@@ -161,6 +188,7 @@
 <!--        <img style="height: 48px;" src="/tools/catalog-admin/naklejki/filters/assets/srv_card-new.svg" alt="">-->
 <!--      </a>-->
       <div style="display: flex; justify-content: space-between;">
+        
         {foreach $filteredGoods as $good}
           <div>
             <a href="/catalog/naklejki/?p={$good.name}">
@@ -191,6 +219,16 @@
 <!--        </p>-->
       {/if}
 
+      <!-- Стандартный футер для карточки наклейки -->
+      <!-- Создаетсая и правится руками (не в админке) -->
+
+      {if $isProductCard}
+        {if file_exists("{$DOCUMENT_ROOT}/tools/catalog-admin/naklejki/filters/auto-semantic-card-templates/footer.html")}
+        
+            {include file="{$DOCUMENT_ROOT}/tools/catalog-admin/naklejki/filters/auto-semantic-card-templates/footer.html"}
+        {/if}
+      {/if}
+
       {* Блок "Вас также может заинтересовать" -------------------- *}
       {if !$isNew}
       <div style="margin: 15px 0;">
@@ -210,19 +248,46 @@
       <span>
         <img style="height: 16px;" src="/tools/catalog-admin/naklejki/filters/assets/srv_not-found.svg" alt="">
       </span>
-      <a href="/catalog/naklejki/?p=new">
-        <img style="height: 48px;" src="/tools/catalog-admin/naklejki/filters/assets/srv_card-new.svg" alt="">
+      <a target="_blank" href="/catalog/naklejki/?p=new&f={$selectedFiltersFromGetString}">
+        <img style="height: 48px;" src="/tools/catalog-admin/naklejki/filters/assets/srv_card-new.svg" alt=""> DE 123
       </a>
       {/if}
       <br>
+
+
+      <!-- Если семантики для фильтра ещё нет, используем автогенерированную семантику -->
+
       {if !$isProductCard}
-        {if file_exists("{$DOCUMENT_ROOT}/tools/catalog-admin/naklejki/filters/semantic/{$smarty.get.f}.html")}
-            {include file="{$DOCUMENT_ROOT}/tools/catalog-admin/naklejki/filters/semantic/{$smarty.get.f}.html"}
+        {*Такой странный if нужен! Это делается для исключения ситуации корневого каталога без ?clear=true*}
+        {if $isClear}
+            {if file_exists("{$DOCUMENT_ROOT}/tools/catalog-admin/naklejki/filters/semantic/{$smarty.get.f}.html")}
+              {include file="{$DOCUMENT_ROOT}/tools/catalog-admin/naklejki/filters/semantic/{$smarty.get.f}.html"}
+            {else}
+              {$generatedSemanticHtml}
+            {/if}
+        {elseif $isFiltersSet}
+            {if file_exists("{$DOCUMENT_ROOT}/tools/catalog-admin/naklejki/filters/semantic/{$smarty.get.f}.html")}
+              {include file="{$DOCUMENT_ROOT}/tools/catalog-admin/naklejki/filters/semantic/{$smarty.get.f}.html"}
+            {else}
+              {$generatedSemanticHtml}
+            {/if}
+        {/if}
+      {/if}
+
+
+      <!-- Стандартный футер для листингов наклеек (нужно для общей семантики по наклейкам) -->
+      <!-- Создаетсая и правится руками (не в админке) -->
+      {if !$isProductCard}
+        {if file_exists("{$DOCUMENT_ROOT}/tools/catalog-admin/naklejki/filters/auto-semantic-list-templates/footer.html")}
+        
+            {include file="{$DOCUMENT_ROOT}/tools/catalog-admin/naklejki/filters/auto-semantic-list-templates/footer.html"}
         {/if}
       {/if}
     </div>
+    
   </div>
 </div>
+{/if}
 
 <script>
   let getParameters = ''
@@ -248,6 +313,50 @@
   } )
 
   //--------------------------------------------------------------------------------------------------------------------
+
+  
+
+  // Заглушки для меню "Магазина" --------------------------------------------
+  
+  /*
+        <a class="js_news" href="#">Новинки</a> 
+        <a class="js_actions" href="#"> Акции</a> 
+        <a class="js_discfounts" href="#">Скидки</span></a> 
+        <span style="float: right;">
+        <a class="js_cart" href="https://r-color.ru/catalog/cart">Корзина 
+        <a class="js_login" href="#">Вход</a>
+        **/
+
+  const $popularButton = document.querySelector( '.js_popular' )
+  const $newsButton = document.querySelector( '.js_news' )
+  const $actionsButton = document.querySelector( '.js_actions' )
+  const $discountsButton = document.querySelector( '.js_discfounts' )
+  const $loginButton = document.querySelector( '.js_login' )
+
+  $popularButton.addEventListener('click', (event)=> { 
+    event.preventDefault() 
+    console.log('$popularButton clicked')
+  } )
+  $newsButton.addEventListener('click', (event)=> { 
+    event.preventDefault() 
+    console.log('$newsButton clicked')
+  } )
+  $actionsButton.addEventListener('click', (event)=> { 
+    event.preventDefault() 
+    console.log('$actionsButton clicked')
+  } )
+  $discountsButton.addEventListener('click', (event)=> { 
+    event.preventDefault() 
+    console.log('$discountsButton clicked')
+  } )
+  $loginButton.addEventListener('click', (event)=> { 
+    event.preventDefault() 
+    console.log('$loginButton clicked')
+  } )
+
+  // / Заглушки для меню "Магазина" ------------------------------------------
+
+
 
   const $filtersItems = document.querySelectorAll( '.js_filter' )
   const $tooltips = document.querySelectorAll( '.js_tooltip' )

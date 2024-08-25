@@ -7,11 +7,12 @@
       {
         "id": "111301",
         "name": "Бумажные",
+        "template": "Бумажные",
         "furl": "bumazhnye"
       },
       {
         "id": "311301",
-        "name": "Плёнка",
+        "name": "Из плёнки",
         "furl": "plyonka"
       }
     ]
@@ -27,6 +28,46 @@
         "furl": "belye"
       },
       {
+        "id": "1111391111555",
+        "name": "Цветные",
+        "furl": "cvetnye"
+      },
+      {
+        "id": "111123",
+        "name": "Прозрачные",
+        "furl": "prozrachnye"
+      },
+      {
+        "id": "111125",
+        "name": "Водостойкие",
+        "furl": "vodostoykie"
+      },
+      {
+        "id": "111128",
+        "name": "Светоотражающие",
+        "furl": "svetootrazhayushchie"
+      },
+      {
+        "id": "111127",
+        "name": "Термонаклейки",
+        "furl": "termonakleyki"
+      },
+      {
+        "id": "111126",
+        "name": "Перфорированные",
+        "furl": "perforirovannye"
+      },
+      {
+        "id": "1111391111",
+        "name": "Самоклеящиеся",
+        "furl": "samokleyashchiesya"
+      },
+      {
+        "id": "111124",
+        "name": "Виниловыe",
+        "furl": "vinilovye"
+      },
+      {
         "id": "111122",
         "name": "С ламинацией",
         "furl": "s-laminaciey"
@@ -37,44 +78,9 @@
         "furl": "magnitnye"
       },
       {
-        "id": "111123",
-        "name": "Прозрачные",
-        "furl": "prozrachnye"
-      },
-      {
-        "id": "111124",
-        "name": "Виниловыe",
-        "furl": "vinilovye"
-      },
-      {
-        "id": "111125",
-        "name": "Водостойкие",
-        "furl": "vodostoykie"
-      },
-      {
-        "id": "111126",
-        "name": "Перфорированные",
-        "furl": "perforirovannye"
-      },
-      {
-        "id": "111127",
-        "name": "Термонаклейки",
-        "furl": "termonakleyki"
-      },
-      {
-        "id": "111128",
-        "name": "Светоотражающие",
-        "furl": "svetootrazhayushchie"
-      },
-      {
         "id": "111129",
         "name": "УФ",
         "furl": "uf"
-      },
-      {
-        "id": "1111391111",
-        "name": "Самоклеящиеся",
-        "furl": "samokleyashchiesya"
       }
     ]
   },
@@ -105,33 +111,33 @@
       },
       {
         "id": "111168",
-        "name": "День Рождения",
+        "name": "На день рождения",
         "furl": "den-rozhdeniya"
       },
       {
         "id": "111169",
-        "name": "Режим Работы",
+        "name": "Режим работы",
         "furl": "rezhim-raboty"
       },
       {
         "id": "111170",
-        "name": "Новогодний",
-        "furl": "novogodnii"
+        "name": "Новогодние",
+        "furl": "novogodnie"
       },
       {
         "id": "111171",
-        "name": "Свадебный",
-        "furl": "svadebnyi"
+        "name": "Свадебные",
+        "furl": "svadebnye"
       },
       {
         "id": "111172",
-        "name": "Витражный",
-        "furl": "vitrazhnyi"
+        "name": "Витражные",
+        "furl": "vitrazhnye"
       },
       {
         "id": "111173",
-        "name": "Медицинский",
-        "furl": "medicinskii"
+        "name": "Медицинские",
+        "furl": "meditsinskie"
       },
       {
         "id": "111174",
@@ -146,17 +152,17 @@
     "furl": "forma",
     "filters": [
       {
-        "id": "1111201",
-        "name": "Фигурные",
-        "furl": "figurnye"
-      },
-      {
         "id": "111117",
         "name": "Круглые",
         "furl": "kruglye"
       },
       {
         "id": "111118",
+        "name": "Треугольные",
+        "furl": "treugolnye"
+      },
+      {
+        "id": "111119",
         "name": "Квадратные",
         "furl": "kvadratnye"
       },
@@ -164,16 +170,6 @@
         "id": "111120",
         "name": "Прямоугольные",
         "furl": "pryamougolnye"
-      },
-      {
-        "id": "111119",
-        "name": "Треугольные",
-        "furl": "treugolnye"
-      },
-      {
-        "id": "11112011",
-        "name": "Овальные",
-        "furl": "ovalnye"
       }
     ]
   },
@@ -191,50 +187,6 @@
         "id": "111132",
         "name": "Маленькие",
         "furl": "malenkie"
-      }
-    ]
-  },
-  {
-    "id": "333333",
-    "name": "Одежда",
-    "furl": "odezhda-cat",
-    "filters": [
-      {
-        "id": "3333331",
-        "name": "Одеежда",
-        "furl": "odezhda"
-      }
-    ]
-  },
-  {
-    "id": 333111,
-    "name": "Объекты",
-    "furl": "obekty",
-    "filters": [
-      {
-        "id": "311143",
-        "name": "Дом",
-        "furl": "dom"
-      },
-      {
-        "id": "111143",
-        "name": "Магазин",
-        "furl": "magazin"
-      },
-      {
-        "id": "111137",
-        "name": "Витрины",
-        "furl": "vitriny"
-      },
-      {
-        "id": "111148",
-        "name": "Офис",
-        "furl": "ofis"
-      },
-      {
-        "id": "111160",
-        "name": "Школа",
-        "furl": "shkola"
       }
     ]
   },
@@ -295,13 +247,13 @@
       },
       {
         "id": "111134",
-        "name": "Банка",
-        "furl": "banka"
+        "name": "На банку",
+        "furl": "na-banku"
       },
       {
         "id": "111135",
-        "name": "Бутылка",
-        "furl": "butylka"
+        "name": "На бутылку",
+        "furl": "na-butylku"
       },
       {
         "id": "111140",
@@ -315,33 +267,33 @@
       },
       {
         "id": "111144",
-        "name": "Мебель",
-        "furl": "mebel"
+        "name": "На мебель",
+        "furl": "na-mebel"
       },
       {
         "id": "111145",
-        "name": "Ноутбук",
-        "furl": "noutbuk"
+        "name": "На ноутбук",
+        "furl": "na-noutbuk"
       },
       {
         "id": "111149",
-        "name": "Пакет",
-        "furl": "paket"
+        "name": "На пакет",
+        "furl": "na-paket"
       },
       {
         "id": "111157",
-        "name": "Упаковка",
-        "furl": "upakovka"
+        "name": "На упаковку",
+        "furl": "na-upakovku"
       },
       {
         "id": "111158",
-        "name": "Холодильник",
-        "furl": "holodilnik"
+        "name": "На холодильник",
+        "furl": "na-holodilnik"
       },
       {
         "id": "111159",
-        "name": "Шкаф",
-        "furl": "shkaf"
+        "name": "На шкаф",
+        "furl": "na-shkaf"
       }
     ]
   },
@@ -378,9 +330,53 @@
     ]
   },
   {
+    "id": 333111,
+    "name": "Объекты",
+    "furl": "obekty",
+    "filters": [
+      {
+        "id": "311143",
+        "name": "Дом",
+        "furl": "dom"
+      },
+      {
+        "id": "111143",
+        "name": "Магазин",
+        "furl": "magazin"
+      },
+      {
+        "id": "111137",
+        "name": "Витрины",
+        "furl": "vitriny"
+      },
+      {
+        "id": "111148",
+        "name": "Офис",
+        "furl": "ofis"
+      },
+      {
+        "id": "111160",
+        "name": "Школа",
+        "furl": "shkola"
+      }
+    ]
+  },
+  {
+    "id": "333330",
+    "name": "Текстиль",
+    "furl": "tekstil-cat",
+    "filters": [
+      {
+        "id": "3333331",
+        "name": "Одежда",
+        "furl": "na-odezhdu"
+      }
+    ]
+  },
+  {
     "id": "111165",
-    "name": "Контент",
-    "furl": "kontent",
+    "name": "Тип наклейки",
+    "furl": "type",
     "filters": [
       {
         "id": "111166",
@@ -389,8 +385,13 @@
       },
       {
         "id": "111167",
-        "name": "Логотип",
-        "furl": "logotip"
+        "name": "С логотипом",
+        "furl": "s-logotipom"
+      },
+      {
+        "id": "1111671488",
+        "name": "Главная",
+        "furl": "glavnaya"
       }
     ]
   }
