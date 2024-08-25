@@ -94,8 +94,9 @@ export default {
     ToastUniversal,
   },
   setup() {
-    const SALTED_PASSWORD = 'de3ff570485f8bdabdd41d3c95b47313' // md5 of '555-900+salt'
-    const HARDCODED_LOGIN = 'rcolor'
+    // https://www.md5.cz/
+    const SALTED_PASSWORD = '4fa07b07dee0e8e6e07afa5a5ed7b930' // md5 of '555900+salt'
+    const HARDCODED_LOGIN = 'r-color'
     const isLoggedIn = ref( localStorage.getItem( 'isLoggedIn' ) === 'true' )
     const isError = ref( false )
     const toastErrorRef = ref( null )
@@ -103,7 +104,6 @@ export default {
     const password = ref( '' )
 
     const authorize = () => {
-      // TODO: Сделать нормальную авторизацию
       if ( ( md5( `${ password.value }+salt` ) === SALTED_PASSWORD ) &&
          ( login.value === HARDCODED_LOGIN ) ) {
         isLoggedIn.value = true
